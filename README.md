@@ -1,7 +1,7 @@
 # system-wide-bash-aliases
-## Helpful system-wide bash aliases for Linux, macOS and other Unix-like operating systems.
+### Helpful system-wide bash aliases for Linux, macOS and other Unix-like operating systems.
 
-For Debian and Ubuntu based operating systems add the following to /etc/bash.bashrc
+For Debian and Ubuntu based Linux distributions add the following to /etc/bash.bashrc
 
 ```bash
 # system-wide bash aliases
