@@ -1,0 +1,166 @@
+#!/bin/sh
+
+# Copyright (c) 2018 Robert LaRocca
+
+_macOS_version="1.10"
+
+function resetdock()
+{
+# restore Dock, Launchpad and Spotlight to macOS defaults
+case $1 in
+#!/bin/sh
+
+# Copyright (c) 2018 Robert LaRocca
+
+alias sudo="sudo "
+
+alias ls="ls -AFh"
+alias ll="ls -l"
+alias la="ll -a"
+
+alias nano="nano --tabstospaces --tabsize=4 --smooth"
+
+# needed for the additional macOS only commands
+if [ -f /etc/bash.macos ]; then
+    source /etc/bash.macos
+else
+    _macOS_version="macOS: Unavailable"
+fi
+
+function bash_profile()
+{
+local _location="/etc"
+local _profile="bash.aliases"
+local _backups="$HOME/Desktop"
+local _version="1.28"
+
+# options for bash_profile command
+case $1 in
+--backup)
+    if [ -z $2 ]; then
+        cp -v $_location/$_profile $_backups/$_profile.bak
+    else
+        cp -v $_location/$_profile $2
+    fi
+    ;;
+--version)
+printf "Version: $_version-$(uname) $_macOS_version \n"
+    ;;
+--gedit|--xcode)
+    local _editor=null
+    if [ $(uname) == Darwin ]; then
+        local _editor="open /Applications/Xcode.app"
+    elif [ $(uname) == Linux ]; then
+        local _editor=gedit
+    elif [ $(uname) == FreeBSD ]; then
+        local _editor=gedit
+    else
+        # bash default
+        local _editor=vi
+    fi
+    sudo $_editor $_location/$_profile
+    ;;
+--nano|*)
+    sudo nano $_location/$_profile
+    ;;
+esac
+};
+
+function clean()
+{
+    function remove-bash-history()
+    {
+    if [ -e $HOME/.bash_history ]; then
+        rm -f $HOME/.bash_history
+    fi
+    if [ -e $HOME/.bash_sessions ]; then
+        rm -f $HOME/.bash_sessions/*
+    fi
+    history -c
+    return
+    };
+
+# options for clean function
+case $1 in
+--exit)
+    reset
+    remove-bash-history
+    exit
+    ;;
+--restart|--reboot)
+    clear
+    remove-bash-history
+    if [ -z $2 ]; then
+        sudo shutdown -r now
+    else
+        sudo shutdown -r $2
+    fi
+    ;;
+--sleep)
+    reset
+    remove-bash-history
+    if [ -z $2 ]; then
+        sudo shutdown -s now
+    else
+        sudo shutdown -s $2
+    fi
+    ;;
+--shutdown)
+    clear
+    remove-bash-history
+    if [ -z $2 ]; then
+        sudo shutdown -h now
+    else
+        sudo shutdown -h $2
+    fi
+    ;;
+--python)
+    reset
+    remove-bash-history
+    if [ -e $HOME/.python_history ]; then
+        rm -f $HOME/.python_history
+    fi
+    ;;
+--wget)
+    reset
+    remove-bash-history
+    if [ -e $HOME/.wget-hsts ]; then
+        rm -f $HOME/.wget-hsts
+    fi
+    ;;
+--delete|*)
+    reset
+    remove-bash-history
+    ;;
+esac
+};
+
+function whatsmyip()
+{
+printf "IPv4: $(curl -s4 http://me.gandi.net)\n"
+printf "IPv6: $(curl -s6 http://me.gandi.net)\n"
+};
+
+function swupdate()
+{
+if [ $(uname) == "Darwin" ]; then
+    sudo softwareupdate --list
+    sudo softwareupdate --install
+elif [ $(uname) == "Linux" ]; then
+    sudo apt update
+    sudo apt --yes upgrade
+    sudo apt --yes dist-upgrade
+    sudo apt autoremove
+    sudo apt autoclean
+elif [ $(uname) == "FreeBSD" ]; then
+    sudo pkg upgrade
+    sudo freebsd-update fetch
+    sudo freebsd-update install
+else
+    # default
+    print "$(uname) package manager is unavailable\n"
+fi
+};
+
+alias router="ssh user@router"
+alias server="ssh user@server"
