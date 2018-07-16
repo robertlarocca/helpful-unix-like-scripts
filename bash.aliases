@@ -2,21 +2,11 @@
 
 # Copyright (c) 2018 Robert LaRocca
 
-_macOS_version="1.10"
-
-function resetdock()
-{
-# restore Dock, Launchpad and Spotlight to macOS defaults
-case $1 in
-#!/bin/sh
-
-# Copyright (c) 2018 Robert LaRocca
-
 alias sudo="sudo "
 
-alias ls="ls -AFh"
+alias ls="ls -Fh"
 alias ll="ls -l"
-alias la="ll -a"
+alias la="ll -A"
 
 alias nano="nano --tabstospaces --tabsize=4 --smooth"
 
@@ -32,7 +22,7 @@ function bash_profile()
 local _location="/etc"
 local _profile="bash.aliases"
 local _backups="$HOME/Desktop"
-local _version="1.28"
+local _version="1.29"
 
 # options for bash_profile command
 case $1 in
