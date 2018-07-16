@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Copyright (c) 2018 Robert LaRocca
+
+_macOS_version="1.10"
+
+function resetdock()
+{
+# restore Dock, Launchpad and Spotlight to macOS defaults
+case $1 in
+--all)
+    defaults delete com.apple.dock
+    defaults write com.apple.dock ResetLaunchPad -bool true
+    defaults delete com.apple.Spotlight
+    killall Dock
+    killall Spotlight
+    ;;
+--launchpad)
+    defaults write com.apple.dock ResetLaunchPad -bool true
+    killall Dock
+    ;;
+--spotlight)
+    defaults delete com.apple.Spotlight
+    killall Spotlight
+    ;;
+--dock|*)
+    defaults delete com.apple.dock
+    killall Dock
+    ;;
+esac
+};
+
+function createinstallmedia()
+{
+/Applications/"Install macOS *.app"/Contents/Resources/createinstallmedia
+};
+
+function rebuildkextcache()
+{
+sudo touch /System/Library/Extensions
+sudo touch /Library/Extensions
+sudo kextcache -u /
+};
+
+function airport()
+{
+/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport
+};
+
+function xcode()
+{
+if [ -f /Applications/Xcode.app ]; then
+    open /Applications/Xcode.app
+fi
+};
