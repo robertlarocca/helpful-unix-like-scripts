@@ -2,31 +2,51 @@
 
 # Copyright (c) 2018 Robert LaRocca
 
-_macOS_version="1.10"
+_macOS_version="1.12"
 
-function resetdock()
+alias ll="ls -alF"
+alias la="ls -A"
+alias l="ls -CF"
+
+function restore()
 {
 # restore Dock, Launchpad and Spotlight to macOS defaults
+#
 case $1 in
 --all)
-    defaults delete com.apple.dock
-    defaults write com.apple.dock ResetLaunchPad -bool true
-    defaults delete com.apple.Spotlight
-    killall Dock
-    killall Spotlight
-    ;;
+	defaults delete com.apple.dock
+	defaults write com.apple.dock ResetLaunchPad -bool true
+	defaults delete com.apple.Spotlight
+	killall Dock
+	killall Spotlight
+	;;
 --launchpad)
-    defaults write com.apple.dock ResetLaunchPad -bool true
-    killall Dock
-    ;;
+	defaults write com.apple.dock ResetLaunchPad -bool true
+	killall Dock
+	;;
 --spotlight)
-    defaults delete com.apple.Spotlight
-    killall Spotlight
-    ;;
---dock|*)
-    defaults delete com.apple.dock
-    killall Dock
-    ;;
+	defaults delete com.apple.Spotlight
+	killall Spotlight
+	;;
+--dock)
+	defaults delete com.apple.dock
+	killall Dock
+	;;
+--help)
+	cat <<-EOF 
+	restore -- initialize macOS settings using the user defaults system
+
+	--help			display this help message
+	--launchpad		restore the default Launchpad app icon layout
+	--spotlight		restore Spotlight search suggestions
+	--dock			restore the default Dock configuration
+	--all			all of the above restore options
+	EOF
+	;;
+*)
+	printf "restore: unrecognized option '$2'\n"
+	printf "Try 'restore --help' for more information.\n"
+	;;
 esac
 };
 
@@ -50,6 +70,7 @@ function airport()
 function xcode()
 {
 if [ -f /Applications/Xcode.app ]; then
-    open /Applications/Xcode.app
+	open /Applications/Xcode.app
 fi
 };
+
