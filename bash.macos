@@ -7,9 +7,15 @@
 
 _macOS_version="1.12"
 
-alias ll="ls -alF"
+# terminal colorize
+export CLICOLOR=1
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+alias ls="ls -FG"
+alias ll="ls -Alh"
 alias la="ls -A"
-alias l="ls -CF"
+alias l.="ll -a"
 
 function restore()
 {
