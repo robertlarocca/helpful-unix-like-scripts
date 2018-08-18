@@ -5,29 +5,35 @@
 # Use of this source code is governed by an MIT-style license that can be
 # found in the projects LICENSE file or https://www.laroccx.io/LICENSE.md
 
-alias sudo="sudo "
 
-alias nano="nano --tabsize=4 --smooth"
+PROFILEVERSION="1.38"
 
 # needed additional macOS only commands
 #
 if [ -f /etc/bash.macos ]; then
 	source /etc/bash.macos
 else
-	_macOS_version="macOS: Unavailable"
+	MACOSVERSION="Unavailable"
 fi
+
+# simple aliases
+alias sudo="sudo "
+alias nano="nano --tabsize=4 --smooth"
+alias ls="ls -F --color=auto"
+alias ll="ls -Alh"
+alias la="ls -A"
+alias l.="ll -a"
 
 function bash_profile()
 {
 local _location="/etc"
 local _profile="bash.aliases"
 local _backups="$HOME/Desktop"
-local _version="1.36"
 
 # options for bash_profile command
 #
 case $1 in
---backup)
+-b|--backup)
 	if [ -z $2 ]; then
 		cp -v $_location/$_profile $_backups/$_profile.sh
 	else
@@ -35,9 +41,11 @@ case $1 in
 	fi
 	;;
 --version)
-	printf "Version: $_version-$(uname) $_macOS_version\n"
+	printf "bash.aliases, version $PROFILEVERSION-$(uname)\n"
+	printf "bash.macos, version $MACOSVERSION-$(uname)\n"
+	printf "Copyright (c) 2018 Robert LaRocca\n"
 	;;
---gedit|--xcode)
+-g|-x|--gedit|--xcode)
 	local _editor=null
 	if [ $(uname) == Darwin ]; then
 		local _editor="open /Applications/Xcode.app"
@@ -50,8 +58,14 @@ case $1 in
 	fi
 	sudo $_editor $_location/$_profile
 	;;
---nano|*)
-	sudo nano $_location/$_profile
+*)
+	if [ ! -z $1 ]; then
+		if [ "-n == $1" ] || [ "--nano == $1" ]; then
+			sudo nano $_location/$_profile
+		else
+			printf "$0: unrecognized option '$1'\n"
+		fi
+	fi
 	;;
 esac
 };
@@ -62,14 +76,20 @@ function clean()
 	#
 	function display_help_message()
 	{
-	cat <<-EOF 
-	clean -- clear and delete command history
-
-	--help		display this help message
-	--bash		remove bash command history
-	--python	remove python command history
-	--wget		remove wget download history
-	--all		remove all history files from above
+	cat <<-EOF
+	Usage: clean [-abpwesr] TIME [--help]
+	
+	Clear and delete command history.
+	
+	  -a, --all	remove all history files from above
+	  -b, --bash	remove bash command history
+	  -p, --python	remove python command history
+	  -w, --wget	remove wget download history
+	  -e, --exit	remove bash command history and exit
+	  -s, --shutdown	remove bash command history and shutdown
+	  -r, --reboot	remove bash command history and reboot
+	  --sleep	remove bash command history and sleep [macOS only]
+	  --help	print command usage and exit
 	EOF
 	};
 
@@ -90,12 +110,12 @@ function clean()
 # options for clean function
 #
 case $1 in
---exit)
+-e|--exit)
 	reset
 	remove-bash-history
 	exit
 	;;
---restart|--reboot)
+-r|--restart)
 	clear
 	remove-bash-history
 	if [ -z $2 ]; then
@@ -113,7 +133,7 @@ case $1 in
 		sudo shutdown -s $2
 	fi
 	;;
---shutdown)
+-s|--shutdown)
 	clear
 	remove-bash-history
 	if [ -z $2 ]; then
@@ -122,21 +142,21 @@ case $1 in
 		sudo shutdown -h $2
 	fi
 	;;
---python)
+-p|--python)
 	reset
 	remove-bash-history
 	if [ -e $HOME/.python_history ]; then
 		rm -f $HOME/.python_history
 	fi
 	;;
---wget)
+-w|--wget)
 	reset
 	remove-bash-history
 	if [ -e $HOME/.wget-hsts ]; then
 		rm -f $HOME/.wget-hsts
 	fi
 	;;
---all)
+-a|--all)
 	reset
 	remove-bash-history
 	if [ -e $HOME/.python_history ]; then
@@ -151,7 +171,7 @@ case $1 in
 	;;
 *)
 	if [ ! -z $1 ]; then
-		if [ "--bash" == $1 ]; then
+		if [ "-b" == $1 ] || [ "--bash" == $1 ]; then
 			reset
 			remove-bash-history
 		else

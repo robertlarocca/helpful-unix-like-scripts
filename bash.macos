@@ -5,7 +5,7 @@
 # Use of this source code is governed by an MIT-style license that can be
 # found in the projects LICENSE file or https://www.laroccx.io/LICENSE.md
 
-_macOS_version="1.12"
+MACOSVERSION="1.14"
 
 # terminal colorize
 export CLICOLOR=1
@@ -22,34 +22,36 @@ function restore()
 # restore Dock, Launchpad and Spotlight to macOS defaults
 #
 case $1 in
---all)
+-a|--all)
 	defaults delete com.apple.dock
 	defaults write com.apple.dock ResetLaunchPad -bool true
 	defaults delete com.apple.Spotlight
 	killall Dock
 	killall Spotlight
 	;;
---launchpad)
+-l|--launchpad)
 	defaults write com.apple.dock ResetLaunchPad -bool true
 	killall Dock
 	;;
---spotlight)
+-s|--spotlight)
 	defaults delete com.apple.Spotlight
 	killall Spotlight
 	;;
---dock)
+-d|--dock)
 	defaults delete com.apple.dock
 	killall Dock
 	;;
 --help)
-	cat <<-EOF 
-	restore -- initialize macOS settings using the user defaults system
-
-	--help			display this help message
-	--launchpad		restore the default Launchpad app icon layout
-	--spotlight		restore Spotlight search suggestions
-	--dock			restore the default Dock configuration
-	--all			all of the above restore options
+	cat <<-EOF
+	Usage: restore [-adls] [--help]
+	
+	Initialize macOS settings using the user defaults system
+	
+	  -a, --all	restore all availalbe configurations to the default
+	  -d, --dock	restore the default Dock configuration
+	  -l, --launchpad	restore the default Launchpad layout
+	  -s, --spotlight	restore Spotlight search suggestions
+	  --help	print command usage and exit
 	EOF
 	;;
 *)
@@ -61,7 +63,11 @@ esac
 
 function createinstallmedia()
 {
-/Applications/"Install macOS *.app"/Contents/Resources/createinstallmedia
+say "Hello, Dave"
+say "The developer who created me"
+say "has not completed this function"
+/Applications/"Install\ macOS\ *.app"/Contents/Resources/createinstallmedia
+say "Your welcome, Dave"
 };
 
 function rebuildkextcache()
