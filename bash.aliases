@@ -78,9 +78,9 @@ function clean()
 	{
 	cat <<-EOF
 	Usage: clean [-abpwesr] TIME [--help]
-	
+
 	Clear and delete command history.
-	
+
 	  -a, --all	remove all history files from above
 	  -b, --bash	remove bash command history
 	  -p, --python	remove python command history
