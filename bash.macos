@@ -3,9 +3,9 @@
 # Copyright (c) 2017-2018 Robert LaRocca
 
 # Use of this source code is governed by an MIT-style license that can be
-# found in the projects LICENSE file or https://www.laroccx.io/LICENSE.md
+# found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
 
-MACOSVERSION="1.14"
+MACOSVERSION="1.16"
 
 # terminal colorize
 export CLICOLOR=1
@@ -13,9 +13,6 @@ alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
 alias ls="ls -FG"
-alias ll="ls -Alh"
-alias la="ls -A"
-alias l.="ll -a"
 
 function restore()
 {
@@ -44,9 +41,9 @@ case $1 in
 --help)
 	cat <<-EOF
 	Usage: restore [-adls] [--help]
-	
+
 	Initialize macOS settings using the user defaults system
-	
+
 	  -a, --all	restore all availalbe configurations to the default
 	  -d, --dock	restore the default Dock configuration
 	  -l, --launchpad	restore the default Launchpad layout
@@ -59,15 +56,6 @@ case $1 in
 	printf "Try 'restore --help' for more information.\n"
 	;;
 esac
-};
-
-function createinstallmedia()
-{
-say "Hello, Dave"
-say "The developer who created me"
-say "has not completed this function"
-/Applications/"Install\ macOS\ *.app"/Contents/Resources/createinstallmedia
-say "Your welcome, Dave"
 };
 
 function rebuildkextcache()
@@ -88,4 +76,3 @@ if [ -f /Applications/Xcode.app ]; then
 	open /Applications/Xcode.app
 fi
 };
-

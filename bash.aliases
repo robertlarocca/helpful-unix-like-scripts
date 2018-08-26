@@ -3,18 +3,9 @@
 # Copyright (c) 2017-2018 Robert LaRocca
 
 # Use of this source code is governed by an MIT-style license that can be
-# found in the projects LICENSE file or https://www.laroccx.io/LICENSE.md
+# found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
 
-
-PROFILEVERSION="1.38"
-
-# needed additional macOS only commands
-#
-if [ -f /etc/bash.macos ]; then
-	source /etc/bash.macos
-else
-	MACOSVERSION="Unavailable"
-fi
+PROFILEVERSION="1.39"
 
 # simple aliases
 alias sudo="sudo "
@@ -23,6 +14,15 @@ alias ls="ls -F --color=auto"
 alias ll="ls -Alh"
 alias la="ls -A"
 alias l.="ll -a"
+alias k="reset"
+
+# needed additional macOS only commands
+#
+if [ -f /etc/bash.macos ]; then
+	source /etc/bash.macos
+else
+	MACOSVERSION="Unavailable"
+fi
 
 function bash_profile()
 {
@@ -188,8 +188,8 @@ esac
 
 function whatsmyip()
 {
-printf "IPv4: $(curl -s4 http://me.gandi.net)\n"
-printf "IPv6: $(curl -s6 http://me.gandi.net)\n"
+printf "IPv4: $(curl -s4 https://ifconfig.co)\n"
+printf "IPv6: $(curl -s6 https://ifconfig.co)\n"
 };
 
 function swupdate()
@@ -197,7 +197,7 @@ function swupdate()
 if [ $(uname) == "Darwin" ]; then
 	sudo softwareupdate --list
 	sudo softwareupdate --install
-elif [ $(uname) == "Linux" ]; then
+elif [ $(lsb_release --id --short) == "Ubuntu" ]; then
 	sudo apt update
 	sudo apt --yes upgrade
 	sudo apt --yes dist-upgrade
@@ -209,7 +209,4 @@ else
 	printf "$(uname) package manager is unavailable\n"
 fi
 };
-
-alias router="ssh root@router"
-alias server="ssh robert@server"
 
