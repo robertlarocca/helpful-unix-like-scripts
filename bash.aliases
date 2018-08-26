@@ -47,9 +47,9 @@ case $1 in
 	;;
 -g|-x|--gedit|--xcode)
 	local _editor=null
-	if [ $(uname) == Darwin ]; then
+	if [ $(uname) == "Darwin" ]; then
 		local _editor="open /Applications/Xcode.app"
-	elif [ $(uname) == Linux ]; then
+	elif [ $(lsb_release -is) == "Ubuntu" ]; then
 		local _editor=gedit
 	else
 		# bash default
@@ -58,10 +58,13 @@ case $1 in
 	fi
 	sudo $_editor $_location/$_profile
 	;;
+-n|--nano)
+	sudo nano $_location/$_profile
+	;;
 *)
 	if [ ! -z $1 ]; then
-		if [ "-n == $1" ] || [ "--nano == $1" ]; then
-			sudo nano $_location/$_profile
+		if [ "-e == $1" ] || [ "--edit == $1" ]; then
+			sudo vi $_location/$_profile
 		else
 			printf "$0: unrecognized option '$1'\n"
 		fi
@@ -115,7 +118,7 @@ case $1 in
 	remove-bash-history
 	exit
 	;;
--r|--restart)
+-r|--reboot)
 	clear
 	remove-bash-history
 	if [ -z $2 ]; then
@@ -197,7 +200,7 @@ function swupdate()
 if [ $(uname) == "Darwin" ]; then
 	sudo softwareupdate --list
 	sudo softwareupdate --install
-elif [ $(lsb_release --id --short) == "Ubuntu" ]; then
+elif [ $(lsb_release -is) == "Ubuntu" ]; then
 	sudo apt update
 	sudo apt --yes upgrade
 	sudo apt --yes dist-upgrade
