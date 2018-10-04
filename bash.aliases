@@ -5,7 +5,7 @@
 # Use of this source code is governed by an MIT-style license that can be
 # found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
 
-PROFILEVERSION="1.39"
+PROFILEVERSION="1.41"
 
 # simple aliases
 alias sudo="sudo "
@@ -89,8 +89,9 @@ function clean()
 	  -p, --python	remove python command history
 	  -w, --wget	remove wget download history
 	  -e, --exit	remove bash command history and exit
-	  -s, --shutdown	remove bash command history and shutdown
 	  -r, --reboot	remove bash command history and reboot
+	  -s, --shutdown	remove bash command history and shutdown
+	  --restore	remove bash command history and restore [macOS only]
 	  --sleep	remove bash command history and sleep [macOS only]
 	  --help	print command usage and exit
 	EOF
@@ -125,6 +126,15 @@ case $1 in
 		sudo shutdown -r now
 	else
 		sudo shutdown -r $2
+	fi
+	;;
+--restore)
+	clear
+	remove-bash-history
+	if [ -z $2 ]; then
+		restore --all
+	else
+		restore $2
 	fi
 	;;
 --sleep)
