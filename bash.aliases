@@ -2,8 +2,7 @@
 
 # Copyright (c) 2017-2018 Robert LaRocca
 
-# Use of this source code is governed by an MIT-style license that can be
-# found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
+# Use of this source code is governed by an MIT-style license that can be found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
 
 PROFILEVERSION="1.41"
 
@@ -24,7 +23,7 @@ else
 	MACOSVERSION="Unavailable"
 fi
 
-function bash_profile()
+bash_profile()
 {
 local _location="/etc"
 local _profile="bash.aliases"
@@ -73,11 +72,11 @@ case $1 in
 esac
 };
 
-function clean()
+clean()
 {
 	# display the clean command help message
 	#
-	function display_help_message()
+	display_help_message()
 	{
 	cat <<-EOF
 	Usage: clean [-abpwesr] TIME [--help]
@@ -99,7 +98,7 @@ function clean()
 
 	# remove history and sessions only when needed
 	#
-	function remove-bash-history()
+	remove_bash_history()
 	{
 	if [ -e $HOME/.bash_history ]; then
 		rm -f $HOME/.bash_history
@@ -116,12 +115,12 @@ function clean()
 case $1 in
 -e|--exit)
 	reset
-	remove-bash-history
+	remove_bash_history
 	exit
 	;;
 -r|--reboot)
 	clear
-	remove-bash-history
+	remove_bash_history
 	if [ -z $2 ]; then
 		sudo shutdown -r now
 	else
@@ -130,7 +129,7 @@ case $1 in
 	;;
 --restore)
 	clear
-	remove-bash-history
+	remove_bash_history
 	if [ -z $2 ]; then
 		restore --all
 	else
@@ -139,7 +138,7 @@ case $1 in
 	;;
 --sleep)
 	reset
-	remove-bash-history
+	remove_bash_history
 	if [ -z $2 ]; then
 		sudo shutdown -s now
 	else
@@ -148,7 +147,7 @@ case $1 in
 	;;
 -s|--shutdown)
 	clear
-	remove-bash-history
+	remove_bash_history
 	if [ -z $2 ]; then
 		sudo shutdown -h now
 	else
@@ -157,21 +156,21 @@ case $1 in
 	;;
 -p|--python)
 	reset
-	remove-bash-history
+	remove_bash_history
 	if [ -e $HOME/.python_history ]; then
 		rm -f $HOME/.python_history
 	fi
 	;;
 -w|--wget)
 	reset
-	remove-bash-history
+	remove_bash_history
 	if [ -e $HOME/.wget-hsts ]; then
 		rm -f $HOME/.wget-hsts
 	fi
 	;;
 -a|--all)
 	reset
-	remove-bash-history
+	remove_bash_history
 	if [ -e $HOME/.python_history ]; then
 		rm -f $HOME/.python_history
 	fi
@@ -186,26 +185,26 @@ case $1 in
 	if [ ! -z $1 ]; then
 		if [ "-b" == $1 ] || [ "--bash" == $1 ]; then
 			reset
-			remove-bash-history
+			remove_bash_history
 		else
 			printf "clean: unrecognized option '$1'\n"
 			printf "Try 'clean --help' for more information.\n"
 		fi
 	else
 		reset
-		remove-bash-history
+		remove_bash_history
 	fi
 	;;
 esac
 };
 
-function whatsmyip()
+whatsmyip()
 {
 printf "IPv4: $(curl -s4 https://ifconfig.co)\n"
 printf "IPv6: $(curl -s6 https://ifconfig.co)\n"
 };
 
-function swupdate()
+swupdate()
 {
 if [ $(uname) == "Darwin" ]; then
 	sudo softwareupdate --list
