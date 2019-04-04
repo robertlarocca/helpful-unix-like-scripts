@@ -6,7 +6,7 @@ For *Debian* and *Ubuntu* based Linux distributions add the following to /etc/ba
 ```bash
 # system-wide bash aliases
 if [ -f /etc/bash.aliases ]; then
-  . /etc/bash.aliases
+	. /etc/bash.aliases
 fi
 ```
 \
@@ -15,6 +15,6 @@ For *macOS* and other Unix-like operating systems add the following to /etc/bash
 ```bash
 # system-wide bash aliases
 if [ -f /etc/bash.aliases ]; then
-  . /etc/bash.aliases
+	. /etc/bash.aliases
 fi
 ````
