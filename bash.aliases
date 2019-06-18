@@ -2,7 +2,8 @@
 
 # Copyright (c) 2017-2018 Robert LaRocca
 
-# Use of this source code is governed by an MIT-style license that can be found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
+# Use of this source code is governed by an MIT-style license that can be
+# found in the projects LICENSE file or https://www.laroccx.com/LICENSE.md
 
 PROFILEVERSION="1.41"
 
@@ -16,7 +17,6 @@ alias l.="ll -a"
 alias k="reset"
 
 # needed additional macOS only commands
-#
 if [ -f /etc/bash.macos ]; then
 	source /etc/bash.macos
 else
@@ -25,45 +25,43 @@ fi
 
 bash_profile()
 {
-local _location="/etc"
-local _profile="bash.aliases"
-local _backups="$HOME/Desktop"
+local location="/etc"
+local profile="bash.aliases"
+local backups="$HOME/Desktop"
 
 # options for bash_profile command
-#
 case $1 in
 -b|--backup)
 	if [ -z $2 ]; then
-		cp -v $_location/$_profile $_backups/$_profile.sh
+		cp -v $location/$profile $backups/$profile.sh
 	else
-		cp -v $_location/$_profile $2
+		cp -v $location/$profile $2
 	fi
 	;;
 --version)
 	printf "bash.aliases, version $PROFILEVERSION-$(uname)\n"
 	printf "bash.macos, version $MACOSVERSION-$(uname)\n"
-	printf "Copyright (c) 2018 Robert LaRocca\n"
+	printf "Copyright (c) 2018-$(date +%Y) Robert LaRocca\n"
 	;;
 -g|-x|--gedit|--xcode)
-	local _editor=null
+	local editor=null
 	if [ $(uname) == "Darwin" ]; then
-		local _editor="open /Applications/Xcode.app"
+		local editor="open /Applications/Xcode.app"
 	elif [ $(lsb_release -is) == "Ubuntu" ]; then
-		local _editor=gedit
+		local editor=gedit
 	else
 		# bash default
-		#
-		local _editor=vi
+		local editor=vi
 	fi
-	sudo $_editor $_location/$_profile
+	sudo $editor $location/$profile
 	;;
 -n|--nano)
-	sudo nano $_location/$_profile
+	sudo nano $location/$profile
 	;;
 *)
 	if [ ! -z $1 ]; then
 		if [ "-e == $1" ] || [ "--edit == $1" ]; then
-			sudo vi $_location/$_profile
+			sudo vi $location/$profile
 		else
 			printf "$0: unrecognized option '$1'\n"
 		fi
@@ -75,7 +73,6 @@ esac
 clean()
 {
 	# display the clean command help message
-	#
 	display_help_message()
 	{
 	cat <<-EOF
@@ -97,7 +94,6 @@ clean()
 	};
 
 	# remove history and sessions only when needed
-	#
 	remove_bash_history()
 	{
 	if [ -e $HOME/.bash_history ]; then
@@ -111,7 +107,6 @@ clean()
 	};
 
 # options for clean function
-#
 case $1 in
 -e|--exit)
 	reset
@@ -216,9 +211,7 @@ elif [ $(lsb_release -is) == "Ubuntu" ]; then
 	sudo apt autoremove
 	sudo apt autoclean
 else
-	# defaut software update error
-	#
+	# default software update error
 	printf "$(uname) package manager is unavailable\n"
 fi
 };
-
