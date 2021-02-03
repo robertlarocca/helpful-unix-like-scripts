@@ -1,20 +1,9 @@
-# system-wide-bash-aliases
-### Helpful system-wide bash aliases for Linux, macOS and other Unix-like operating systems.
-\
-For *Debian* and *Ubuntu* based Linux distributions add the following to /etc/bash.bashrc
+# helpful-linux-bash-aliases
+Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-```bash
-# system-wide bash aliases
-if [ -f /etc/bash.aliases ]; then
-	. /etc/bash.aliases
-fi
+## Install
+Install the `bash_aliases` shell script using:
+```shell
+bash INSTALL
 ```
-\
-For *macOS* and other Unix-like operating systems add the following to /etc/bashrc
 
-```bash
-# system-wide bash aliases
-if [ -f /etc/bash.aliases ]; then
-	. /etc/bash.aliases
-fi
-````

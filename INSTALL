@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Copyright (c) 2021 Robert LaRocca http://www.laroccx.com
+
+main() {
+	cp -b -S .bak -v $PWD/bash_aliases.sh $HOME/.bash_aliases
+	touch $HOME/.bash_aliases_private
+	chmod 0644 $HOME/.bash_aliases*
+};
+
+main "$@"
+
