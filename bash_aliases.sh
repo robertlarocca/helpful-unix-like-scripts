@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="1.2.16-$HOSTNAME"
+export BASH_ALIASES_VERSION="1.2.18-$HOSTNAME"
 
 if [ $USER = 'root' ]; then
 	printf '🧀 '
@@ -33,18 +33,18 @@ edit-bash-aliases() {
 };
 
 # prevent conflicts with existing kubectl installs
-alias kubectl='microk8s kubectl'
+alias kubectl="microk8s kubectl"
 
 # similar to the macOS 'open' command
 alias open="$(which xdg-open)"
 
 # search bash history with grep
-alias hgrep='history | grep -i'
+alias hgrep="history | grep -i"
 
 # personalize ubuntu desktop
-alias personalize=personalize-ubuntu-desktop
+alias personalize="personalize-ubuntu-desktop"
 personalize-ubuntu-desktop() {
-	local script_location="$HOME/Documents/Developer/personalize-ubuntu-desktop/personalize-ubuntu-desktop.sh"
+	local script_location="$(which personalize-ubuntu-desktop)"
 	case "$1" in
 	--gedit)
 		sudo gedit $script_location
@@ -126,7 +126,7 @@ lvmsnapshot() {
 };
 
 # generate a secure random password
-alias mkpw=mkpassword
+alias mkpw="mkpassword"
 mkpassword() {
 	local a=$(pwgen -A -0 -B 6 1)
 	local b=$(pwgen -A -0 -B 6 1)
@@ -135,7 +135,7 @@ mkpassword() {
 };
 
 # generate a secure random pre-shared key
-alias mkpsk=mkpresharedkey
+alias mkpsk="mkpresharedkey"
 mkpresharedkey() {
 	local a=$(pwgen -A -0 -B 6 1)
 	local b=$(pwgen -A -0 -B 6 1)
@@ -199,7 +199,7 @@ swupdate() {
 };
 
 # check website availability
-alias check-website=test-website
+alias check-website="test-website"
 test-website() {
 	local server_address="$1"
 
@@ -246,7 +246,7 @@ test-port() {
 git-merge-upstream() {
 	case "$1" in
 	-H | --help)
-		cat <-EOF_XYZ
+		cat <<-EOF_XYZ
 		Update a fork by merging with upstream using the 'git' command.
 
 		Examples:
