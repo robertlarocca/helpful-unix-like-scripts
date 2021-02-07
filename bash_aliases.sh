@@ -14,7 +14,7 @@ elif [ $USER = 'user2' ]; then
 	printf '💵️ '
 fi
 
-# edit bash aliases using gedit (GNOME Text Editor)
+# edit bash aliases using gedit (Text Editor)
 edit-bash-aliases() {
 	case "$1" in
 	--gedit)
@@ -27,7 +27,7 @@ edit-bash-aliases() {
 		vim $HOME/.bash_aliases
 		;;
 	*)
-		nano $HOME/.bash_aliases
+		$(which xdg-open) $HOME/.bash_aliases
 		;;
 	esac
 };
@@ -35,14 +35,38 @@ edit-bash-aliases() {
 # prevent conflicts with existing kubectl installs
 alias kubectl='microk8s kubectl'
 
-# equivalent to the macOS open command
+# similar to the macOS 'open' command
 alias open="$(which xdg-open)"
 
 # search bash history with grep
 alias hgrep='history | grep -i'
 
 # personalize ubuntu desktop
-alias personalize-ubuntu-20-desktop="sudo bash $HOME/Documents/Developer/personalize-ubuntu-20-desktop.sh"
+alias personalize=personalize-ubuntu-desktop
+personalize-ubuntu-desktop() {
+	local script_location="$HOME/Documents/Developer/personalize-ubuntu-desktop/personalize-ubuntu-desktop.sh"
+	case "$1" in
+	--gedit)
+		sudo gedit $script_location
+		;;
+	--nano)
+		sudo nano $script_location
+		;;
+	--vi | --vim)
+		sudo vim $script_location
+		;;
+	*)
+		if [ -z "$1" ]; then
+			sudo bash $script_location
+		else
+			cat <<-EOF_XYZ
+			personalize: unrecognized option '$1'
+			Try 'personalize --help' for more information.
+			EOF_XYZ
+		fi
+		;;
+	esac
+};
 
 # display the current ipv4 and ipv6 address
 whatsmyip() {
@@ -60,20 +84,32 @@ whatsmyip() {
 
 # display the current logical volume management (lvs) storage
 lvms() {
-	sudo echo '  --- Physical volumes ---'
-	sudo pvs ; echo
-
-	sudo echo '  --- Volume groups ---'
-	sudo vgs ; echo
-
-	sudo echo '  --- Logical volumes ---'
-	sudo lvs ; echo
+	# require root privileges
+	if [ $UID != 0 ]; then
+		logger -i "Error: lvms must be run as root!"
+		echo "Error: lvms must be run as root!"
+		break
+	else
+		echo '  --- Physical volumes ---'
+		pvs ; echo
+		echo '  --- Volume groups ---'
+		vgs ; echo
+		echo '  --- Logical volumes ---'
+		lvs ; echo
+	fi
 };
 
 lvmdisplay() {
-	sudo pvdisplay
-	sudo vgdisplay
-	sudo lvdisplay
+	# require root privileges
+	if [ $UID != 0 ]; then
+		logger -i "Error: lvmdisplay must be run as root!"
+		echo "Error: lvmdisplay must be run as root!"
+		break
+	else
+		pvdisplay
+		vgdisplay
+		lvdisplay
+	fi
 };
 
 # display command reminder to create a lvm snapshot
@@ -85,7 +121,7 @@ lvmsnapshot() {
 	 lvcreate -L 50%ORIGIN --snapshot --name snap_1 /dev/mapper/ubuntu-root
 	 lvcreate -L 16G -s -n snap_2 /dev/ubuntu/logical-volume-name
 
-	Read the lvcreate(8) manual for more information.
+	See the lvcreate(8) manual for more information.
 	EOF_XYZ
 };
 
@@ -110,7 +146,7 @@ mkpresharedkey() {
 # update apt repositories and upgrade installed packages
 swupdate() {
 	case "$1" in
-		--fw | --firmware)
+		-f | --fw | --firmware)
 			sudo apt --yes clean
 			sudo apt --yes update
 			sudo apt --yes upgrade
@@ -120,7 +156,7 @@ swupdate() {
 			sudo fwupdmgr --force refresh
 			sudo fwupdmgr update
 			;;
-		--lts)
+		-l | --lts)
 			sudo apt --yes clean
 			sudo apt --yes update
 			sudo apt --yes upgrade
@@ -132,7 +168,7 @@ swupdate() {
 			sudo sed -E -i s/'^Prompt=.*'/'Prompt=lts'/g /etc/update-manager/release-upgrades
 			sudo do-release-upgrade
 			;;
-		--release)
+		-r | --release)
 			sudo apt --yes clean
 			sudo apt --yes update
 			sudo apt --yes upgrade
@@ -145,19 +181,25 @@ swupdate() {
 			sudo do-release-upgrade
 			;;
 		*)
-			sudo apt --yes clean
-			sudo apt --yes update
-			sudo apt --yes upgrade
-			sudo apt --yes full-upgrade
-			sudo apt --yes autoremove
-			sudo snap refresh
+			if [ -z "$1" ]; then
+				sudo apt --yes clean
+				sudo apt --yes update
+				sudo apt --yes upgrade
+				sudo apt --yes full-upgrade
+				sudo apt --yes autoremove
+				sudo snap refresh
+			else
+				cat <<-EOF_XYZ
+				swupdate: unrecognized option '$1'
+				Try 'swupdate --help' for more information.
+				EOF_XYZ
+			fi
 			;;
 	esac
 };
 
 # check website availability
 alias check-website=test-website
-alias check-websites=test-website
 test-website() {
 	local server_address="$1"
 
@@ -166,8 +208,8 @@ test-website() {
 		curl -ISs --connect-timeout 8 --retry 2 "$server_address"
 	else
 		for server_address in \
-			https://duckduckgo.com \
 			https://www.bing.com \
+			https://duckduckgo.com \
 			https://www.google.com \
 			https://www.yahoo.com ;
 		do
@@ -179,21 +221,54 @@ test-website() {
 };
 
 # test firewall ports using telnet
-unlock-ports() {
-	local server_address='telnet.example.com' # "$1"
-	local service_port='8738' # "$2"
-	telnet $server_address $service_port
+test-port() {
+	local server_address='telnet.example.com'
+	local service_port='8738'
+
+	case "$1" in
+	-p | --port)
+		telnet $server_address "$2"
+		;;
+	*)
+		if [ -z "$1" ]; then
+			telnet $server_address $service_port
+		else
+			cat <<-EOF_XYZ
+			test-port: unrecognized option '$1'
+			Try 'test-port --port <number>' to check a specific port.
+			EOF_XYZ
+		fi
+		;;
+	esac
 };
 
 # merge current master with upstream
 git-merge-upstream() {
-	local upstream_repo_address="$1"
-	remote add upstream $upstream_repo_address
-	git remote -v
-	git fetch upstream
-	git checkout master
-	git merge upstream/master
-	git push origin master
+	case "$1" in
+	-H | --help)
+		cat <-EOF_XYZ
+		Update a fork by merging with upstream using the 'git' command.
+
+		Examples:
+		 remote add upstream https://example.com/project-repo.git
+		 git fetch upstream
+		 git checkout master
+		 git merge upstream/master
+		 git push origin master
+
+		See gittutorial(7) and the git(1) manual for more information.
+		EOF_XYZ
+		;;
+	*)
+		local upstream_repo_address="$1"
+		remote add upstream $upstream_repo_address
+		git remote -v
+		git fetch upstream
+		git checkout master
+		git merge upstream/master
+		git push origin master
+		;;
+	esac
 };
 
 # include private bash_aliases
