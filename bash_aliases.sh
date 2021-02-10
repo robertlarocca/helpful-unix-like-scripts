@@ -41,33 +41,6 @@ alias open="$(which xdg-open)"
 # search bash history with grep
 alias hgrep="history | grep -i"
 
-# personalize ubuntu desktop
-alias personalize="personalize-ubuntu-desktop"
-personalize-ubuntu-desktop() {
-	local script_location="$(which personalize-ubuntu-desktop)"
-	case "$1" in
-	--gedit)
-		sudo gedit $script_location
-		;;
-	--nano)
-		sudo nano $script_location
-		;;
-	--vi | --vim)
-		sudo vim $script_location
-		;;
-	*)
-		if [ -z "$1" ]; then
-			sudo bash $script_location
-		else
-			cat <<-EOF_XYZ
-			personalize: unrecognized option '$1'
-			Try 'personalize --help' for more information.
-			EOF_XYZ
-		fi
-		;;
-	esac
-};
-
 # display the current ipv4 and ipv6 address
 whatsmyip() {
 	ipv4_address="$(curl -s4 https://ifconfig.co/ip)"
