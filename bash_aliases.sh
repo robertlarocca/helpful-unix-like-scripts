@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="1.2.18-$HOSTNAME"
+export BASH_ALIASES_VERSION="1.3.14-$HOSTNAME"
 
 if [ $USER = 'root' ]; then
 	printf '🧀 '
@@ -14,9 +14,12 @@ elif [ $USER = 'user2' ]; then
 	printf '💵️ '
 fi
 
-# edit bash aliases using gedit (Text Editor)
+# Edit bash aliases using gedit (Text Editor)
 edit-bash-aliases() {
 	case "$1" in
+	--code)
+		code $HOME/.bash_aliases
+		;;
 	--gedit)
 		gedit $HOME/.bash_aliases
 		;;
@@ -30,18 +33,18 @@ edit-bash-aliases() {
 		$(which xdg-open) $HOME/.bash_aliases
 		;;
 	esac
-};
+}
 
-# prevent conflicts with existing kubectl installs
+# Prevent conflicts with existing kubectl installs
 alias kubectl="microk8s kubectl"
 
-# similar to the macOS 'open' command
+# Similar to the macOS 'open' command
 alias open="$(which xdg-open)"
 
-# search bash history with grep
+# Search bash history with grep
 alias hgrep="history | grep -i"
 
-# display the current ipv4 and ipv6 address
+# Display the current ipv4 and ipv6 address
 whatsmyip() {
 	ipv4_address="$(curl -s4 https://ifconfig.co/ip)"
 	ipv6_address="$(curl -s6 https://ifconfig.co/ip)"
@@ -53,27 +56,30 @@ whatsmyip() {
 	if [ -n "$ipv6_address" ]; then
 		echo "IPv6: $ipv6_address"
 	fi
-};
+}
 
-# display the current logical volume management (lvs) storage
+# Display the current logical volume management (lvs) storage
 lvms() {
-	# require root privileges
+	# Require root privileges
 	if [ $UID != 0 ]; then
 		logger -i "Error: lvms must be run as root!"
 		echo "Error: lvms must be run as root!"
 		break
 	else
 		echo '  --- Physical volumes ---'
-		pvs ; echo
+		pvs
+		echo
 		echo '  --- Volume groups ---'
-		vgs ; echo
+		vgs
+		echo
 		echo '  --- Logical volumes ---'
-		lvs ; echo
+		lvs
+		echo
 	fi
-};
+}
 
 lvmdisplay() {
-	# require root privileges
+	# Require root privileges
 	if [ $UID != 0 ]; then
 		logger -i "Error: lvmdisplay must be run as root!"
 		echo "Error: lvmdisplay must be run as root!"
@@ -83,95 +89,95 @@ lvmdisplay() {
 		vgdisplay
 		lvdisplay
 	fi
-};
+}
 
-# display command reminder to create a lvm snapshot
+# Display command reminder to create a lvm snapshot
 lvmsnapshot() {
 	cat <<-EOF_XYZ
-	Logical volume snapshots are created using the 'lvcreate' command.
+		Logical volume snapshots are created using the 'lvcreate' command.
 
-	Examples:
-	 lvcreate -L 50%ORIGIN --snapshot --name snap_1 /dev/mapper/ubuntu-root
-	 lvcreate -L 16G -s -n snap_2 /dev/ubuntu/logical-volume-name
+		Examples:
+		 lvcreate -L 50%ORIGIN --snapshot --name snap_1 /dev/mapper/ubuntu-root
+		 lvcreate -L 16G -s -n snap_2 /dev/ubuntu/logical-volume-name
 
-	See the lvcreate(8) manual for more information.
+		See the lvcreate(8) manual for more information.
 	EOF_XYZ
-};
+}
 
-# generate a secure random password
+# Generate a secure random password
 alias mkpw="mkpassword"
 mkpassword() {
 	local a=$(pwgen -A -0 -B 6 1)
 	local b=$(pwgen -A -0 -B 6 1)
 	local c=$(pwgen -n -B 6 1)
 	echo "$a-$b-$c"
-};
+}
 
-# generate a secure random pre-shared key
+# Generate a secure random pre-shared key
 alias mkpsk="mkpresharedkey"
 mkpresharedkey() {
 	local a=$(pwgen -A -0 -B 6 1)
 	local b=$(pwgen -A -0 -B 6 1)
 	local c=$(pwgen -n -B 6 1)
 	echo "$a-$b-$c" | sha256sum | cut -f1 -d' '
-};
+}
 
-# update apt repositories and upgrade installed packages
+# Update apt repositories and upgrade installed packages
 swupdate() {
 	case "$1" in
-		-f | --fw | --firmware)
+	-f | --fw | --firmware)
+		sudo apt --yes clean
+		sudo apt --yes update
+		sudo apt --yes upgrade
+		sudo apt --yes full-upgrade
+		sudo apt --yes autoremove
+		sudo snap refresh
+		sudo fwupdmgr --force refresh
+		sudo fwupdmgr update
+		;;
+	-l | --lts)
+		sudo apt --yes clean
+		sudo apt --yes update
+		sudo apt --yes upgrade
+		sudo apt --yes full-upgrade
+		sudo apt --yes autoremove
+		sudo snap refresh
+		sudo apt --yes install update-manager-core
+		sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
+		sudo sed -E -i s/'^Prompt=.*'/'Prompt=lts'/g /etc/update-manager/release-upgrades
+		sudo do-release-upgrade
+		;;
+	-r | --release)
+		sudo apt --yes clean
+		sudo apt --yes update
+		sudo apt --yes upgrade
+		sudo apt --yes full-upgrade
+		sudo apt --yes autoremove
+		sudo snap refresh
+		sudo apt --yes install update-manager-core
+		sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
+		sudo sed -E -i s/'^Prompt=.*'/'Prompt=normal'/g /etc/update-manager/release-upgrades
+		sudo do-release-upgrade
+		;;
+	*)
+		if [ -z "$1" ]; then
 			sudo apt --yes clean
 			sudo apt --yes update
 			sudo apt --yes upgrade
 			sudo apt --yes full-upgrade
 			sudo apt --yes autoremove
 			sudo snap refresh
-			sudo fwupdmgr --force refresh
-			sudo fwupdmgr update
-			;;
-		-l | --lts)
-			sudo apt --yes clean
-			sudo apt --yes update
-			sudo apt --yes upgrade
-			sudo apt --yes full-upgrade
-			sudo apt --yes autoremove
-			sudo snap refresh
-			sudo apt --yes install update-manager-core
-			sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
-			sudo sed -E -i s/'^Prompt=.*'/'Prompt=lts'/g /etc/update-manager/release-upgrades
-			sudo do-release-upgrade
-			;;
-		-r | --release)
-			sudo apt --yes clean
-			sudo apt --yes update
-			sudo apt --yes upgrade
-			sudo apt --yes full-upgrade
-			sudo apt --yes autoremove
-			sudo snap refresh
-			sudo apt --yes install update-manager-core
-			sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
-			sudo sed -E -i s/'^Prompt=.*'/'Prompt=normal'/g /etc/update-manager/release-upgrades
-			sudo do-release-upgrade
-			;;
-		*)
-			if [ -z "$1" ]; then
-				sudo apt --yes clean
-				sudo apt --yes update
-				sudo apt --yes upgrade
-				sudo apt --yes full-upgrade
-				sudo apt --yes autoremove
-				sudo snap refresh
-			else
-				cat <<-EOF_XYZ
+		else
+			cat <<-EOF_XYZ
 				swupdate: unrecognized option '$1'
 				Try 'swupdate --help' for more information.
-				EOF_XYZ
-			fi
-			;;
+			EOF_XYZ
+		fi
+		;;
 	esac
-};
+}
 
-# check website availability
+# Check website availability
 alias check-website="test-website"
 test-website() {
 	local server_address="$1"
@@ -184,16 +190,15 @@ test-website() {
 			https://www.bing.com \
 			https://duckduckgo.com \
 			https://www.google.com \
-			https://www.yahoo.com ;
-		do
+			https://www.yahoo.com; do
 			echo "$server_address"
 			curl -ISs --connect-timeout 8 --retry 2 "$server_address"
 			echo
 		done
 	fi
-};
+}
 
-# test firewall ports using telnet
+# Test firewall ports using telnet
 test-port() {
 	local server_address='telnet.example.com'
 	local service_port='8738'
@@ -207,29 +212,29 @@ test-port() {
 			telnet $server_address $service_port
 		else
 			cat <<-EOF_XYZ
-			test-port: unrecognized option '$1'
-			Try 'test-port --port <number>' to check a specific port.
+				test-port: unrecognized option '$1'
+				Try 'test-port --port <number>' to check a specific port.
 			EOF_XYZ
 		fi
 		;;
 	esac
-};
+}
 
-# merge current master with upstream
+# Merge current master with upstream
 git-merge-upstream() {
 	case "$1" in
 	-H | --help)
 		cat <<-EOF_XYZ
-		Update a fork by merging with upstream using the 'git' command.
+			Update a fork by merging with upstream using the 'git' command.
 
-		Examples:
-		 remote add upstream https://example.com/project-repo.git
-		 git fetch upstream
-		 git checkout master
-		 git merge upstream/master
-		 git push origin master
+			Examples:
+			 remote add upstream https://example.com/project-repo.git
+			 git fetch upstream
+			 git checkout master
+			 git merge upstream/master
+			 git push origin master
 
-		See gittutorial(7) and the git(1) manual for more information.
+			See gittutorial(7) and the git(1) manual for more information.
 		EOF_XYZ
 		;;
 	*)
@@ -242,8 +247,20 @@ git-merge-upstream() {
 		git push origin master
 		;;
 	esac
-};
+}
 
-# include private bash_aliases
+# Toggle wireless network power management
+alias wifi-power="wlan-power"
+wlan-power() {
+	if [ -z "$1" ]; then
+		iwconfig wlan0
+	else
+		sudo iwconfig wlan0 power "$1"
+	fi
+}
+
+# Ookla speedtest-cli alias to display minimal output
+alias speedtest="speedtest-cli --simple"
+
+# Include private bash_aliases
 source $HOME/.bash_aliases_private
-

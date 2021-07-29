@@ -4,11 +4,12 @@
 #	https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
 # Passwords
+*.passwd
 *.passwd/
 
 # Node artifact files
-node_modules/
 dist/
+node_modules/
 
 # Compiled Java class files
 *.class
@@ -23,8 +24,8 @@ dist/
 *.jar
 
 # Maven
-target/
 dist/
+target/
 
 # JetBrains IDE
 .idea/
@@ -44,10 +45,9 @@ Thumbs.db
 *.war
 
 # Large media files
-*.mp4
-*.tiff
 *.avi
 *.flv
 *.mov
+*.mp4
+*.tiff
 *.wmv
-

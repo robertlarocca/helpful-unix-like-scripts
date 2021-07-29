@@ -6,7 +6,6 @@ main() {
 	cp -b -S .bak -v $PWD/bash_aliases.sh $HOME/.bash_aliases
 	touch $HOME/.bash_aliases_private
 	chmod 0644 $HOME/.bash_aliases*
-};
+}
 
 main "$@"
-
