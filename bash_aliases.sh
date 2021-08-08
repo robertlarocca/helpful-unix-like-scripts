@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="1.3.14-$HOSTNAME"
+export BASH_ALIASES_VERSION="1.3.16-$HOSTNAME"
 
 if [ $USER = 'root' ]; then
 	printf '🧀 '
@@ -64,7 +64,6 @@ lvms() {
 	if [ $UID != 0 ]; then
 		logger -i "Error: lvms must be run as root!"
 		echo "Error: lvms must be run as root!"
-		break
 	else
 		echo '  --- Physical volumes ---'
 		pvs
@@ -83,7 +82,6 @@ lvmdisplay() {
 	if [ $UID != 0 ]; then
 		logger -i "Error: lvmdisplay must be run as root!"
 		echo "Error: lvmdisplay must be run as root!"
-		break
 	else
 		pvdisplay
 		vgdisplay
