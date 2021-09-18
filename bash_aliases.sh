@@ -261,4 +261,6 @@ wlan-power() {
 alias speedtest="speedtest-cli --simple"
 
 # Include private bash_aliases
-source $HOME/.bash_aliases_private
+if [ -f "$HOME/.bash_aliases_private" ]; then
+	source $HOME/.bash_aliases_private
+fi
