@@ -35,6 +35,9 @@ edit-bash-aliases() {
 	esac
 }
 
+# Prevent pubkey authentication with ssh command
+alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+
 # Prevent conflicts with existing kubectl installs
 alias kubectl="microk8s kubectl"
 
