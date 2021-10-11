@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="1.3.16-$HOSTNAME"
+export BASH_ALIASES_VERSION="1.4.0-$HOSTNAME"
 
 if [ $USER = 'root' ]; then
 	printf '🧀 '
@@ -15,7 +15,7 @@ elif [ $USER = 'user2' ]; then
 fi
 
 # Edit bash aliases using gedit (Text Editor)
-edit-bash-aliases() {
+bashedit() {
 	case "$1" in
 	--code)
 		code $HOME/.bash_aliases
@@ -35,8 +35,9 @@ edit-bash-aliases() {
 	esac
 }
 
-# Prevent pubkey authentication with ssh command
+# Prevent pubkey authentication with ssh and scp commands
 alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+alias scp-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
 # Prevent conflicts with existing kubectl installs
 alias kubectl="microk8s kubectl"
@@ -126,7 +127,7 @@ mkpresharedkey() {
 # Update apt repositories and upgrade installed packages
 swupdate() {
 	case "$1" in
-	-f | --fw | --firmware)
+	all)
 		sudo apt --yes clean
 		sudo apt --yes update
 		sudo apt --yes upgrade
@@ -136,7 +137,35 @@ swupdate() {
 		sudo fwupdmgr --force refresh
 		sudo fwupdmgr update
 		;;
-	-l | --lts)
+	firmware | fw)
+		sudo fwupdmgr --force refresh
+		sudo fwupdmgr update
+		;;
+	never)
+		sudo apt --yes clean
+		sudo apt --yes update
+		sudo apt --yes upgrade
+		sudo apt --yes full-upgrade
+		sudo apt --yes autoremove
+		sudo snap refresh
+		sudo apt --yes install update-manager-core
+		sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
+		sudo sed -E -i s/'^Prompt=.*'/'Prompt=never'/g /etc/update-manager/release-upgrades
+		sudo do-release-upgrade
+		;;
+	normal | current)
+		sudo apt --yes clean
+		sudo apt --yes update
+		sudo apt --yes upgrade
+		sudo apt --yes full-upgrade
+		sudo apt --yes autoremove
+		sudo snap refresh
+		sudo apt --yes install update-manager-core
+		sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
+		sudo sed -E -i s/'^Prompt=.*'/'Prompt=normal'/g /etc/update-manager/release-upgrades
+		sudo do-release-upgrade
+		;;
+	lts | longterm)
 		sudo apt --yes clean
 		sudo apt --yes update
 		sudo apt --yes upgrade
@@ -148,17 +177,31 @@ swupdate() {
 		sudo sed -E -i s/'^Prompt=.*'/'Prompt=lts'/g /etc/update-manager/release-upgrades
 		sudo do-release-upgrade
 		;;
-	-r | --release)
-		sudo apt --yes clean
-		sudo apt --yes update
-		sudo apt --yes upgrade
-		sudo apt --yes full-upgrade
-		sudo apt --yes autoremove
-		sudo snap refresh
-		sudo apt --yes install update-manager-core
-		sudo cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
-		sudo sed -E -i s/'^Prompt=.*'/'Prompt=normal'/g /etc/update-manager/release-upgrades
-		sudo do-release-upgrade
+	help | --help)
+		cat <<-EOF_XYZ
+		swupdate $BASH_ALIASES_VERSION
+		Usage: swupdate [option]
+
+		swupdate is a apt commandline package manager wrapper and provides commands
+		for quickly updating Debian and Ubuntu based operating systems.
+
+		This command by default (without an option) will update all installed
+		packages or snaps and autoremove all unused packages.
+
+		Available options:
+		  all - update installed packages, snaps and hardware firmware
+		  firmware - update hardware firmware
+		  never - update installed packages, snaps but never upgrade to next release
+		  normal - update installed packages, snaps and upgrade to current release
+		  lts - update installed packages, snaps and upgrade to current lts release
+		  help - show help message and exit
+
+		See apt(8) fwupdmgr(1) snap(8) and do-release-upgrade(8) for additonal
+		information and insight into the available commands. Configuration options and
+		syntax is detailed in '$HOME/.bash_aliases'.
+
+		Copyright (c) 2021 Robert LaRocca http://www.laroccx.com
+		EOF_XYZ
 		;;
 	*)
 		if [ -z "$1" ]; then
