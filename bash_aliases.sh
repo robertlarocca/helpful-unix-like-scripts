@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="1.4.0-$HOSTNAME"
+export BASH_ALIASES_VERSION="1.5.0-$HOSTNAME"
 
 if [ $USER = 'root' ]; then
 	printf '🧀 '
@@ -17,20 +17,96 @@ fi
 # Edit bash aliases using gedit (Text Editor)
 bashedit() {
 	case "$1" in
-	--code)
+	code)
 		code $HOME/.bash_aliases
 		;;
-	--gedit)
+	gedit)
 		gedit $HOME/.bash_aliases
 		;;
-	--nano)
+	nano)
 		nano $HOME/.bash_aliases
 		;;
-	--vi | --vim)
+	vi | vim)
 		vim $HOME/.bash_aliases
 		;;
 	*)
 		$(which xdg-open) $HOME/.bash_aliases
+		;;
+	esac
+}
+
+# Prevent idle system sleep (blank screen), suspend, and hibernation until reboot
+# Similar to the macOS 'caffeinate' command
+alias decaffeinate="caffeinate off"
+caffeinate() {
+	local blank_screen_delay="300" # default 300 seconds (5 minutes)
+
+	case "$1" in
+	on)
+		gsettings set org.gnome.desktop.session idle-delay 0
+		sudo systemctl --runtime mask \
+			sleep.target \
+			suspend.target \
+			suspend-then-hibernate.target \
+			hybrid-sleep.target \
+			hibernate.target 1> /dev/null
+		;;
+	off)
+		gsettings set org.gnome.desktop.session idle-delay $blank_screen_delay
+		sudo systemctl --runtime unmask \
+			sleep.target \
+			suspend.target \
+			suspend-then-hibernate.target \
+			hybrid-sleep.target \
+			hibernate.target 1> /dev/null
+		;;
+	status | verbose)
+		echo "Period of inactivity after which the screen will go blank."
+		printf "    Blank Screen Delay: $(gsettings get org.gnome.desktop.session idle-delay) \n\n"
+		systemctl status \
+			sleep.target \
+			suspend.target \
+			suspend-then-hibernate.target \
+			hybrid-sleep.target \
+			hibernate.target
+		;;
+	help | --help)
+		cat <<-EOF_XYZ
+		caffeinate $BASH_ALIASES_VERSION
+		Usage: caffeinate [option]
+
+		caffeinate is a systemctl commandline wrapper to prevent the system from
+		starting idle sleep, suspend and hibernate targets.
+
+		This command by default (without an option) will prevent idle power management
+		until the next system reboot or caffeinate is disabled.
+
+		Available options:
+		  on - prevent idle sleep, suspend and hibernate
+		  off - restore idle sleep, suspend and hibernate
+		  status - show the current state of caffeinate
+		  verbose - show the current status of systemd power management targets
+		  help - show help message and exit
+
+		See systemctl(1) for additonal information and insight into the available
+		commands. Configuration options and syntax is detailed in '$HOME/.bash_aliases'.
+		EOF_XYZ
+		;;
+	*)
+		if [ -z "$1" ]; then
+			gsettings set org.gnome.desktop.session idle-delay 0
+			sudo systemctl --runtime mask \
+				sleep.target \
+				suspend.target \
+				suspend-then-hibernate.target \
+				hybrid-sleep.target \
+				hibernate.target 1> /dev/null
+		else
+			cat <<-EOF_XYZ
+				caffeinate: unrecognized option '$1'
+				Try 'caffeinate --help' for more information.
+			EOF_XYZ
+		fi
 		;;
 	esac
 }
@@ -50,8 +126,47 @@ alias hgrep="history | grep -i"
 
 # Display the current ipv4 and ipv6 address
 whatsmyip() {
+	country_code="$(curl -s https://ifconfig.io/country_code)"
 	ipv4_address="$(curl -s4 https://ifconfig.co/ip)"
 	ipv6_address="$(curl -s6 https://ifconfig.co/ip)"
+
+	# Flag emoji symbols:
+	# https://apps.timwhitlock.info/emoji/tables/iso3166
+	case "$country_code" in
+	AU)
+		local flag_emoji='🇦🇺'
+		;;
+	BG)
+		local flag_emoji='🇧🇬'
+		;;
+	CA)
+		local flag_emoji='🇨🇦'
+		;;
+	FR)
+		local flag_emoji='🇫🇷'
+		;;
+	GB)
+		local flag_emoji='🇬🇧'
+		;;
+	MX)
+		local flag_emoji='🇲🇽'
+		;;
+	PR)
+		local flag_emoji='🇵🇷'
+		;;
+	UN)
+		local flag_emoji='🇺🇳'
+		;;
+	US)
+		local flag_emoji='🇺🇸'
+		;;
+	ZA)
+		local flag_emoji='🇿🇦'
+		;;
+	*)
+		local flag_emoji='👻'
+		;;
+	esac
 
 	if [ -n "$ipv4_address" ]; then
 		echo "IPv4: $ipv4_address"
@@ -109,19 +224,13 @@ lvmsnapshot() {
 # Generate a secure random password
 alias mkpw="mkpassword"
 mkpassword() {
-	local a=$(pwgen -A -0 -B 6 1)
-	local b=$(pwgen -A -0 -B 6 1)
-	local c=$(pwgen -n -B 6 1)
-	echo "$a-$b-$c"
+	pwgen --capitalize --numerals --symbols 15 1
 }
 
 # Generate a secure random pre-shared key
 alias mkpsk="mkpresharedkey"
 mkpresharedkey() {
-	local a=$(pwgen -A -0 -B 6 1)
-	local b=$(pwgen -A -0 -B 6 1)
-	local c=$(pwgen -n -B 6 1)
-	echo "$a-$b-$c" | sha256sum | cut -f1 -d' '
+	head -c 50 /dev/urandom | base64
 }
 
 # Update apt repositories and upgrade installed packages
@@ -199,8 +308,6 @@ swupdate() {
 		See apt(8) fwupdmgr(1) snap(8) and do-release-upgrade(8) for additonal
 		information and insight into the available commands. Configuration options and
 		syntax is detailed in '$HOME/.bash_aliases'.
-
-		Copyright (c) 2021 Robert LaRocca http://www.laroccx.com
 		EOF_XYZ
 		;;
 	*)
