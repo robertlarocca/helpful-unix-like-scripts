@@ -4,14 +4,21 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="1.5.0-$HOSTNAME"
+export BASH_ALIASES_VERSION="1.6.2-$HOSTNAME"
 
+# Include private bash_aliases
+if [ -f "$HOME/.bash_aliases_private" ]; then
+	source $HOME/.bash_aliases_private
+fi
+
+# Custom shell prompts
+export PS1_ORIGINAL="$PS1"
 if [ $USER = 'root' ]; then
-	printf '🧀 '
+	export PS1="🧀 $PS1"
 elif [ $USER = 'user1' ]; then
-	printf '👾️ '
+	export PS1="👾️ $PS1"
 elif [ $USER = 'user2' ]; then
-	printf '💵️ '
+	export PS1="💵️ $PS1"
 fi
 
 # Edit bash aliases using gedit (Text Editor)
@@ -214,8 +221,8 @@ lvmsnapshot() {
 		Logical volume snapshots are created using the 'lvcreate' command.
 
 		Examples:
-		 lvcreate -L 50%ORIGIN --snapshot --name snap_1 /dev/mapper/ubuntu-root
-		 lvcreate -L 16G -s -n snap_2 /dev/ubuntu/logical-volume-name
+		 lvcreate -L 25%ORIGIN --snapshot --name snap_1 /dev/logical/volume-name
+		 lvcreate -L 16G -s -n snap_2 /dev/mapper/logical-volume-name
 
 		See the lvcreate(8) manual for more information.
 	EOF_XYZ
@@ -231,6 +238,11 @@ mkpassword() {
 alias mkpsk="mkpresharedkey"
 mkpresharedkey() {
 	head -c 50 /dev/urandom | base64
+}
+
+# Generate a secure random LUKS keyslot password
+mklukspassword() {
+	head -c 512 /dev/urandom | base64
 }
 
 # Update apt repositories and upgrade installed packages
@@ -412,8 +424,3 @@ wlan-power() {
 
 # Ookla speedtest-cli alias to display minimal output
 alias speedtest="speedtest-cli --simple"
-
-# Include private bash_aliases
-if [ -f "$HOME/.bash_aliases_private" ]; then
-	source $HOME/.bash_aliases_private
-fi
