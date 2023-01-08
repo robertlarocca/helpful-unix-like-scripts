@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="2.4.15-$HOSTNAME"
+export BASH_ALIASES_VERSION="2.4.17-$HOSTNAME"
 
 # Set custom PS1 prompt for localhost.
 PS1_ORIG="$PS1"
@@ -14,7 +14,7 @@ set_emoji_ps1_prompt() {
 	elif [[ $USER = 'root' ]]; then
 		PS1="🧀 $PS1_ORIG"
 	elif [[ $USER = 'user1' ]]; then
-		PS1="👽 $PS1_ORIG"
+		PS1="💀 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
 		PS1="🐉 $PS1_ORIG"
 	fi
@@ -29,7 +29,6 @@ edit_aliaess() {
 		code $HOME/.bash_aliases
 		;;
 	gedit)
-		# gedit Text Editor
 		gedit $HOME/.bash_aliases
 		;;
 	nano)
@@ -43,17 +42,18 @@ edit_aliaess() {
 		vim $HOME/.bash_aliases
 		;;
 	*)
-		# Use the configured default GNOME text editor
+		# Use the default GNOME configured text editor.
 		$(which xdg-open) $HOME/.bash_aliases
 		;;
 	esac
 }
 
-# Windows Subsystem for Linux (WSL2) specific variables and aliases
-# Set to the Windows username if different from the Linux username
-# Use the $NTUSER variable just like $USER witin Linux
+# Windows Subsystem for Linux (WSL2) specific variables and aliases.
+# Use the $NTUSER variable just like $USER from witin Linux.
+# Use the $USERS variable just Like $HOME from witin Linux.
+
+# Set NTUSER to the Windows username if different from Linux username.
 NTUSER="$USER"
-# Use the $USERS variable just Like $HOME witin Linux
 USERS="/mnt/c/Users/$NTUSER"
 
 # Change Active Directory password on domain controller.
@@ -81,23 +81,23 @@ adpasswd() {
 # Single command to disable the 'caffeinate' script.
 alias decaffeinate="caffeinate off"
 
-# Prevent conflicts with existing kubectl installs
+# Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"
 
-# Similar to the macOS 'open' command
+# Similar to the macOS 'open' command.
 alias open="$(which xdg-open)"
 
-# Show the current logical volume management (lvm) storage
+# Show the current logical volume management (lvm) storage.
 lvms() {
 	sudo pvs && echo && sudo vgs && echo && sudo lvs
 }
 
-# Display the current logical volume management (lvm) storage
+# Display the current logical volume management (lvm) storage.
 lvmdisplay() {
 	sudo pvdisplay && echo && sudo vgdisplay && echo && sudo lvdisplay
 }
 
-# Display command reminder to create a lvm snapshot
+# Display command reminder to create a lvm snapshot.
 lvmsnapshot() {
 	cat <<-EOF_XYZ
 	Logical volume snapshots are created using the 'lvcreate' command.
@@ -110,17 +110,17 @@ lvmsnapshot() {
 	EOF_XYZ
 }
 
-# Generate a secure random password
+# Generate a secure random password.
 mkpw() {
 	pwgen --capitalize --numerals --symbols --ambiguous 14 1
 }
 
-# Generate a secure random pre-shared key
+# Generate a secure random pre-shared key.
 mkpsk() {
 	head -c 50 /dev/urandom | base64
 }
 
-# Check website availability and display headers
+# Check website availability and display headers.
 test_website() {
 	local server_address="$1"
 
@@ -141,9 +141,9 @@ test_website() {
 			echo
 		done
 	fi
-}e
+}
 
-# Test firewall ports using telnet
+# Test firewall ports using telnet.
 test_port() {
 	local server_address='telnet.example.com'
 	local service_port='8738'
@@ -165,7 +165,7 @@ test_port() {
 	esac
 }
 
-# Merge current master with upstream
+# Merge current master with upstream.
 git_merge_upstream() {
 	case "$1" in
 	-H | --help)
@@ -197,7 +197,7 @@ git_merge_upstream() {
 	esac
 }
 
-# Toggle wireless network power management
+# Toggle wireless network power management.
 wifi_power() {
 	if [[ -z "$1" ]]; then
 		iwconfig wlan0
@@ -206,10 +206,10 @@ wifi_power() {
 	fi
 }
 
-# Ookla speedtest-cli alias to display minimal output
+# Ookla speedtest-cli alias to display minimal output.
 alias speedtest="speedtest-cli --simple"
 
-# Include bash_aliases_private
+# Include the bash_aliases_private if available.
 if [[ -f "$HOME/.bash_aliases_private" ]]; then
 	source $HOME/.bash_aliases_private
 fi
