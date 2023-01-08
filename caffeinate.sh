@@ -5,13 +5,13 @@
 # Prevent idle system sleep (blank screen), suspend, and hibernation
 # until reboot. Similar to the macOS 'caffeinate' command.
 
-# Setting blank_screen_delay to 0 (zero) disables the feature.
-blank_screen_delay_on="3600" # default is 3600 seconds
-blank_screen_delay_off="300" # default is 300 seconds
-
 # Script version and release
 script_version='2.0.0'
 script_release='beta'  # options devel, beta, release, stable
+
+# Setting blank_screen_delay to 0 (zero) disables the feature.
+blank_screen_delay_on="3600" # default is 3600 seconds
+blank_screen_delay_off="300" # default is 300 seconds
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
