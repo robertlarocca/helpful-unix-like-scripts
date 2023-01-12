@@ -18,7 +18,7 @@ require_root_privileges() {
 
 show_help_message() {
 	cat <<-EOF_XYZ
-	No help message yet.
+	No help message yet...
 	EOF_XYZ
 }
 
@@ -38,26 +38,79 @@ error_unrecognized_option() {
 	EOF_XYZ
 }
 
-ipv4_address="$(curl -s4 https://ifconfig.co/ip)"
-ipv6_address="$(curl -s6 https://ifconfig.co/ip)"
+flag_emoji() {
+	# Flag emoji may be used for the country_code:
+	# https://apps.timwhitlock.info/emoji/tables/iso3166
 
-# Flag emoji may be used for the country_code:
-# https://apps.timwhitlock.info/emoji/tables/iso3166
+	local country_code="$(curl -s https://ifconfig.io/country_code)"
 
-# country_code="$(curl -s https://ifconfig.io/country_code)"
+	case "$country_code" in
+	CA)
+		flag="🏳️"
+		;;
+	US)
+		flag="⛳"
+		;;
+	MX)
+		flag="🏴"
+		;;
+	*)
+		flag="👻"
+		;;
+	esac
 
-# case "$country_code" in
-# US)
-# 	country_name='United States'
-# 	;;
-# esac
+	if [[ -n "$flag" ]]; then
+		echo "Flag: $flag"
+	fi
+}
 
-if [ -n "$ipv4_address" ]; then
-	echo "IPv4: $ipv4_address"
-fi
+ipv4_address() {
+	local ipv4="$(curl -s4 https://ifconfig.co/ip)"
 
-if [ -n "$ipv6_address" ]; then
-	echo "IPv6: $ipv6_address"
-fi
+	if [[ -n "$ipv4" ]]; then
+		echo "IPv4: $ipv4"
+	fi
+}
+
+ipv6_address() {
+	local ipv6="$(curl -s6 https://ifconfig.co/ip)"
+
+	if [[ -n "$ipv6" ]]; then
+		echo "IPv6: $ipv6"
+	fi
+}
+
+# Options
+case "$1" in
+all)
+	ipv4_address
+	ipv6_address
+	flag_emoji
+	;;
+-4)
+	ipv4_address
+	;;
+-6)
+	ipv6_address
+	;;
+flag)
+	flag_emoji
+	;;
+version)
+	show_version_information
+	;;
+help | --help)
+	show_help_message
+	;;
+*)
+	if [[ -z "$1" ]]; then
+		ipv4_address
+		ipv6_address
+	else
+		error_unrecognized_option "$1"
+		exit 1
+	fi
+	;;
+esac
 
 # vi: syntax=sh ts=2 noexpandtab

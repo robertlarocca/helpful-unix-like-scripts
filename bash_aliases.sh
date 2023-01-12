@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="2.4.17-$HOSTNAME"
+export BASH_ALIASES_VERSION="2.4.19-$HOSTNAME"
 
 # Set custom PS1 prompt for localhost.
 PS1_ORIG="$PS1"
@@ -117,7 +117,12 @@ mkpw() {
 
 # Generate a secure random pre-shared key.
 mkpsk() {
-	head -c 50 /dev/urandom | base64
+	head -c 64 /dev/urandom | base64
+}
+
+# Generate a secure random LUKS device secret.
+mksecret() {
+	head -c 512 /dev/urandom | base64
 }
 
 # Check website availability and display headers.
