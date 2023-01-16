@@ -19,8 +19,8 @@ require_root_privileges() {
 
 require_user_privileges() {
 	if [[ "$(whoami)" == "root" ]]; then
-		# logger -i "Error: swupdate must be run as $USER!"
-		echo "Error: swupdate must be run as $USER!" >&2
+		# logger -i "Error: swupdate must be run as normal user!"
+		echo "Error: swupdate must be run as normal user!" >&2
 		exit 2
 	fi
 }
@@ -162,7 +162,6 @@ case "$1" in
 all)
 	apt_packages
 	flatpak_packages
-	python3_packages
 	snap_packages
 	firmware_packages
 	;;
