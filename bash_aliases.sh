@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="2.4.19-$HOSTNAME"
+export BASH_ALIASES_VERSION="2.4.22-$HOSTNAME"
 
 # Set custom PS1 prompt for localhost.
 PS1_ORIG="$PS1"
@@ -78,8 +78,12 @@ adpasswd() {
 	fi
 }
 
-# Single command to disable the 'caffeinate' script.
+# Single command to disable or off the caffeinate script.
 alias decaffeinate="caffeinate off"
+
+# Prevent pubkey authentication with ssh and scp commands.
+alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+alias scp-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
 # Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"

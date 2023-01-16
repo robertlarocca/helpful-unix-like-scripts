@@ -1,11 +1,76 @@
 #!/bin/bash
 
-# Copyright (c) 2021 Robert LaRocca http://www.laroccx.com
+# Copyright (c) 2023 Robert LaRocca http://www.laroccx.com
 
-main() {
-	cp -b -S .bak -v $PWD/bash_aliases.sh $HOME/.bash_aliases
-	touch $HOME/.bash_aliases_private
-	chmod 0644 $HOME/.bash_aliases*
+sample_bash_aliases_private() {
+	if [[ -f "$HOME/.bash_aliases_private" ]]; then
+		mv -v $HOME/.bash_aliases_private $HOME/.bash_aliases_private.bak
+	fi
+
+	cat <<-EOF_XYZ > $HOME/.bash_aliases_private
+	#!/bin/bash
+
+	# Copyright (c) $(date "+%Y") Robert LaRocca http://www.laroccx.com
+
+	# Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
+
+	# Last updated on $(date "+%A, %B %d, %Y") [$(date "+%x")]
+
+	# Usernames for SSH and SCP authentication.
+	home_username="user1"
+	remote_username="user2"
+	work_username="user3"
+
+	# Quickly connect to local LXC containers and remote servers.
+
+	#########
+	## LXC ##
+	#########
+
+	alias mariadb="lxc exec mariadb bash"
+	alias nginx="lxc exec apache bash"
+	alias redis="lxc exec redis bash"
+
+	###########
+	## CLOUD ##
+	###########
+
+	alias virtual="ssh $remote_username@virtual.example"
+
+	#############
+	## SERVERS ##
+	#############
+
+	alias desktop="ssh $home_username@desktop.test"
+	alias laptop="ssh $home_username@laptop.test"
+	alias server="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no $work_username@server.localhost"
+
+	###############
+	## LOCALHOST ##
+	###############
+
+	alias localhost="ssh-passwd $home_username@127.0.0.1"
+
+	EOF_XYZ
+
+	chmod 0640 $HOME/.bash_aliases_private
 }
 
-main "$@"
+cp -b -S .bak -v $PWD/bash_aliases.sh $HOME/.bash_aliases
+chmod 0644 $HOME/.bash_aliases
+
+# sample_bash_aliases_private
+
+sudo cp -b -S .bak -v $PWD/caffeinate.sh /usr/local/bin/caffeinate
+sudo chown root:root /usr/local/bin/caffeinate
+sudo chmod 0755 /usr/local/bin/caffeinate
+
+sudo cp -b -S .bak -v $PWD/swupdate.sh /usr/local/bin/swupdate
+sudo chown root:root /usr/local/bin/swupdate
+sudo chmod 0755 /usr/local/bin/swupdate
+
+sudo cp -b -S .bak -v $PWD/whatsmyip.sh /usr/local/bin/whatsmyip
+sudo chown root:root /usr/local/bin/whatsmyip
+sudo chmod 0755 /usr/local/bin/whatsmyip
+
+# vi: syntax=sh ts=2 noexpandtab
