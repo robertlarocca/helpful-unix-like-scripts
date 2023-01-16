@@ -6,13 +6,21 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.0.0'
+script_version='2.1.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
 		# logger -i "Error: swupdate must be run as root!"
 		echo "Error: swupdate must be run as root!" >&2
+		exit 2
+	fi
+}
+
+require_user_privileges() {
+	if [[ "$(whoami)" == "root" ]]; then
+		# logger -i "Error: swupdate must be run as $USER!"
+		echo "Error: swupdate must be run as $USER!" >&2
 		exit 2
 	fi
 }
@@ -33,6 +41,7 @@ show_help_message() {
 	 apt - update only installed APT packages
 	 firmware - update only the hardware firmware
 	 flatpak - update only installed Flatpak packages
+	 python - update only installed Python3 packages
 	 snap - update only installed Snap packages
 
 	 normal - upgrade to the next current OS release
@@ -41,6 +50,9 @@ show_help_message() {
 
 	 version - show version information
 	 help - show this help message
+
+	When using normal or lts option; swupdate will try to upgrade with third
+	party mirrors and repositories enabled instead of commenting them out.
 
 	Exit status:
 	 0 - ok
@@ -92,6 +104,26 @@ flatpak_packages() {
 	fi
 }
 
+python3_packages() {
+	require_user_privileges
+
+	if [[ -x $(which pip3) ]]; then
+		# Default command using grep.
+		pip3 list --outdated --format=freeze \
+			| grep -v '^\-e' \
+			| cut -d = -f 1 \
+			| xargs -n1 pip3 install -U
+
+		# Alternate command using awk.
+		# pip3 list --outdated \
+			# | cut -f1 -d' ' \
+			# | tr " " "\n" \
+			# | awk '{if(NR>=3)print)' \
+			# | cut -d' ' -f1 \
+			# | xargs -n1 pip3 install -U
+	fi
+}
+
 snap_packages() {
 	require_root_privileges
 
@@ -121,7 +153,7 @@ os_upgrade() {
 	sed -E -i s/'^Prompt=.*'/'Prompt=$os_release'/g /etc/update-manager/release-upgrades
 
 	if [[ -x $(which do-release-upgrade) ]]; then
-		do-release-upgrade
+		do-release-upgrade --allow-third-party
 	fi
 }
 
@@ -130,6 +162,7 @@ case "$1" in
 all)
 	apt_packages
 	flatpak_packages
+	python3_packages
 	snap_packages
 	firmware_packages
 	;;
@@ -141,6 +174,9 @@ firmware)
 	;;
 flatpak)
 	flatpak_packages
+	;;
+python | pip)
+	python3_packages
 	;;
 snap)
 	snap_packages
