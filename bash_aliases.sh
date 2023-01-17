@@ -4,7 +4,7 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="2.4.22-$HOSTNAME"
+export BASH_ALIASES_VERSION="2.4.26-$HOSTNAME"
 
 # Set custom PS1 prompt for localhost.
 PS1_ORIG="$PS1"
@@ -82,8 +82,9 @@ adpasswd() {
 alias decaffeinate="caffeinate off"
 
 # Prevent pubkey authentication with ssh and scp commands.
+alias scp-passwd="scp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+alias sftp-passwd="sftp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
-alias scp-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
 # Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"
@@ -167,7 +168,7 @@ test_port() {
 		else
 			cat <<-EOF_XYZ
 			test_port: unrecognized option '$1'
-			Try 'test_port --port <number>' to check a specific port.
+			Try 'test_port --port [NUMBER]' to check a specific port.
 			EOF_XYZ
 		fi
 		;;
