@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.1.0'
+script_version='2.1.1'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -20,7 +20,7 @@ require_root_privileges() {
 require_user_privileges() {
 	if [[ "$(whoami)" == "root" ]]; then
 		# logger -i "Error: swupdate must be run as normal user!"
-		echo "Error: swupdate must be run as normal user!" >&2
+		echo "Error: swupdate must be run as a normal user!" >&2
 		exit 2
 	fi
 }
