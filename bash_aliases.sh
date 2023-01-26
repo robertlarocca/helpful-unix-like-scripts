@@ -4,19 +4,26 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="2.4.26-$HOSTNAME"
+export BASH_ALIASES_VERSION="2.5.3-$USER@$HOSTNAME"
 
-# Set custom PS1 prompt for localhost.
+# Set custom emoji prompt for Linux user accounts.
 PS1_ORIG="$PS1"
 set_emoji_ps1_prompt() {
 	if [[ -f "$HOME/.caffeinate" ]]; then
+		# Emoji when caffeinate is enabled
 		PS1="☕ $PS1_ORIG"
 	elif [[ $USER = 'root' ]]; then
+		# Emoji for root
 		PS1="🧀 $PS1_ORIG"
 	elif [[ $USER = 'user1' ]]; then
-		PS1="💀 $PS1_ORIG"
+		# Emoji for user1
+		PS1="🙈 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
-		PS1="🐉 $PS1_ORIG"
+		# Emoji for user2
+		PS1="🙉 $PS1_ORIG"
+	elif [[ $USER = 'user3' ]]; then
+		# Emoji for user3
+		PS1="🙊 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt
@@ -74,7 +81,9 @@ adpasswd() {
 		smbpasswd -U "$domain_realm"/"$domain_user" -r "$domain_controller"
 	else
 		echo "Command 'smbpasswd' not found, but can be installed with:"
-		echo "sudo apt install samba-common-bin"
+		echo "apt install samba-common-bin  # or"
+		echo "dnf install samba-common-bin  #"
+		echo "yum install samba-common-bin  #"
 	fi
 }
 
@@ -132,22 +141,23 @@ mksecret() {
 
 # Check website availability and display headers.
 test_website() {
-	local server_address="$1"
+	local website_address="$1"
 
-	if [[ -n "$server_address" ]]; then
-		echo "$server_address"
-		curl -ISs --connect-timeout 8 --retry 2 "$server_address"
+	if [[ -n "$website_address" ]]; then
+		echo "$website_address"
+		curl -ISs --connect-timeout 8 --retry 2 "$website_address"
 	else
-		for server_address in \
+		for website_address in \
 			https://www.apple.com \
 			https://duckduckgo.com \
 			https://www.google.com \
+			https://www.laroccx.com \
 			https://www.microsoft.com \
 			https://www.netflix.com \
 			https://www.wikipedia.org \
 			https://ubuntu.com ; do
-			echo "$server_address"
-			curl -ISs --connect-timeout 8 --retry 2 "$server_address"
+			echo "$website_address"
+			curl -ISs --connect-timeout 8 --retry 2 "$website_address"
 			echo
 		done
 	fi
@@ -155,6 +165,7 @@ test_website() {
 
 # Test firewall ports using telnet.
 test_port() {
+	# The server address and service port are tested by default.
 	local server_address='telnet.example.com'
 	local service_port='8738'
 
@@ -168,7 +179,7 @@ test_port() {
 		else
 			cat <<-EOF_XYZ
 			test_port: unrecognized option '$1'
-			Try 'test_port --port [NUMBER]' to check a specific port.
+			Try 'test_port --port <port_number>' to check a specific port.
 			EOF_XYZ
 		fi
 		;;
@@ -216,10 +227,22 @@ wifi_power() {
 	fi
 }
 
-# Ookla speedtest-cli alias to display minimal output.
+# Ookla speedtest-cli alias to display minimal output by default.
 alias speedtest="speedtest-cli --simple"
 
-# Include the bash_aliases_private if available.
+# Install required commands and apt packages used throughout
+# this helpful-linux-bash-scripts-aliases repository.
+install_support_packages() {
+	apt update
+	sudo apt --yes install \
+		git \
+		pwgen \
+		samba-common-bin \
+		speedtest-cli \
+		telnet
+}
+
+# Include bash_aliases_private if available.
 if [[ -f "$HOME/.bash_aliases_private" ]]; then
 	source $HOME/.bash_aliases_private
 fi
