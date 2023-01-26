@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.1.1'
+script_version='2.1.3'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -20,7 +20,7 @@ require_root_privileges() {
 require_user_privileges() {
 	if [[ "$(whoami)" == "root" ]]; then
 		# logger -i "Error: swupdate must be run as normal user!"
-		echo "Error: swupdate must be run as a normal user!" >&2
+		echo "Error: swupdate must be run as normal user!" >&2
 		exit 2
 	fi
 }
@@ -132,8 +132,17 @@ snap_packages() {
 	fi
 }
 
+error_kernel_release() {
+	# Test for Microsoft Standard WSL2 kernel
+	if [[ "$(uname --kernel-release)" =~ .*"WSL".* ]]; then
+		echo "This system is not supported by fwupdmgr." >&2
+		exit 1
+	fi
+}
+
 firmware_packages() {
 	require_root_privileges
+	error_kernel_release
 
 	if [[ -x $(which fwupdmgr) ]]; then
 		fwupdmgr --force refresh
