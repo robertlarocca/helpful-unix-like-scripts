@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.2.0'
+script_version='2.2.3'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -126,9 +126,9 @@ snap_packages() {
 }
 
 wsl2_packages() {
-	require_root_privileges
+	# require_user_privileges
 
-	if [[ -x $(which wsl.exe) ]]; then
+	if [[ -x "/mnt/c/WINDOWS/system32/wsl.exe" ]]; then
 		/mnt/c/WINDOWS/system32/wsl.exe --update
 	fi
 }
@@ -174,7 +174,6 @@ all)
 	flatpak_packages
 	snap_packages
 	firmware_packages
-	wsl2_packages
 	;;
 apt)
 	apt_packages
@@ -214,7 +213,6 @@ help | --help)
 		apt_packages
 		flatpak_packages
 		snap_packages
-		wsl2_packages
 	else
 		error_unrecognized_option "$1"
 		exit 1
