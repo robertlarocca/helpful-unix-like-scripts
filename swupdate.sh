@@ -6,8 +6,8 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.1.3'
-script_release='beta'  # options devel, beta, release, stable
+script_version='2.2.0'
+script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -43,6 +43,7 @@ show_help_message() {
 	 flatpak - update only installed Flatpak packages
 	 python - update only installed Python3 packages
 	 snap - update only installed Snap packages
+	 wsl - update only the Windows Subsystem for Linux packages
 
 	 normal - upgrade to the next current OS release
 	 lts - upgrade to the next long term supported OS release
@@ -113,14 +114,6 @@ python3_packages() {
 			| grep -v '^\-e' \
 			| cut -d = -f 1 \
 			| xargs -n1 pip3 install -U
-
-		# Alternate command using awk.
-		# pip3 list --outdated \
-			# | cut -f1 -d' ' \
-			# | tr " " "\n" \
-			# | awk '{if(NR>=3)print)' \
-			# | cut -d' ' -f1 \
-			# | xargs -n1 pip3 install -U
 	fi
 }
 
@@ -132,8 +125,16 @@ snap_packages() {
 	fi
 }
 
+wsl2_packages() {
+	require_root_privileges
+
+	if [[ -x $(which wsl.exe) ]]; then
+		/mnt/c/WINDOWS/system32/wsl.exe --update
+	fi
+}
+
 error_kernel_release() {
-	# Test for Microsoft Standard WSL2 kernel
+	# Test for the Microsoft Standard Windows Subsystem for Linux kernel.
 	if [[ "$(uname --kernel-release)" =~ .*"WSL".* ]]; then
 		echo "This system is not supported by fwupdmgr." >&2
 		exit 1
@@ -173,6 +174,7 @@ all)
 	flatpak_packages
 	snap_packages
 	firmware_packages
+	wsl2_packages
 	;;
 apt)
 	apt_packages
@@ -188,6 +190,9 @@ python | pip)
 	;;
 snap)
 	snap_packages
+	;;
+wsl)
+	wsl2_packages
 	;;
 normal)
 	os_upgrade "$1"
@@ -207,7 +212,9 @@ help | --help)
 *)
 	if [[ -z "$1" ]]; then
 		apt_packages
+		flatpak_packages
 		snap_packages
+		wsl2_packages
 	else
 		error_unrecognized_option "$1"
 		exit 1

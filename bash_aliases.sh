@@ -4,7 +4,10 @@
 
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
-export BASH_ALIASES_VERSION="2.5.3-$USER@$HOSTNAME"
+# Script version and release
+script_version='2.5.7'
+script_release='stable'  # options devel, beta, release, stable
+export BASH_ALIASES_VERSION="$script_version-$script_release"
 
 # Set custom emoji prompt for Linux user accounts.
 PS1_ORIG="$PS1"
@@ -14,21 +17,21 @@ set_emoji_ps1_prompt() {
 		PS1="☕ $PS1_ORIG"
 	elif [[ $USER = 'root' ]]; then
 		# Emoji for root
-		PS1="🧀 $PS1_ORIG"
+		PS1="🐳 $PS1_ORIG"
 	elif [[ $USER = 'user1' ]]; then
 		# Emoji for user1
-		PS1="🙈 $PS1_ORIG"
+		PS1="🦄 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
 		# Emoji for user2
-		PS1="🙉 $PS1_ORIG"
+		PS1="🩻 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
 		# Emoji for user3
-		PS1="🙊 $PS1_ORIG"
+		PS1="🐲 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt
 
-# Edit bash aliases using gedit (Text Editor).
+# Edit bash aliases using many different text editors.
 edit_aliaess() {
 	case "$1" in
 	code)
@@ -49,7 +52,7 @@ edit_aliaess() {
 		vim $HOME/.bash_aliases
 		;;
 	*)
-		# Use the default GNOME configured text editor.
+		# Use the default GNOME text editor.
 		$(which xdg-open) $HOME/.bash_aliases
 		;;
 	esac
@@ -57,11 +60,11 @@ edit_aliaess() {
 
 # Windows Subsystem for Linux (WSL2) specific variables and aliases.
 # Use the $NTUSER variable just like $USER from witin Linux.
-# Use the $USERS variable just Like $HOME from witin Linux.
+# Use the $NTHOME variable just like $HOME from witin Linux.
 
 # Set NTUSER to the Windows username if different from Linux username.
 NTUSER="$USER"
-USERS="/mnt/c/Users/$NTUSER"
+NTHOME="/mnt/c/Users/$NTUSER"
 
 # Change Active Directory password on domain controller.
 adpasswd() {
@@ -80,10 +83,7 @@ adpasswd() {
 	if [[ -x "$(which smbpasswd)" ]];then
 		smbpasswd -U "$domain_realm"/"$domain_user" -r "$domain_controller"
 	else
-		echo "Command 'smbpasswd' not found, but can be installed with:"
-		echo "apt install samba-common-bin  # or"
-		echo "dnf install samba-common-bin  #"
-		echo "yum install samba-common-bin  #"
+		/usr/lib/command-not-found "smbpasswd"
 	fi
 }
 
