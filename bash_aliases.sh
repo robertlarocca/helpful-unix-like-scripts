@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.7'
+script_version='2.5.13'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -230,16 +230,19 @@ wifi_power() {
 # Ookla speedtest-cli alias to display minimal output by default.
 alias speedtest="speedtest-cli --simple"
 
-# Install required commands and apt packages used throughout
-# this helpful-linux-bash-scripts-aliases repository.
-install_support_packages() {
-	apt update
+# Install required commands and apt packages used throughout this
+# helpful-linux-bash-scripts-aliases repository. Also started to
+# include some helpful packages like nmap for troubleshooting.
+install_required_support_packages() {
+	sudo apt update
 	sudo apt --yes install \
 		git \
+		nmap \
 		pwgen \
 		samba-common-bin \
 		speedtest-cli \
-		telnet
+		telnet \
+		whois
 }
 
 # Include bash_aliases_private if available.
