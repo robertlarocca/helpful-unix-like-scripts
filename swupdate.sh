@@ -28,13 +28,13 @@ require_user_privileges() {
 show_help_message() {
 	cat <<-EOF_XYZ
 	Usage: swupdate [OPTION]...
-	Easily update Debian and Ubuntu based operating systems. All the
+	Easily update Debian and Red Hat based operating systems. All the
 	installed packages and hardware firmware can be updated using this
 	swupdate script and command wrapper utiltiy.
 
 	This script by default (without an additional option provided) will
 	update all of the installed packages and autoremove unused packages.
-	The additional options provide more functionality.
+	The additional options provide more package sources and functionality.
 
 	Options:
 	 all - update packages, snaps, flatpaks and hardware firmware
@@ -46,15 +46,15 @@ show_help_message() {
 	 snap - update only installed Snap packages
 	 wsl - update only the Windows Subsystem for Linux packages
 
-	 normal - upgrade to the next current os release
-	 lts - upgrade to the next long term supported os release
-	 never - never upgrade to the next os release
+	 normal - upgrade to the next current Ubuntu release
+	 lts - upgrade to the next long term supported Ubuntu release
+	 never - never upgrade to the next Ubuntu release
 
 	 version - show version information
 	 help - show this help message
 
-	When using normal or lts option; swupdate will try to upgrade with third
-	party mirrors and repositories enabled instead of commenting them out.
+	When using the normal or lts options; swupdate tries to upgrade Ubuntu with
+	third party mirrors and repositories enabled instead of commenting out.
 
 	Exit status:
 	 0 - ok
