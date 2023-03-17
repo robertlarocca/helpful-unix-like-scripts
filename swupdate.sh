@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.2.3'
+script_version='2.3.21'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -39,15 +39,16 @@ show_help_message() {
 	Options:
 	 all - update packages, snaps, flatpaks and hardware firmware
 	 apt - update only installed APT packages
+	 dnf - update only installed RPM-based packages
 	 firmware - update only the hardware firmware
 	 flatpak - update only installed Flatpak packages
 	 python - update only installed Python3 packages
 	 snap - update only installed Snap packages
 	 wsl - update only the Windows Subsystem for Linux packages
 
-	 normal - upgrade to the next current OS release
-	 lts - upgrade to the next long term supported OS release
-	 never - never upgrade to the next OS release
+	 normal - upgrade to the next current os release
+	 lts - upgrade to the next long term supported os release
+	 never - never upgrade to the next os release
 
 	 version - show version information
 	 help - show this help message
@@ -62,10 +63,10 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts-aliases
+	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 
-	See apt(8) fwupdmgr(1) snap(8) and do-release-upgrade(8) for additonal
-	information and to provide insight how this script works.
+	See apt(8) dnf(8) fwupdmgr(1) snap(8) and do-release-upgrade(8) for
+	additonal information and to provide insight how this wrapper works.
 	EOF_XYZ
 }
 
@@ -74,7 +75,7 @@ show_version_information() {
 	swupdate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts-aliases
+	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 	EOF_XYZ
 }
 
@@ -93,7 +94,26 @@ apt_packages() {
 		apt update
 		apt --yes upgrade
 		apt --yes full-upgrade
+		# Don't remove any packages without prompting user.
 		apt autoremove
+	fi
+}
+
+dnf_packages() {
+	require_root_privileges
+
+	if [[ -x $(which dnf) ]]; then
+		dnf clean all
+		dnf check-update
+		dnf --assumeyes upgrade
+		# Don't remove any packages without prompting user.
+		dnf autoremove
+	elif [[ -x $(which yum) ]]; then
+		yum clean all
+		yum check-update
+		yum --assumeyes upgrade
+		# Don't remove any packages without prompting user.
+		yum autoremove
 	fi
 }
 
@@ -109,7 +129,6 @@ python3_packages() {
 	require_user_privileges
 
 	if [[ -x $(which pip3) ]]; then
-		# Default command using grep.
 		pip3 list --outdated --format=freeze \
 			| grep -v '^\-e' \
 			| cut -d = -f 1 \
@@ -126,17 +145,22 @@ snap_packages() {
 }
 
 wsl2_packages() {
-	# require_user_privileges
-
-	if [[ -x "/mnt/c/WINDOWS/system32/wsl.exe" ]]; then
-		/mnt/c/WINDOWS/system32/wsl.exe --update
+	# Set complete path to the Windows Subsystem for Linux binary.
+	# Using methods like the which command don't work as root.
+	local wsl_binary="/mnt/c/WINDOWS/system32/wsl.exe"
+	if [[ -x "$wsl_binary" ]]; then
+		$wsl_binary --update
 	fi
 }
 
 error_kernel_release() {
-	# Test for the Microsoft Standard Windows Subsystem for Linux kernel.
-	if [[ "$(uname --kernel-release)" =~ .*"WSL".* ]]; then
-		echo "This system is not supported by fwupdmgr." >&2
+	# Test for the Microsoft Standard Windows Subsystem for Linux (WSL) kernel.
+	local kernel_release="$(uname --kernel-release)"
+	if [[ "$kernel_release" =~ .*"WSL".* ]]; then
+		cat <<-EOF_XYZ >&2
+		The following kernel is not supported by fwupdmgr:
+		  $kernel_release
+		EOF_XYZ
 		exit 1
 	fi
 }
@@ -171,12 +195,17 @@ os_upgrade() {
 case "$1" in
 all)
 	apt_packages
+	dnf_packages
 	flatpak_packages
 	snap_packages
+	wsl2_packages
 	firmware_packages
 	;;
 apt)
 	apt_packages
+	;;
+dnf | yum)
+	dnf_packages
 	;;
 firmware)
 	firmware_packages
@@ -211,6 +240,7 @@ help | --help)
 *)
 	if [[ -z "$1" ]]; then
 		apt_packages
+		dnf_packages
 		flatpak_packages
 		snap_packages
 	else
