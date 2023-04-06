@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.31'
+script_version='2.5.32'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -209,7 +209,7 @@ git_merge_upstream() {
 	case "$1" in
 	-H | --help)
 		cat <<-EOF_XYZ
-		Usage: git_merge_upstream [URL]...
+		Usage: git_merge_upstream [URL] ...
 		Update a forked Git repository by merging with upstream.
 
 		Examples:
