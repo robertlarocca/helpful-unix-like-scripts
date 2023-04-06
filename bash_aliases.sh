@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.32'
+script_version='2.5.33'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -189,7 +189,7 @@ test_port() {
 	esac
 }
 
-# Upate all Git repositories in the current directory.
+# Update all Git repositories in the current directory.
 git_update_all_repos() {
 	for i in $(ls -1); do
 		if [[ -f "$i/.git/index" ]]; then
