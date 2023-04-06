@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.24'
+script_version='2.5.31'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -65,6 +65,9 @@ edit_aliaess() {
 # Set NTUSER to the Windows username if different from Linux username.
 NTUSER="$USER"
 NTHOME="/mnt/c/Users/$NTUSER"
+
+alias wsl="/mnt/c/WINDOWS/system32/wsl.exe"
+alias wslg="/mnt/c/WINDOWS/system32/wslg.exe"
 
 # Change Active Directory password on domain controller.
 adpasswd() {
@@ -189,12 +192,15 @@ test_port() {
 # Upate all Git repositories in the current directory.
 git_update_all_repos() {
 	for i in $(ls -1); do
-		cd $i
-		echo "Working on Git repository $i..."
-		git pull
-		git fetch --all
-		git push
-		cd ..
+		if [[ -f "$i/.git/index" ]]; then
+			cd $i
+			echo "Working on Git repository $i ..."
+			# git status
+			git pull
+			git fetch --all
+			git push
+			cd ..
+		fi
 	done
 }
 
