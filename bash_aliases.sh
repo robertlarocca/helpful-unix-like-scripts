@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.33'
+script_version='2.5.37'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -189,19 +189,20 @@ test_port() {
 	esac
 }
 
-# Update all Git repositories in the current directory.
-git_update_all_repos() {
-	for i in $(ls -1); do
-		if [[ -f "$i/.git/index" ]]; then
-			cd $i
-			echo "Working on Git repository $i ..."
-			# git status
-			git pull
-			git fetch --all
-			git push
-			cd ..
-		fi
-	done
+# Synchronize all Git repositories in the current directory.
+git_sync_all_repos() {
+for i in $(ls -1); do
+	if [[ -f "$i/.git/index" ]]; then
+		cd $i
+		echo "Working on Git repository $i ..."
+		# git status
+		git fetch --all
+		git pull
+		git push
+		echo
+		cd ..
+	fi
+done
 }
 
 # Merge current master with upstream.
