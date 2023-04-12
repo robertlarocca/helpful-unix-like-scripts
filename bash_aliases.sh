@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.50'
+script_version='2.5.51'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -216,7 +216,7 @@ git_sync_local() {
 		for i in $(ls -1); do
 			if [[ -d "$i/.git" ]]; then
 				cd "$i"
-				echo "Synchronizing Git repository $(basename $i)..."
+				echo "Synchronizing $(basename $i)..."
 				git fetch --all
 				git pull
 				git push
