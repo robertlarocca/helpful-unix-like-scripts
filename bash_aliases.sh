@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.37'
+script_version='2.5.50'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -190,22 +190,47 @@ test_port() {
 }
 
 # Synchronize all Git repositories in the current directory.
-git_sync_all_repos() {
-for i in $(ls -1); do
-	if [[ -f "$i/.git/index" ]]; then
-		cd $i
-		echo "Working on Git repository $i ..."
-		# git status
-		git fetch --all
-		git pull
-		git push
-		echo
-		cd ..
-	fi
-done
+git_sync_local() {
+	case "$1" in
+	-H | --help)
+		cat <<-EOF_XYZ
+		Usage: git_sync_local [DIR] ...
+		Synchronize all Git repositories in the current directory.
+
+		Examples:
+		  git_sync_local
+		  git_sync_local path/to/repos
+		  git_sync_local /full/path/to/repos
+
+		See git(1) and gittutorial(7) for additonal information.
+		EOF_XYZ
+		;;
+	*)
+		if [[ -z "$1" ]]; then
+			local starting_location="$PWD"
+		elif [[ -n "$1" ]] && [[ -d "$1" ]]; then
+			local starting_location="$PWD"
+			cd "$1"
+		fi
+
+		for i in $(ls -1); do
+			if [[ -d "$i/.git" ]]; then
+				cd "$i"
+				echo "Synchronizing Git repository $(basename $i)..."
+				git fetch --all
+				git pull
+				git push
+				echo
+				cd ..
+			fi
+		done
+
+		cd "$starting_location"
+		;;
+	esac
 }
 
-# Merge current master with upstream.
+# Update a forked Git repository by merging with upstream.
 git_merge_upstream() {
 	case "$1" in
 	-H | --help)
@@ -214,12 +239,8 @@ git_merge_upstream() {
 		Update a forked Git repository by merging with upstream.
 
 		Examples:
-		 remote add upstream https://example.com/project-repo.git
-		 git remote -v
-		 git fetch upstream
-		 git checkout master
-		 git merge upstream/master
-		 git push origin master
+		  git_merge_upstream git@example.com/project-repo.git
+		  git_merge_upstream https://example.com/project-repo.git
 
 		See git(1) and gittutorial(7) for additonal information.
 		EOF_XYZ
@@ -227,7 +248,7 @@ git_merge_upstream() {
 	*)
 		local upstream_repo_address="$1"
 
-		remote add upstream $upstream_repo_address
+		remote add upstream "$upstream_repo_address"
 		git remote -v
 		git fetch upstream
 		git checkout master
