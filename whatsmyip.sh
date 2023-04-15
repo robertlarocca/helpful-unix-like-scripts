@@ -5,7 +5,7 @@
 # Display the current ipv4 and ipv6 addresses
 
 # Script version and release
-script_version='2.0.0'
+script_version='2.1.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -18,7 +18,35 @@ require_root_privileges() {
 
 show_help_message() {
 	cat <<-EOF_XYZ
-	No help message yet...
+	Usage: whatsmyip [OPTION]...
+	Display the current public IP addresses and host geolocation information.
+
+	This script is not affiliated with ifconfig.co or Leafcloud. They are a
+	great free option for looking up IP information. Please limit automated
+	requests to 1 request per minute. No guarantee is made for requests that
+	exceed this limit. You may be rate-limited with a 429 status code, or
+	dropped entirely.
+
+	You can run your own IP lookup service. The source code and documentation
+	are available on GitHub https://github.com/leafcloudhq/echoip
+
+	Options:
+	 all - display all public IP addresses and host information.
+	 -4 - display only the public IPv4 address.
+	 -6 - display only the public IPv6 address.
+	 flag - display the geo location country flag.
+
+	 version - show version information
+	 help - show this help message
+
+	Exit status:
+	 0 - ok
+	 1 - minor issue
+	 2 - serious error
+
+	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
+	License: The MIT License (MIT)
+	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 	EOF_XYZ
 }
 
@@ -27,7 +55,7 @@ show_version_information() {
 	whatsmyip $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts-aliases
+	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 	EOF_XYZ
 }
 
@@ -38,21 +66,30 @@ error_unrecognized_option() {
 	EOF_XYZ
 }
 
+json_details() {
+	local json="$(curl -s https://ifconfig.co/json)"
+
+	if [[ -n "$json" ]]; then
+		echo "$json"
+		echo
+	fi
+}
+
 flag_emoji() {
-	# Flag emoji may be used for the country_code:
+	# Flag emoji might work for the country_iso:
 	# https://apps.timwhitlock.info/emoji/tables/iso3166
 
-	local country_code="$(curl -s https://ifconfig.io/country_code)"
+	local country_iso="$(curl -s https://ifconfig.co/country-iso)"
 
-	case "$country_code" in
+	case "$country_iso" in
 	CA)
-		flag="🏳️"
+		flag="🥞"
 		;;
 	US)
-		flag="⛳"
+		flag="🍔"
 		;;
 	MX)
-		flag="🏴"
+		flag="🌯"
 		;;
 	*)
 		flag="👻"

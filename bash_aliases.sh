@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.5.51'
+script_version='2.6.0'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -31,33 +31,6 @@ set_emoji_ps1_prompt() {
 }
 set_emoji_ps1_prompt
 
-# Edit bash aliases using many different text editors.
-edit_aliaess() {
-	case "$1" in
-	code)
-		# Visual Studio Code
-		code $HOME/.bash_aliases
-		;;
-	gedit)
-		gedit $HOME/.bash_aliases
-		;;
-	nano)
-		nano $HOME/.bash_aliases
-		;;
-	subl)
-		# Sublime Text
-		subl $HOME/.bash_aliases
-		;;
-	vi | vim)
-		vim $HOME/.bash_aliases
-		;;
-	*)
-		# Use the default GNOME text editor.
-		$(which xdg-open) $HOME/.bash_aliases
-		;;
-	esac
-}
-
 # Windows Subsystem for Linux (WSL2) specific variables and aliases.
 # Use the $NTUSER variable just like $USER from witin Linux.
 # Use the $NTHOME variable just like $HOME from witin Linux.
@@ -69,7 +42,7 @@ NTHOME="/mnt/c/Users/$NTUSER"
 alias wsl="/mnt/c/WINDOWS/system32/wsl.exe"
 alias wslg="/mnt/c/WINDOWS/system32/wslg.exe"
 
-# Change Active Directory password on domain controller.
+# Change your Active Directory domain user password.
 adpasswd() {
 	# Set to the Active Directory username if different from the Linux username.
 	local domain_user="$USER"
@@ -143,14 +116,14 @@ mksecret() {
 }
 
 # Check website availability and display headers.
-test_website() {
-	local website_address="$1"
+test-website() {
+	local website_url="$1"
 
-	if [[ -n "$website_address" ]]; then
-		echo "$website_address"
-		curl -ISs --connect-timeout 8 --retry 2 "$website_address"
+	if [[ -n "$website_url" ]]; then
+		echo "$website_url"
+		curl -ISs --connect-timeout 8 --retry 2 "$website_url"
 	else
-		for website_address in \
+		for website_url in \
 			https://www.apple.com \
 			https://duckduckgo.com \
 			https://www.google.com \
@@ -159,15 +132,15 @@ test_website() {
 			https://www.netflix.com \
 			https://www.wikipedia.org \
 			https://ubuntu.com ; do
-			echo "$website_address"
-			curl -ISs --connect-timeout 8 --retry 2 "$website_address"
+			echo "$website_url"
+			curl -ISs --connect-timeout 8 --retry 2 "$website_url"
 			echo
 		done
 	fi
 }
 
 # Test firewall ports using telnet.
-test_port() {
+test-port() {
 	# The server address and service port are tested by default.
 	local server_address='telnet.example.com'
 	local service_port='8738'
@@ -190,26 +163,26 @@ test_port() {
 }
 
 # Synchronize all Git repositories in the current directory.
-git_sync_local() {
+git-sync() {
 	case "$1" in
 	-H | --help)
 		cat <<-EOF_XYZ
-		Usage: git_sync_local [DIR] ...
-		Synchronize all Git repositories in the current directory.
+		Usage: git-sync [DIR] ...
+		Synchronize all the Git repositories in a directory.
 
 		Examples:
-		  git_sync_local
-		  git_sync_local path/to/repos
-		  git_sync_local /full/path/to/repos
+		  git-sync
+		  git-sync path/to/repos
+		  git-sync /full/path/to/repos
 
 		See git(1) and gittutorial(7) for additonal information.
 		EOF_XYZ
 		;;
 	*)
 		if [[ -z "$1" ]]; then
-			local starting_location="$PWD"
+			local working_directory="$PWD"
 		elif [[ -n "$1" ]] && [[ -d "$1" ]]; then
-			local starting_location="$PWD"
+			local working_directory="$PWD"
 			cd "$1"
 		fi
 
@@ -217,39 +190,39 @@ git_sync_local() {
 			if [[ -d "$i/.git" ]]; then
 				cd "$i"
 				echo "Synchronizing $(basename $i)..."
-				git fetch --all
 				git pull
+				git fetch --all
 				git push
 				echo
 				cd ..
 			fi
 		done
 
-		cd "$starting_location"
+		cd "$working_directory"
 		;;
 	esac
 }
 
 # Update a forked Git repository by merging with upstream.
-git_merge_upstream() {
+git-merge-upstream() {
 	case "$1" in
 	-H | --help)
 		cat <<-EOF_XYZ
-		Usage: git_merge_upstream [URL] ...
+		Usage: git-merge-upstream [URL] ...
 		Update a forked Git repository by merging with upstream.
 
 		Examples:
-		  git_merge_upstream git@example.com/project-repo.git
-		  git_merge_upstream https://example.com/project-repo.git
+		  git-merge-upstream git@example.com/project-repo.git
+		  git-merge-upstream https://example.com/project-repo.git
 
 		See git(1) and gittutorial(7) for additonal information.
 		EOF_XYZ
 		;;
 	*)
-		local upstream_repo_address="$1"
+		local upstream_url="$1"
 
-		remote add upstream "$upstream_repo_address"
-		git remote -v
+		remote add upstream "$upstream_url"
+		git remote --verbose
 		git fetch upstream
 		git checkout master
 		git merge upstream/master
@@ -259,7 +232,7 @@ git_merge_upstream() {
 }
 
 # Toggle wireless network power management.
-wifi_power() {
+wifi-power() {
 	if [[ -z "$1" ]]; then
 		iwconfig wlan0
 	else
@@ -270,10 +243,9 @@ wifi_power() {
 # Ookla speedtest-cli alias to display minimal output by default.
 alias speedtest="speedtest-cli --simple"
 
-# Install required commands and apt packages used throughout this
-# helpful-linux-bash-scripts-aliases repository. Also started to
-# include some helpful packages like nmap for troubleshooting.
-install_required_support_packages() {
+# Install the required apt packages used throughout this repository.
+# Also contains extra commands like nmap for troubleshooting issues.
+install-required-bash-alias-packages() {
 	sudo apt update
 	sudo apt --yes install \
 		git \
