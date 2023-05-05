@@ -76,8 +76,10 @@ json_details() {
 }
 
 flag_emoji() {
-	# Flag emoji might work for the country_iso:
-	# https://apps.timwhitlock.info/emoji/tables/iso3166
+	# Flag emoji might not display properly depending on the terminal being used.
+	#
+	# Checkout all the emoji country flag options:
+	#   https://apps.timwhitlock.info/emoji/tables/iso3166
 
 	local country_iso="$(curl -s https://ifconfig.co/country-iso)"
 
