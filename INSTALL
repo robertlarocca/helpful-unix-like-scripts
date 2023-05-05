@@ -2,22 +2,22 @@
 
 # Copyright (c) 2023 Robert LaRocca http://www.laroccx.com
 
-# Update the current user /home directory.
+# Install bash_aliases into the current user /home directory.
 touch $HOME/.bash_aliases_private
 cp -b -S .bak -v $PWD/bash_aliases.sh $HOME/.bash_aliases
 chmod 0640 $HOME/.bash_aliases
 
-# Update the root user /root directory.
-sudo touch /root/.bash_aliases_private
-sudo cp -b -S .bak -v $PWD/bash_aliases.sh /root/.bash_aliases
-sudo chmod 0640 /root/.bash_aliases
+# Uncomment to install bash_aliases into the root user /root directory.
+# sudo touch /root/.bash_aliases_private
+# sudo cp -b -S .bak -v $PWD/bash_aliases.sh /root/.bash_aliases
+# sudo chmod 0640 /root/.bash_aliases
 
-# Update the new user home /etc/skel template directory.
-sudo mkdir /etc/skel/.ssh/
-sudo chmod 0700 /etc/skel/.ssh/
-sudo touch /etc/skel/.bash_aliases_private
-sudo cp -b -S .bak -v $PWD/bash_aliases.sh /etc/skel/.bash_aliases
-sudo chmod 0644 /etc/skel/.bash_aliases
+# Uncomment to install bash_aliases into the new user home template /etc/skel directory.
+# sudo mkdir /etc/skel/.ssh/
+# sudo chmod 0700 /etc/skel/.ssh/
+# sudo touch /etc/skel/.bash_aliases_private
+# sudo cp -b -S .bak -v $PWD/bash_aliases.sh /etc/skel/.bash_aliases
+# sudo chmod 0644 /etc/skel/.bash_aliases
 
 sudo cp -b -S .bak -v $PWD/caffeinate.sh /usr/local/bin/caffeinate
 sudo chown root:root /usr/local/bin/caffeinate
