@@ -151,15 +151,15 @@ json_details() {
 	local json="$(curl -s https://ifconfig.co/json)"
 
 	if [[ -n "$json" ]]; then
-		echo "$json" && echo
+		echo "$json"
 	fi
 }
 
 port_details() {
-	local port="$(curl -s https://ifconfig.co//port/$1)"
+	local port="$(curl -s https://ifconfig.co/port/$1)"
 
 	if [[ -n "$port" ]]; then
-		echo "$port" && echo
+		echo "$port"
 	fi
 }
 
