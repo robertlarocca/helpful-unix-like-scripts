@@ -5,7 +5,7 @@
 # Display the current ipv4 and ipv6 addresses
 
 # Script version and release
-script_version='2.1.0'
+script_version='3.0.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -18,7 +18,7 @@ require_root_privileges() {
 
 show_help_message() {
 	cat <<-EOF_XYZ
-	Usage: whatsmyip [OPTION]...
+	Usage: whatsmyip [OPTION], [PORT]...
 	Display the current public IP addresses and host geolocation information.
 
 	This script is not affiliated with ifconfig.co or Leafcloud. They are a
@@ -31,10 +31,15 @@ show_help_message() {
 	are available on GitHub https://github.com/leafcloudhq/echoip
 
 	Options:
-	 all - display all public IP addresses and host information.
-	 -4 - display only the public IPv4 address.
-	 -6 - display only the public IPv6 address.
-	 flag - display the geo location country flag.
+	 all - display all IP addresses and options information
+	 -4 - display only IPv4 address
+	 -6 - display only IPv6 address
+	 country - display IP address geolocation country name
+	 country-code - display IP address geolocation country code
+	 city - display IP address geolocation city
+	 asn - display IP address ASN information
+	 json - display all IP address information as json
+	 port - display port connectivity results
 
 	 version - show version information
 	 help - show this help message
@@ -64,15 +69,6 @@ error_unrecognized_option() {
 	whatsmyip: unrecognized option '$1'
 	Try 'whatsmyip --help' for more information.
 	EOF_XYZ
-}
-
-json_details() {
-	local json="$(curl -s https://ifconfig.co/json)"
-
-	if [[ -n "$json" ]]; then
-		echo "$json"
-		echo
-	fi
 }
 
 flag_emoji() {
@@ -119,18 +115,92 @@ ipv6_address() {
 	fi
 }
 
+country_name() {
+	local country="$(curl -s https://ifconfig.co/country)"
+
+	if [[ -n "$country" ]]; then
+		echo "Country: $country"
+	fi
+}
+
+country_code() {
+	local country_iso="$(curl -s https://ifconfig.co/country-iso)"
+
+	if [[ -n "$country_iso" ]]; then
+		echo "Country Code: $country_iso"
+	fi
+}
+
+city_name() {
+	local city="$(curl -s https://ifconfig.co/city)"
+
+	if [[ -n "$city" ]]; then
+		echo "City: $city"
+	fi
+}
+
+asn_info() {
+	local asn="$(curl -s https://ifconfig.co/asn)"
+
+	if [[ -n "$asn" ]]; then
+		echo "ASN: $asn"
+	fi
+}
+
+json_details() {
+	local json="$(curl -s https://ifconfig.co/json)"
+
+	if [[ -n "$json" ]]; then
+		echo "$json" && echo
+	fi
+}
+
+port_details() {
+	local port="$(curl -s https://ifconfig.co//port/$1)"
+
+	if [[ -n "$port" ]]; then
+		echo "$port" && echo
+	fi
+}
+
 # Options
 case "$1" in
 all)
 	ipv4_address
 	ipv6_address
-	flag_emoji
+	country_name
+	country_code
+	city_name
+	asn_info
 	;;
-4 | -4)
+-4)
 	ipv4_address
 	;;
-6 | -6)
+-6)
 	ipv6_address
+	;;
+country)
+	country_name
+	;;
+country-code)
+	country_code
+	;;
+city)
+	city_name
+	;;
+asn)
+	asn_info
+	;;
+json)
+	json_details
+	;;
+port)
+	if [[ -n "$2" ]]; then
+		port_details "$2"
+	else
+		error_unrecognized_option "$*"
+		exit 1
+	fi
 	;;
 flag)
 	flag_emoji
@@ -146,7 +216,7 @@ help | --help)
 		ipv4_address
 		ipv6_address
 	else
-		error_unrecognized_option "$1"
+		error_unrecognized_option "$*"
 		exit 1
 	fi
 	;;
