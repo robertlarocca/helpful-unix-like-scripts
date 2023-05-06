@@ -6,7 +6,7 @@
 # until reboot. Similar to the macOS 'caffeinate' command.
 
 # Script version and release
-script_version='2.0.0'
+script_version='2.0.1'
 script_release='release'  # options devel, beta, release, stable
 
 # Setting blank_screen_delay to 0 (zero) disables the feature.
@@ -130,7 +130,7 @@ help | --help)
 		touch $HOME/.caffeinate
 		PS1="☕ $PS1_ORIG"
 	else
-		error_unrecognized_option "$1"
+		error_unrecognized_option "$*"
 		exit 1
 	fi
 	;;
