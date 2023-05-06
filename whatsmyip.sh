@@ -126,10 +126,10 @@ all)
 	ipv6_address
 	flag_emoji
 	;;
--4)
+4 | -4)
 	ipv4_address
 	;;
--6)
+6 | -6)
 	ipv6_address
 	;;
 flag)
