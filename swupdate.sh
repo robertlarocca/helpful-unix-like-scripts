@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.3.21'
+script_version='2.3.22'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -244,7 +244,7 @@ help | --help)
 		flatpak_packages
 		snap_packages
 	else
-		error_unrecognized_option "$1"
+		error_unrecognized_option "$*"
 		exit 1
 	fi
 	;;
