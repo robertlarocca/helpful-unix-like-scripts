@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.6.0'
+script_version='2.6.1'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -154,7 +154,7 @@ test-port() {
 			telnet $server_address $service_port
 		else
 			cat <<-EOF_XYZ
-			test_port: unrecognized option '$1'
+			test_port: unrecognized option '$*'
 			Try 'test_port --port <port_number>' to check a specific port.
 			EOF_XYZ
 		fi
