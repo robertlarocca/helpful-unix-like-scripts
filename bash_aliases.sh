@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.6.1'
+script_version='2.6.4'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -248,11 +248,15 @@ alias speedtest="speedtest-cli --simple"
 install-required-bash-alias-packages() {
 	sudo apt update
 	sudo apt --yes install \
+		byobu \
+		dnsutils \
 		git \
+		htop \
 		nmap \
 		pwgen \
 		samba-common-bin \
 		speedtest-cli \
+		tasksel \
 		telnet \
 		whois
 }
