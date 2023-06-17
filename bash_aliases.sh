@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.6.4'
+script_version='2.6.5'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -233,10 +233,13 @@ git-merge-upstream() {
 
 # Toggle wireless network power management.
 wifi-power() {
+	# The wireless network interface name.
+	local wifi_iface="wlp2s0"
+
 	if [[ -z "$1" ]]; then
-		iwconfig wlan0
+		iwconfig "$wifi_iface"
 	else
-		sudo iwconfig wlan0 power "$1"
+		sudo iwconfig "$wifi_iface" power "$1"
 	fi
 }
 
