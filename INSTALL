@@ -23,9 +23,17 @@ sudo cp -b -S .bak -v $PWD/caffeinate.sh /usr/local/bin/caffeinate
 sudo chown root:root /usr/local/bin/caffeinate
 sudo chmod 0755 /usr/local/bin/caffeinate
 
+sudo cp -b -S .bak -v $PWD/git-sync.sh /usr/local/bin/git-sync
+sudo chown root:root /usr/local/bin/git-sync
+sudo chmod 0755 /usr/local/bin/git-sync
+
 sudo cp -b -S .bak -v $PWD/swupdate.sh /usr/local/bin/swupdate
 sudo chown root:root /usr/local/bin/swupdate
 sudo chmod 0755 /usr/local/bin/swupdate
+
+sudo cp -b -S .bak -v $PWD/theme-helper.sh /usr/local/bin/theme-helper
+sudo chown root:root /usr/local/bin/theme-helper
+sudo chmod 0755 /usr/local/bin/theme-helper
 
 sudo cp -b -S .bak -v $PWD/whatsmyip.sh /usr/local/bin/whatsmyip
 sudo chown root:root /usr/local/bin/whatsmyip
