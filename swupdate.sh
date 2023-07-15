@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.3.22'
+script_version='2.4.0'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -42,6 +42,7 @@ show_help_message() {
 	 dnf - update only installed RPM-based packages
 	 firmware - update only the hardware firmware
 	 flatpak - update only installed Flatpak packages
+	 opkg - update only installed OpenWrt packages
 	 python - update only installed Python3 packages
 	 snap - update only installed Snap packages
 	 wsl - update only the Windows Subsystem for Linux packages
@@ -125,14 +126,30 @@ flatpak_packages() {
 	fi
 }
 
+opkg_packages() {
+	require_root_privileges
+
+	if [[ -x $(which opkg) ]]; then
+		opkg update
+		local upgrade_list="$(opkg list-upgradable | awk '{ printf "%s ",$1 }' 2>/dev/null)"
+		if [[ -n "$upgrade_list" ]]; then
+			opkg install "$upgrade_list"
+		else
+			echo "All OpenWrt packages up to date."
+		fi
+	fi
+}
+
 python3_packages() {
 	require_user_privileges
 
 	if [[ -x $(which pip3) ]]; then
-		pip3 list --outdated --format=freeze \
-			| grep -v '^\-e' \
-			| cut -d = -f 1 \
-			| xargs -n1 pip3 install -U
+		local upgrade_list="$(pip3 list --outdated | cut -d' ' -f1 | tail -n+3 2> /dev/null)"
+		if [[ -n "$upgrade_list" ]]; then
+			pip3 install --upgrade "$upgrade_list"
+		else
+			echo "All Python packages up to date."
+		fi
 	fi
 }
 
@@ -196,6 +213,7 @@ case "$1" in
 all)
 	apt_packages
 	dnf_packages
+	opkg_packages
 	flatpak_packages
 	snap_packages
 	wsl2_packages
@@ -212,6 +230,9 @@ firmware)
 	;;
 flatpak)
 	flatpak_packages
+	;;
+openwrt | opkg)
+	opkg_packages
 	;;
 python | pip)
 	python3_packages
@@ -241,6 +262,7 @@ help | --help)
 	if [[ -z "$1" ]]; then
 		apt_packages
 		dnf_packages
+		opkg_packages
 		flatpak_packages
 		snap_packages
 	else
