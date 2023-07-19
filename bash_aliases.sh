@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.6.5'
+script_version='2.7.0'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -53,7 +53,7 @@ adpasswd() {
 
 	# Set the default domain controller IP address.
 	# May also use $domain_name to use any avaiable domain controller.
-	local domain_controller="192.168.1.2"
+	local domain_controller="192.168.99.21"
 
 	# The 'samba-common-bin' packaged must be installed.
 	if [[ -x "$(which smbpasswd)" ]];then
@@ -162,75 +162,6 @@ test-port() {
 	esac
 }
 
-# Synchronize all Git repositories in the current directory.
-git-sync() {
-	case "$1" in
-	-H | --help)
-		cat <<-EOF_XYZ
-		Usage: git-sync [DIR] ...
-		Synchronize all the Git repositories in a directory.
-
-		Examples:
-		  git-sync
-		  git-sync path/to/repos
-		  git-sync /full/path/to/repos
-
-		See git(1) and gittutorial(7) for additonal information.
-		EOF_XYZ
-		;;
-	*)
-		if [[ -z "$1" ]]; then
-			local working_directory="$PWD"
-		elif [[ -n "$1" ]] && [[ -d "$1" ]]; then
-			local working_directory="$PWD"
-			cd "$1"
-		fi
-
-		for i in $(ls -1); do
-			if [[ -d "$i/.git" ]]; then
-				cd "$i"
-				echo "Synchronizing $(basename $i)..."
-				git pull
-				git fetch --all
-				git push
-				echo
-				cd ..
-			fi
-		done
-
-		cd "$working_directory"
-		;;
-	esac
-}
-
-# Update a forked Git repository by merging with upstream.
-git-merge-upstream() {
-	case "$1" in
-	-H | --help)
-		cat <<-EOF_XYZ
-		Usage: git-merge-upstream [URL] ...
-		Update a forked Git repository by merging with upstream.
-
-		Examples:
-		  git-merge-upstream git@example.com/project-repo.git
-		  git-merge-upstream https://example.com/project-repo.git
-
-		See git(1) and gittutorial(7) for additonal information.
-		EOF_XYZ
-		;;
-	*)
-		local upstream_url="$1"
-
-		remote add upstream "$upstream_url"
-		git remote --verbose
-		git fetch upstream
-		git checkout master
-		git merge upstream/master
-		git push origin master
-		;;
-	esac
-}
-
 # Toggle wireless network power management.
 wifi-power() {
 	# The wireless network interface name.
@@ -248,7 +179,7 @@ alias speedtest="speedtest-cli --simple"
 
 # Install the required apt packages used throughout this repository.
 # Also contains extra commands like nmap for troubleshooting issues.
-install-required-bash-alias-packages() {
+install-helpful-linux-bash-scripts-packages() {
 	sudo apt update
 	sudo apt --yes install \
 		byobu \
