@@ -5,11 +5,11 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.0.0'
-script_release='devel'  # options devel, beta, release, stable
+script_version='1.0.4'
+script_release='beta'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
-set -xv
+# set -xv
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -101,14 +101,19 @@ check_binary_exists() {
 
 sync_directory() {
 	if [[ -z "$1" ]]; then
-		local starting_directory="$PWD"
-	elif [[ -n "$1" ]] && [[ -d "$1" ]]; then
-		local starting_directory="$PWD"
-
-		cd "$1"
+		export orig_directory="$PWD"
+		export sync_directory="$PWD"
+	else
+		export orig_directory="$PWD"
+		export sync_directory="$1"
 	fi
 
-	for i in $(ls -1); do
+	ls -1 "$sync_directory" \
+	| while read -r i; do
+		if [[ ! "$orig_directory" == "$PWD" ]]; then
+			cd "$orig_directory"
+		fi
+
 		if [[ -s "$i/.git/config" ]]; then
 			cd "$i"
 			echo "Synchronizing $(basename $i)..."
@@ -116,11 +121,33 @@ sync_directory() {
 			git fetch --all
 			git push
 			echo
-			cd ..
 		fi
 	done
 
-	cd "$starting_directory"
+	if [[ ! "$orig_directory" == "$PWD" ]]; then
+		cd "$orig_directory"
+	fi
+
+	unset orig_directory
+	unset sync_directory
+}
+
+sync_config_list() {
+	if [[ -s "/etc/git-sync.conf" ]]; then
+		export git_sync_config="/etc/git-sync.conf"
+	elif [[ -s "$HOME/.git-sync" ]]; then
+		export git_sync_config="$HOME/.git-sync"
+	else
+		echo "Error: git-sync configuration is unavailable!" >&2
+		exit 2
+	fi
+
+	grep -v -E '^#|^;|^ ' "$git_sync_config" \
+	| while read -r f; do
+		sync_directory "$f"
+	done
+
+	unset git_sync_config
 }
 
 sync_upstream() {
@@ -137,28 +164,13 @@ sync_upstream() {
 	git push origin master
 }
 
-sync_list() {
-	if [[ -s "/etc/git-sync.conf" ]]; then
-		git_sync_config="/etc/git-sync.conf"
-	elif [[ -s "$HOME/.git-sync" ]]; then
-		git_sync_config="$HOME/.git-sync"
-	else
-		echo "Error: git-sync configuration is unavailable!" >&2
-		exit 2
-	fi
-
-	for i in $(grep -v -E '^#|^;|^ ' "$git_sync_config"); do
-		sync_directory "$i"
-	done
-}
-
 check_binary_exists git
 
 case "$1" in
-all)
-	sync_list
+all | --all)
+	sync_config_list
 	;;
-url)
+url | --url)
 	sync_upstream "$2"
 	;;
 version)
