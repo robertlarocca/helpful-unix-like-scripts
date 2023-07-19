@@ -2,20 +2,18 @@
 
 # Copyright (c) 2023 Robert LaRocca http://www.laroccx.com
 
-# Install bash_aliases into the current user /home directory.
-touch $HOME/.bash_aliases_private
+# Install into the current user home.
+touch $HOME/.bash_private
 cp -b -S .bak -v $PWD/bash_aliases.sh $HOME/.bash_aliases
 chmod 0640 $HOME/.bash_aliases
 
-# Uncomment to install bash_aliases into the root user /root directory.
-# sudo touch /root/.bash_aliases_private
+# Uncomment to enable install into the root home.
+# sudo touch /root/.bash_private
 # sudo cp -b -S .bak -v $PWD/bash_aliases.sh /root/.bash_aliases
 # sudo chmod 0640 /root/.bash_aliases
 
-# Uncomment to install bash_aliases into the new user home template /etc/skel directory.
-# sudo mkdir /etc/skel/.ssh/
-# sudo chmod 0700 /etc/skel/.ssh/
-# sudo touch /etc/skel/.bash_aliases_private
+# Uncomment to enable install into the /etc/skel directory.
+# sudo touch /etc/skel/.bash_private
 # sudo cp -b -S .bak -v $PWD/bash_aliases.sh /etc/skel/.bash_aliases
 # sudo chmod 0644 /etc/skel/.bash_aliases
 

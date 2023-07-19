@@ -195,9 +195,9 @@ install-helpful-linux-bash-scripts-packages() {
 		whois
 }
 
-# Include bash_aliases_private if available.
-if [[ -f "$HOME/.bash_aliases_private" ]]; then
-	source $HOME/.bash_aliases_private
+# Include bash_private if available.
+if [[ -f "$HOME/.bash_private" ]]; then
+	source $HOME/.bash_private
 fi
 
 # vi: syntax=sh ts=2 noexpandtab
