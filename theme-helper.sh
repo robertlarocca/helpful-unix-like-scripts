@@ -5,7 +5,7 @@
 # Customize the GNOME desktop enviroment theme and application settings.
 
 # Script version and release
-script_version='1.0.1'
+script_version='1.0.2'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -125,7 +125,7 @@ customize_applications() {
 	sed -E -i s/'Name=Startup Applications'/'Name=Startup Apps'/g /usr/share/applications/gnome-session-properties.desktop
 	sed -E -i s/'Name=Ubuntu Software'/'Name=Software'/g /var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop
 
-	sed -E -i s/'^Icon=.*'/'Icon=games-app'/g /usr/share/applications/element-desktop.desktop
+	sed -E -i s/'^Icon=.*'/'Icon=games-app'/g /usr/share/applications/org.gnome.Games.desktop
 }
 
 hide_applications() {
