@@ -5,8 +5,8 @@
 # Customize the GNOME desktop enviroment theme and application settings.
 
 # Script version and release
-script_version='1.0.0'
-script_release='devel'  # options devel, beta, release, stable
+script_version='1.0.1'
+script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -110,6 +110,9 @@ customize_applications() {
 	sed -E -i s/'Name=Geary'/'Name=Mail'/g /usr/share/applications/org.gnome.Geary.desktop
 	sed -E -i s/'^Icon=.*'/'Icon=mail-app'/g /usr/share/applications/org.gnome.Geary.desktop
 
+	sed -E -i s/'Name=Element'/'Name=Messages'/g /usr/share/applications/element-desktop.desktop
+	sed -E -i s/'^Icon=.*'/'Icon=messaging-app'/g /usr/share/applications/element-desktop.desktop
+
 	sed -E -i s/'Name=Rhythmbox'/'Name=Music'/g /usr/share/applications/org.gnome.Rhythmbox3.desktop
 	sed -E -i s/'Name=Rhythmbox'/'Name=Music'/g /usr/share/applications/org.gnome.Rhythmbox3.device.desktop
 	sed -E -i s/'^Icon=.*'/'Icon=rhythmbox'/g /usr/share/applications/org.gnome.Rhythmbox3.desktop
@@ -121,6 +124,8 @@ customize_applications() {
 	sed -E -i s/'Name=Power Statistics'/'Name=Power Stats'/g /usr/share/applications/org.gnome.PowerStats.desktop
 	sed -E -i s/'Name=Startup Applications'/'Name=Startup Apps'/g /usr/share/applications/gnome-session-properties.desktop
 	sed -E -i s/'Name=Ubuntu Software'/'Name=Software'/g /var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop
+
+	sed -E -i s/'^Icon=.*'/'Icon=games-app'/g /usr/share/applications/element-desktop.desktop
 }
 
 hide_applications() {
@@ -150,14 +155,12 @@ hide_applications() {
 # Options
 case "$1" in
 all)
-	configure_logrotate
 	configure_dpkg_invoke
 	configure_gsettings
 	customize_applications
 	hide_applications
 	;;
 auto)
-	configure_logrotate
 	configure_dpkg_invoke
 	;;
 config)
@@ -187,7 +190,6 @@ help | --help)
 	;;
 esac
 
-remove_pid_lock
 exit 0
 
 # vi: syntax=sh ts=2 noexpandtab
