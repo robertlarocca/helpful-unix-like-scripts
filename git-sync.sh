@@ -5,11 +5,11 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.0.5'
+script_version='1.0.6'
 script_release='beta'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
-set -xv
+# set -xv
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -103,9 +103,8 @@ sync_directory() {
 	if [[ -z "$1" ]]; then
 		export orig_path="$PWD"
 		export sync_path="$PWD"
-
 		if [[ -s "$orig_path/.git/config" ]]; then
-			echo "Synchronizing $(basename $orig_path)..."
+			echo "Synchronizing $(basename $PWD)..."
 			git pull
 			git fetch --all
 			git push
@@ -114,6 +113,15 @@ sync_directory() {
 	else
 		export orig_path="$PWD"
 		export sync_path="$(realpath $1)"
+		if [[ -s "$sync_path/.git/config" ]]; then
+			cd "$sync_path"
+			echo "Synchronizing $(basename $PWD)..."
+			git pull
+			git fetch --all
+			git push
+			cd "$orig_path"
+			return
+		fi
 	fi
 
 	for i in $(ls -1 "$sync_path"); do
@@ -141,9 +149,9 @@ sync_directory() {
 
 sync_config_list() {
 	if [[ -s "/etc/gitsync.conf" ]]; then
-		export git_sync_config="/etc/git-sync.conf"
+		export git_sync_config="/etc/gitsync.conf"
 	elif [[ -s "$HOME/.gitsync" ]]; then
-		export git_sync_config="$HOME/.git-sync"
+		export git_sync_config="$HOME/.gitsync"
 	else
 		echo "Error: No sync configuration list." >&2
 		exit 2
@@ -159,7 +167,7 @@ sync_config_list() {
 
 sync_upstream() {
 	if [[ -z "$1" ]]; then
-		echo "Error: Must provide URL to upstream git repository!" >&2
+		echo "Error: No upstream repository URL." >&2
 		exit 2
 	fi
 
