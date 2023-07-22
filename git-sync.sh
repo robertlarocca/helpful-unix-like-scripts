@@ -5,11 +5,11 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.0.4'
+script_version='1.0.5'
 script_release='beta'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
-# set -xv
+set -xv
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -105,17 +105,16 @@ sync_directory() {
 		export sync_directory="$PWD"
 	else
 		export orig_directory="$PWD"
-		export sync_directory="$1"
+		export sync_directory="$(realpath $1)"
 	fi
 
-	ls -1 "$sync_directory" \
-	| while read -r i; do
-		if [[ ! "$orig_directory" == "$PWD" ]]; then
+	for i in $(ls -1 "$sync_directory"); do
+		if [[ ! "$PWD" -ef "$orig_directory" ]]; then
 			cd "$orig_directory"
 		fi
 
-		if [[ -s "$i/.git/config" ]]; then
-			cd "$i"
+		if [[ -s "$sync_directory/$i/.git/config" ]]; then
+			cd "$sync_directory/$i"
 			echo "Synchronizing $(basename $i)..."
 			git pull
 			git fetch --all
@@ -124,7 +123,7 @@ sync_directory() {
 		fi
 	done
 
-	if [[ ! "$orig_directory" == "$PWD" ]]; then
+	if [[ ! "$PWD" -ef "$orig_directory" ]]; then
 		cd "$orig_directory"
 	fi
 
@@ -133,12 +132,12 @@ sync_directory() {
 }
 
 sync_config_list() {
-	if [[ -s "/etc/git-sync.conf" ]]; then
+	if [[ -s "/etc/gitsync.conf" ]]; then
 		export git_sync_config="/etc/git-sync.conf"
-	elif [[ -s "$HOME/.git-sync" ]]; then
+	elif [[ -s "$HOME/.gitsync" ]]; then
 		export git_sync_config="$HOME/.git-sync"
 	else
-		echo "Error: git-sync configuration is unavailable!" >&2
+		echo "Error: No sync list." >&2
 		exit 2
 	fi
 
