@@ -44,9 +44,9 @@ show_help_message() {
 
 	Examples:
 	 git-sync
-	 git-sync --all
+	 git-sync all
 	 git-sync /path/to/repos/
-	 git-sync --url git@example.com/project-repo.git
+	 git-sync url git@example.com/project-repo.git
 	 git-sync upstream https://example.com/project-repo.git
 
 	Exit status:
@@ -101,20 +101,28 @@ check_binary_exists() {
 
 sync_directory() {
 	if [[ -z "$1" ]]; then
-		export orig_directory="$PWD"
-		export sync_directory="$PWD"
+		export orig_path="$PWD"
+		export sync_path="$PWD"
+
+		if [[ -s "$orig_path/.git/config" ]]; then
+			echo "Synchronizing $(basename $orig_path)..."
+			git pull
+			git fetch --all
+			git push
+			return
+		fi
 	else
-		export orig_directory="$PWD"
-		export sync_directory="$(realpath $1)"
+		export orig_path="$PWD"
+		export sync_path="$(realpath $1)"
 	fi
 
-	for i in $(ls -1 "$sync_directory"); do
-		if [[ ! "$PWD" -ef "$orig_directory" ]]; then
-			cd "$orig_directory"
+	for i in $(ls -1 "$sync_path"); do
+		if [[ ! "$PWD" -ef "$orig_path" ]]; then
+			cd "$orig_path"
 		fi
 
-		if [[ -s "$sync_directory/$i/.git/config" ]]; then
-			cd "$sync_directory/$i"
+		if [[ -s "$sync_path/$i/.git/config" ]]; then
+			cd "$sync_path/$i"
 			echo "Synchronizing $(basename $i)..."
 			git pull
 			git fetch --all
@@ -123,12 +131,12 @@ sync_directory() {
 		fi
 	done
 
-	if [[ ! "$PWD" -ef "$orig_directory" ]]; then
-		cd "$orig_directory"
+	if [[ ! "$PWD" -ef "$orig_path" ]]; then
+		cd "$orig_path"
 	fi
 
-	unset orig_directory
-	unset sync_directory
+	unset orig_path
+	unset sync_path
 }
 
 sync_config_list() {
@@ -137,7 +145,7 @@ sync_config_list() {
 	elif [[ -s "$HOME/.gitsync" ]]; then
 		export git_sync_config="$HOME/.git-sync"
 	else
-		echo "Error: No sync list." >&2
+		echo "Error: No sync configuration list." >&2
 		exit 2
 	fi
 
@@ -166,10 +174,10 @@ sync_upstream() {
 check_binary_exists git
 
 case "$1" in
-all | --all)
+all)
 	sync_config_list
 	;;
-url | --url)
+url | upstream)
 	sync_upstream "$2"
 	;;
 version)
