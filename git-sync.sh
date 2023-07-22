@@ -5,8 +5,8 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.0.6'
-script_release='beta'  # options devel, beta, release, stable
+script_version='1.1.0'
+script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv
@@ -29,24 +29,24 @@ require_user_privileges() {
 
 show_help_message() {
 	cat <<-EOF_XYZ
-	Usage: git-sync [OPTION] [URI]...
+	Usage: git-sync [OPTION] <URI>...
 	Easily synchronize cloned Git repositories on the local filesystem
 	or forked repositories with upstream on the internet. By default the
-	current directory is synchronized unless another directory path or
-	option is provided.
+	current directory is synchronized unless another option is provided.
 
 	Options:
 	 all - synchronize all repositories in configuration list
-	 url - synchronize and merge upstream repository
+	 upstream - synchronize and merge upstream repository
 
 	 version - show version information
 	 help - show this help message
 
 	Examples:
 	 git-sync
-	 git-sync all
+	 git-sync /path/to/repo/
 	 git-sync /path/to/repos/
-	 git-sync url git@example.com/project-repo.git
+	 git-sync all
+	 git-sync upstream git@example.com/project-repo.git
 	 git-sync upstream https://example.com/project-repo.git
 
 	Exit status:
@@ -61,6 +61,7 @@ show_help_message() {
 	See git(1) git-pull(1) git-fetch(1) git-push(1) and gittutorial(7) for
 	additonal information and to provide insight how this wrapper works.
 	EOF_XYZ
+	exit 0
 }
 
 show_version_information() {
@@ -70,6 +71,7 @@ show_version_information() {
 	License: The MIT License (MIT)
 	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 	EOF_XYZ
+	exit 0
 }
 
 error_unrecognized_option() {
@@ -77,6 +79,7 @@ error_unrecognized_option() {
 	git-sync: unrecognized option '$1'
 	Try 'git-sync --help' for more information.
 	EOF_XYZ
+	exit 1
 }
 
 check_binary_exists() {
@@ -99,15 +102,29 @@ check_binary_exists() {
 	fi
 }
 
+git_pull_fetch_push_clone() {
+	echo "Synchronizing $(basename $PWD)..."
+	git pull
+	git fetch --all
+	git push
+}
+
+git_add_fetch_merge_upstream() {
+	remote add upstream "$1"
+	git remote
+	git fetch upstream
+	git checkout master
+	git merge upstream/master
+	git push origin master
+}
+
 sync_directory() {
 	if [[ -z "$1" ]]; then
 		export orig_path="$PWD"
 		export sync_path="$PWD"
 		if [[ -s "$orig_path/.git/config" ]]; then
-			echo "Synchronizing $(basename $PWD)..."
-			git pull
-			git fetch --all
-			git push
+			git_pull_fetch_push_clone
+			export synced=true
 			return
 		fi
 	else
@@ -115,10 +132,8 @@ sync_directory() {
 		export sync_path="$(realpath $1)"
 		if [[ -s "$sync_path/.git/config" ]]; then
 			cd "$sync_path"
-			echo "Synchronizing $(basename $PWD)..."
-			git pull
-			git fetch --all
-			git push
+			git_pull_fetch_push_clone
+			export synced=true
 			cd "$orig_path"
 			return
 		fi
@@ -131,11 +146,9 @@ sync_directory() {
 
 		if [[ -s "$sync_path/$i/.git/config" ]]; then
 			cd "$sync_path/$i"
-			echo "Synchronizing $(basename $i)..."
-			git pull
-			git fetch --all
-			git push
-			echo
+			git_pull_fetch_push_clone
+			export synced=true
+			# echo
 		fi
 	done
 
@@ -147,45 +160,41 @@ sync_directory() {
 	unset sync_path
 }
 
-sync_config_list() {
+sync_list() {
 	if [[ -s "/etc/gitsync.conf" ]]; then
-		export git_sync_config="/etc/gitsync.conf"
+		export conf_path="/etc/gitsync.conf"
 	elif [[ -s "$HOME/.gitsync" ]]; then
-		export git_sync_config="$HOME/.gitsync"
+		export conf_path="$HOME/.gitsync"
 	else
-		echo "Error: No sync configuration list." >&2
+		echo "git-sync: No configuration file" >&2
 		exit 2
 	fi
 
-	grep -v -E '^#|^;|^ ' "$git_sync_config" \
-	| while read -r f; do
-		sync_directory "$f"
+	grep -v -E '^#|^;|^ ' "$conf_path" \
+	| while read -r line; do
+		sync_directory "$line"
 	done
 
-	unset git_sync_config
+	unset conf_path
 }
 
 sync_upstream() {
 	if [[ -z "$1" ]]; then
-		echo "Error: No upstream repository URL." >&2
+		echo "git-sync: No upstream repository URL" >&2
 		exit 2
 	fi
 
-	remote add upstream "$1"
-	git remote
-	git fetch upstream
-	git checkout master
-	git merge upstream/master
-	git push origin master
+	git_add_fetch_merge_upstream "$1"
+	export synced=true
 }
 
 check_binary_exists git
 
 case "$1" in
 all)
-	sync_config_list
+	sync_list
 	;;
-url | upstream)
+upstream)
 	sync_upstream "$2"
 	;;
 version)
@@ -198,6 +207,12 @@ help | --help)
 	sync_directory "$1"
 	;;
 esac
+
+if [[ -z "$synced" ]]; then
+	echo "git-sync: No repository to synchronize" >&2
+	unset synced
+	exit 1
+fi
 
 exit 0
 
