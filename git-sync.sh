@@ -5,7 +5,7 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.1.0'
+script_version='1.1.1'
 script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -124,7 +124,6 @@ sync_directory() {
 		export sync_path="$PWD"
 		if [[ -s "$orig_path/.git/config" ]]; then
 			git_pull_fetch_push_clone
-			export synced=true
 			return
 		fi
 	else
@@ -133,7 +132,6 @@ sync_directory() {
 		if [[ -s "$sync_path/.git/config" ]]; then
 			cd "$sync_path"
 			git_pull_fetch_push_clone
-			export synced=true
 			cd "$orig_path"
 			return
 		fi
@@ -147,7 +145,6 @@ sync_directory() {
 		if [[ -s "$sync_path/$i/.git/config" ]]; then
 			cd "$sync_path/$i"
 			git_pull_fetch_push_clone
-			export synced=true
 			# echo
 		fi
 	done
@@ -185,7 +182,6 @@ sync_upstream() {
 	fi
 
 	git_add_fetch_merge_upstream "$1"
-	export synced=true
 }
 
 check_binary_exists git
@@ -207,12 +203,6 @@ help | --help)
 	sync_directory "$1"
 	;;
 esac
-
-if [[ -z "$synced" ]]; then
-	echo "git-sync: No repository to synchronize" >&2
-	unset synced
-	exit 1
-fi
 
 exit 0
 
