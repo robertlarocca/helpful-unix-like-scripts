@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.7.0'
+script_version='2.7.7'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -26,7 +26,7 @@ set_emoji_ps1_prompt() {
 		PS1="🩻 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
 		# Emoji for user3
-		PS1="🐲 $PS1_ORIG"
+		PS1="🗿 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt
@@ -44,20 +44,33 @@ alias wslg="/mnt/c/WINDOWS/system32/wslg.exe"
 
 # Change your Active Directory domain user password.
 adpasswd() {
-	# Set to the Active Directory username if different from the Linux username.
-	local domain_user="$USER"
+	# Use the current username when specific username not provided.
+	if [[ -z "$1" ]]; then
+		# Set to the Active Directory username if different
+		# from the Linux username variable.
+		local domain_user="$USER"
+	else
+		# Use the specific username provided.
+		local domain_user="$1"
+	fi
 
 	# Set the realm and domain name.
 	local domain_realm="EXAMPLE"
 	local domain_name="example.com"
 
-	# Set the default domain controller IP address.
-	# May also use $domain_name to use any avaiable domain controller.
+	# Set the default domain controller IP address or FQDN.
+	# NOTE: May also use $domain_name variable for best avaiable domain controller.
 	local domain_controller="192.168.99.21"
 
 	# The 'samba-common-bin' packaged must be installed.
-	if [[ -x "$(which smbpasswd)" ]];then
+	if [[ -x "$(which smbpasswd)" ]]; then
 		smbpasswd -U "$domain_realm"/"$domain_user" -r "$domain_controller"
+
+		# Display reminder after changed password.
+		smbpasswd_status="$?"
+		if [[ "$smbpasswd_status" == 0 ]]; then
+			echo "Reminder: Lock workstation to begin using changed password" 2>&1
+		fi
 	else
 		/usr/lib/command-not-found "smbpasswd"
 	fi
