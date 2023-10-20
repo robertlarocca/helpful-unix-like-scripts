@@ -1,10 +1,10 @@
-# helpful-linux-bash-aliases
+# helpful-linux-bash-scripts
 
-Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
+Helpful Linux bash_aliases and scripts for sysadmins, developers and the forgetful.
 
 ## Install
 
-Install the `bash_aliases` shell script using:
+Install the `bash_aliases` and other included shell scripts using:
 
 ```shell
 bash INSTALL
