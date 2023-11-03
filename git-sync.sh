@@ -5,7 +5,7 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.1.1'
+script_version='1.1.2'
 script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -84,7 +84,7 @@ error_unrecognized_option() {
 
 check_binary_exists() {
 	local binary_command="$1"
-	if [[ ! -x "$(which $binary_command)" ]]; then
+	if [[ ! -x "$(which $binary_command 2> /dev/null)" ]]; then
 		if [[ -x "/lib/command-not-found" ]]; then
 			/lib/command-not-found "$binary_command"
 		else
