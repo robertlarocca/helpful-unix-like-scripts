@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.4.0'
+script_version='2.4.2'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -90,7 +90,7 @@ error_unrecognized_option() {
 apt_packages() {
 	require_root_privileges
 
-	if [[ -x $(which apt) ]]; then
+	if [[ -x $(which apt 2> /dev/null) ]]; then
 		apt autoclean
 		apt update
 		apt --yes upgrade
@@ -103,13 +103,13 @@ apt_packages() {
 dnf_packages() {
 	require_root_privileges
 
-	if [[ -x $(which dnf) ]]; then
+	if [[ -x $(which dnf 2> /dev/null) ]]; then
 		dnf clean all
 		dnf check-update
 		dnf --assumeyes upgrade
 		# Don't remove any packages without prompting user.
 		dnf autoremove
-	elif [[ -x $(which yum) ]]; then
+	elif [[ -x $(which yum 2> /dev/null) ]]; then
 		yum clean all
 		yum check-update
 		yum --assumeyes upgrade
@@ -121,7 +121,7 @@ dnf_packages() {
 flatpak_packages() {
 	require_root_privileges
 
-	if [[ -x $(which flatpak) ]]; then
+	if [[ -x $(which flatpak 2> /dev/null) ]]; then
 		flatpak update
 	fi
 }
@@ -129,7 +129,7 @@ flatpak_packages() {
 opkg_packages() {
 	require_root_privileges
 
-	if [[ -x $(which opkg) ]]; then
+	if [[ -x $(which opkg 2> /dev/null) ]]; then
 		opkg update
 		local upgrade_list="$(opkg list-upgradable | awk '{ printf "%s ",$1 }' 2>/dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
@@ -143,7 +143,7 @@ opkg_packages() {
 python3_packages() {
 	require_user_privileges
 
-	if [[ -x $(which pip3) ]]; then
+	if [[ -x $(which pip3 2> /dev/null) ]]; then
 		local upgrade_list="$(pip3 list --outdated | cut -d' ' -f1 | tail -n+3 2> /dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
 			pip3 install --upgrade "$upgrade_list"
@@ -156,7 +156,7 @@ python3_packages() {
 snap_packages() {
 	require_root_privileges
 
-	if [[ -x $(which snap) ]]; then
+	if [[ -x $(which snap 2> /dev/null) ]]; then
 		snap refresh
 	fi
 }
@@ -186,7 +186,7 @@ firmware_packages() {
 	require_root_privileges
 	error_kernel_release
 
-	if [[ -x $(which fwupdmgr) ]]; then
+	if [[ -x $(which fwupdmgr 2> /dev/null) ]]; then
 		fwupdmgr --force refresh
 		fwupdmgr update
 	fi
@@ -196,14 +196,14 @@ os_upgrade() {
 	local os_release="$1"
 	require_root_privileges
 
-	if [[ -x $(which apt) ]]; then
+	if [[ -x $(which apt 2> /dev/null) ]]; then
 		apt --yes install update-manager-core
 	fi
 
 	cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
 	sed -E -i s/'^Prompt=.*'/'Prompt=$os_release'/g /etc/update-manager/release-upgrades
 
-	if [[ -x $(which do-release-upgrade) ]]; then
+	if [[ -x $(which do-release-upgrade 2> /dev/null) ]]; then
 		do-release-upgrade --allow-third-party
 	fi
 }
