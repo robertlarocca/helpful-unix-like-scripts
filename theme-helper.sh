@@ -5,7 +5,7 @@
 # Customize the GNOME desktop enviroment theme and application settings.
 
 # Script version and release
-script_version='1.0.2'
+script_version='1.0.3'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -84,7 +84,7 @@ configure_dpkg_invoke() {
 }
 
 configure_gsettings() {
-	if [[ -x $(which gsettings) ]]; then
+	if [[ -x $(which gsettings 2> /dev/null) ]]; then
 		gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark' 2> /dev/null
 		gsettings set org.gnome.desktop.peripherals.touchpad click-method 'fingers' 2> /dev/null
 	fi
