@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.7.7'
+script_version='2.8.0'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -76,19 +76,24 @@ adpasswd() {
 	fi
 }
 
+# Clear the current shell history after executing clean command.
+# You can checkout and download from the clean-command-history
+# repository here: https://github.com/robertlarocca/clean-command-history
+alias clean="$(which clean) $* && history -c"
+
 # Single command to disable or off the caffeinate script.
 alias decaffeinate="caffeinate off"
-
-# Prevent pubkey authentication with ssh and scp commands.
-alias scp-passwd="scp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
-alias sftp-passwd="sftp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
-alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
 # Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"
 
 # Similar to the macOS 'open' command.
 alias open="$(which xdg-open)"
+
+# Prevent pubkey authentication with ssh and scp commands.
+alias scp-passwd="scp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+alias sftp-passwd="sftp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
 # Show the current logical volume management (lvm) storage.
 lvms() {
