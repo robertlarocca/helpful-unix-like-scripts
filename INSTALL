@@ -21,6 +21,10 @@ sudo cp -b -S .bak -v $PWD/caffeinate.sh /usr/local/bin/caffeinate
 sudo chown root:root /usr/local/bin/caffeinate
 sudo chmod 0755 /usr/local/bin/caffeinate
 
+sudo cp -b -S .bak -v $PWD/clean.sh /usr/local/bin/clean
+sudo chown root:root /usr/local/bin/clean
+sudo chmod 0755 /usr/local/bin/clean
+
 sudo cp -b -S .bak -v $PWD/git-sync.sh /usr/local/bin/git-sync
 sudo chown root:root /usr/local/bin/git-sync
 sudo chmod 0755 /usr/local/bin/git-sync
