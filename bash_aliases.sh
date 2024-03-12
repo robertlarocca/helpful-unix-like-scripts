@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.9.1'
+script_version='2.9.2'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -105,12 +105,12 @@ bash_aliases() {
 
 	error_unrecognized_option() {
 		cat <<-EOF_XYZ
-		bash_aliases: unrecognized option '$2'
+		bash_aliases: unrecognized option '$1'
 		Try 'bash_aliases --help' for more information.
 		EOF_XYZ
 	}
 
-	case "$2" in
+	case "$1" in
 	--help | help)
 		show_help_message
 		;;
@@ -121,10 +121,10 @@ bash_aliases() {
 		# Default
 		if [[ -z "$2" ]]; then
 			echo "OK"
-			exit 0
+			return 0
 		else
 			error_unrecognized_option "$*"
-			exit 1
+			return 1
 		fi
 		;;
 	esac
