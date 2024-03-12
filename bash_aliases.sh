@@ -35,7 +35,7 @@ set_emoji_ps1_prompt
 bash_aliases() {
 	show_help_message() {
 		cat <<-EOF_XYZ
-		Usage: bash_aliases | alias | command [OPTION] [PARAMETER]...
+		Usage: bash_aliases | <alias> | <command> [OPTION] [PARAMETER]...
 		Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 		This bash_aliases script by default (without an option) will only return
@@ -44,46 +44,46 @@ bash_aliases() {
 		installed Linux program or builtin tools and utilities.
 
 		Aliases:
-		kubectl - alias to prevent microk8s conflicts with existing (kubectl) packages
+		 kubectl - alias to prevent microk8s conflicts with existing (kubectl) packages
 
-		scp-passwd -  alias to prevent secure copy (scp) pubkey authentication
-		sftp-passwd - alias to prevent secure file transfer (sftp) pubkey authentication
-		ssh-passwd - alias to prevent secure remote login (ssh) pubkey authentication
+		 scp-passwd -  alias to prevent secure copy (scp) pubkey authentication
+		 sftp-passwd - alias to prevent secure file transfer (sftp) pubkey authentication
+		 ssh-passwd - alias to prevent secure remote login (ssh) pubkey authentication
 
-		speedtest - alias for Ookla (speedtest-cli) command with minimal output
+		 speedtest - alias for Ookla (speedtest-cli) command with minimal output
 
-		wsl - alias for Windows PowerShell (wsl.exe) command
-		wslg - alias for Windows PowerShell (wslg.exe) command
+		 wsl - alias for Windows PowerShell (wsl.exe) command
+		 wslg - alias for Windows PowerShell (wslg.exe) command
 
 		Commands:
-		adpasswd - change your Active Directory domain user password
+		 adpasswd - change your Active Directory domain user password
 
-		caffeinate - prevent the system suspend and hibernation timer (keep awake)
-		decaffeinate - restore the default suspend and hibernation timer (allow sleep)
+		 caffeinate - prevent the system suspend and hibernation timer (keep awake)
+		 decaffeinate - restore the default suspend and hibernation timer (allow sleep)
 
-		open - open or edit file using the default GNOME application
+		 open - open or edit file using the default GNOME application
 
-		lvmdisplay - show the logical volume management storage details
-		lvms - show the logical volume management storage
-		lvmsnapshot - show example commands how to create lvm snapshots
+		 lvmdisplay - show the logical volume management storage details
+		 lvms - show the logical volume management storage
+		 lvmsnapshot - show example commands how to create lvm snapshots
 
-		mkpsk - generate a secure random 64 character pre-shared key
-		mkpw - generate a secure ambiguous random 14 character password
-		mksecret - generate a secure random 512 character LUKS secret
+		 mkpsk - generate a secure random 64 character pre-shared key
+		 mkpw - generate a secure ambiguous random 14 character password
+		 mksecret - generate a secure random 512 character LUKS secret
 
-		test-port - check network port and try to connect with telnet
-		test-website - check website availability and display headers
+		 test-port - check network port and try to connect with telnet
+		 test-website - check website availability and display headers
 
-		wifi-power - toggle wireless network power management
+		 wifi-power - toggle wireless network power management
 
 		Options:
-		version - show version information
-		help - show this help message
+		 version - show version information
+		 help - show this help message
 
 		Exit Status:
-		0 - ok
-		1 - minor issue
-		2 - serious error
+		 0 - ok
+		 1 - minor issue
+		 2 - serious error
 
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
@@ -106,7 +106,7 @@ bash_aliases() {
 	error_unrecognized_option() {
 		cat <<-EOF_XYZ
 		bash_aliases: unrecognized option '$2'
-		Try 'swupdate --help' for more information.
+		Try 'bash_aliases --help' for more information.
 		EOF_XYZ
 	}
 
