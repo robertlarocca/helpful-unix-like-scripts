@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.9.2'
+script_version='2.9.3'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -237,7 +237,7 @@ test-website() {
 
 	if [[ -n "$website_url" ]]; then
 		echo "$website_url"
-		curl -ISs --connect-timeout 8 --retry 2 "$website_url"
+		curl -A "test-website/$script_version-$script_release" -ISs --connect-timeout 8 --retry 2 "$website_url"
 	else
 		for website_url in \
 			https://www.apple.com \
@@ -249,7 +249,7 @@ test-website() {
 			https://www.wikipedia.org \
 			https://ubuntu.com ; do
 			echo "$website_url"
-			curl -ISs --connect-timeout 8 --retry 2 "$website_url"
+			curl curl -A "test-website/$script_version-$script_release" -ISs --connect-timeout 8 --retry 2 "$website_url"
 			echo
 		done
 	fi
