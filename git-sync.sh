@@ -5,7 +5,7 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.1.2'
+script_version='1.1.3'
 script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -105,7 +105,7 @@ check_binary_exists() {
 git_pull_fetch_push_clone() {
 	echo "Synchronizing $(basename $PWD)..."
 	git pull
-	git fetch --all
+	git fetch --all --tags
 	git push
 }
 
