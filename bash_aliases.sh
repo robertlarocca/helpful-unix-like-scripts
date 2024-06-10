@@ -5,7 +5,7 @@
 # Helpful Linux bash_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='2.9.3'
+script_version='3.0.0'
 script_release='stable'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -41,7 +41,8 @@ bash_aliases() {
 		This bash_aliases script by default (without an option) will only return
 		the text 'OK'. The commands section displays aliases and functions that
 		may be executed without the bash_aliases prefix, just like any other
-		installed Linux program or builtin tools and utilities.
+		installed Linux program or builtin tools and utilities. This bash_aliases
+		file has only ever been tested with Ubuntu and Ubuntu under WSL2.
 
 		Aliases:
 		 kubectl - alias to prevent microk8s conflicts with existing (kubectl) packages
