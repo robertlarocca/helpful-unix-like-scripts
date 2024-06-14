@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Copyright (c) 2023 Robert LaRocca http://www.laroccx.com
+# Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
 
 # Prevent idle system sleep (blank screen), suspend, and hibernation
 # until reboot. Similar to the macOS 'caffeinate' command.
 
 # Script version and release
 script_version='2.0.1'
-script_release='release'  # options devel, beta, release, stable
+script_release='stable'  # options devel, beta, release, stable
 
 # Setting blank_screen_delay to 0 (zero) disables the feature.
 blank_screen_delay_on="3600" # default is 3600 seconds

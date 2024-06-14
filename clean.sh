@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-# Copyright (c) 2023 Robert LaRocca https://www.laroccx.com
+# Copyright (c) 2024 Robert LaRocca https://www.laroccx.com
 
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='2.7.0'
-script_release='release'  # options devel, beta, release, stable
+script_version='2.8.0'
+script_release='stable'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -56,6 +56,7 @@ show_help_message() {
 	 viminfo
 	 wget-hsts
 	 zsh_history
+	 zsh_sessions
 
 	Exit status:
 	 0 - ok
@@ -64,7 +65,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/clean-command-history
+	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 	EOF_XYZ
 }
 
@@ -73,7 +74,7 @@ show_version_information() {
 	clean $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/clean-command-history
+	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 	EOF_XYZ
 }
 
@@ -89,6 +90,7 @@ remove_all_history() {
 	logger -i "Notice: Removed all $(basename $SHELL) and command history from $HOME directory."
 	rm -f -r $HOME/.ansible
 	rm -f -r $HOME/.bash_sessions
+	rm -f -r $HOME/.zsh_sessions
 	rm -f $HOME/.bash_history
 	rm -f $HOME/.lesshst
 	rm -f $HOME/.local/share/nano/search_history
@@ -101,13 +103,20 @@ remove_all_history() {
 	rm -f $HOME/.viminfo
 	rm -f $HOME/.wget-hsts
 	rm -f $HOME/.zsh_history
-	history -c
-	clear
+
+	if [[ "$SHELL" == "/bin/bash" ]]; then
+		history -c
+		clear
+	elif [[ "$SHELL" == "/bin/zsh" ]]; then
+		history -p
+		clear
+	fi
 }
 
 remove_most_history() {
 	logger -i "Notice: Removed $(basename $SHELL) and command history from $HOME directory."
 	rm -f -r $HOME/.bash_sessions
+	rm -f -r $HOME/.zsh_sessions
 	rm -f $HOME/.bash_history
 	rm -f $HOME/.lesshst
 	rm -f $HOME/.mysql_history
@@ -115,8 +124,14 @@ remove_most_history() {
 	rm -f $HOME/.rediscli_history
 	rm -f $HOME/.wget-hsts
 	rm -f $HOME/.zsh_history
-	history -c
-	clear
+
+	if [[ "$SHELL" == "/bin/bash" ]]; then
+		history -c
+		clear
+	elif [[ "$SHELL" == "/bin/zsh" ]]; then
+		history -p
+		clear
+	fi
 }
 
 remove_windows_history() {
@@ -125,23 +140,29 @@ remove_windows_history() {
 	rm -f /mnt/c/Users/$USER/AppData/Roaming/Microsoft/Windows/Recent/*.lnk
 	rm -f /mnt/c/Users/$USER/AppData/Roaming/Microsoft/Windows/Recent/AutomaticDestinations/*
 	rm -f /mnt/c/Users/$USER/AppData/Roaming/Microsoft/Windows/Recent/CustomDestinations/*
-	history -c
-	clear
+
+	if [[ "$SHELL" == "/bin/bash" ]]; then
+		history -c
+		clear
+	elif [[ "$SHELL" == "/bin/zsh" ]]; then
+		history -p
+		clear
+	fi
 }
 
 # Options
 case "$1" in
-all | -A)
+all | --all | -A)
 	remove_all_history
 	remove_windows_history
 	;;
-most | -a)
+most | --most | -a)
 	remove_most_history
 	;;
-windows | -w)
+windows | --windows | -w)
 	remove_windows_history
 	;;
-halt)
+halt | --halt)
 	remove_most_history
 	if [[ -z "$2" ]]; then
 		/usr/bin/sudo shutdown --halt +0
@@ -149,7 +170,7 @@ halt)
 		/usr/bin/sudo shutdown --halt "$2" "$3"
 	fi
 	;;
-reboot)
+reboot | --reboot)
 	remove_most_history
 	if [[ -z "$2" ]]; then
 		/usr/bin/sudo shutdown --reboot +0
@@ -157,7 +178,7 @@ reboot)
 		/usr/bin/sudo shutdown --reboot "$2" "$3"
 	fi
 	;;
-poweroff | shutdown)
+poweroff | --poweroff | shutdown | --shutdown)
 	remove_most_history
 	if [[ -z "$2" ]]; then
 		/usr/bin/sudo shutdown --poweroff +0
@@ -165,7 +186,7 @@ poweroff | shutdown)
 		/usr/bin/sudo shutdown --poweroff "$2" "$3"
 	fi
 	;;
-version)
+version | --version)
 	show_version_information
 	;;
 help | --help)

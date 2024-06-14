@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-# Copyright (c) 2023 Robert LaRocca <robert@laroccx.com>
+# Copyright (c) 2024 Robert LaRocca <robert@laroccx.com>
 
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.1.3'
-script_release='release'  # options devel, beta, release, stable
+script_version='1.1.5'
+script_release='stable'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv
