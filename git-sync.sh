@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# Copyright (c) 2024 Robert LaRocca <robert@laroccx.com>
+# Copyright (c) 2023 Robert LaRocca <robert@laroccx.com>
 
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.1.5'
-script_release='stable'  # options devel, beta, release, stable
+script_version='1.2.0'
+script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv
@@ -35,19 +35,19 @@ show_help_message() {
 	current directory is synchronized unless another option is provided.
 
 	Options:
-	 all - synchronize all repositories in configuration list
-	 upstream - synchronize and merge upstream repository
+	 --all		synchronize all repositories in configuration list
+	 --upstream	synchronize and merge upstream repository
 
-	 version - show version information
-	 help - show this help message
+	 --version	show version information
+	 --help		show this help message
 
 	Examples:
 	 git-sync
 	 git-sync /path/to/repo/
 	 git-sync /path/to/repos/
-	 git-sync all
-	 git-sync upstream git@example.com/project-repo.git
-	 git-sync upstream https://example.com/project-repo.git
+	 git-sync --all
+	 git-sync --upstream git@example.com/project-repo.git
+	 git-sync --upstream https://example.com/project-repo.git
 
 	Exit status:
 	 0 - ok
@@ -187,16 +187,16 @@ sync_upstream() {
 check_binary_exists git
 
 case "$1" in
-all)
+--all)
 	sync_list
 	;;
-upstream)
+--upstream)
 	sync_upstream "$2"
 	;;
-version)
+--version)
 	show_version_information
 	;;
-help | --help)
+--help)
 	show_help_message
 	;;
 *)

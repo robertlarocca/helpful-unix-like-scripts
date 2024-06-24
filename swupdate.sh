@@ -1,13 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# Copyright (c) 2024 Robert LaRocca https://www.laroccx.com
+# Copyright (c) 2023 Robert LaRocca https://www.laroccx.com
 
 # Update apt packages, snaps, flatpaks, firmware or upgrade
 # to the next operating system release.
 
 # Script version and release
-script_version='2.4.5'
-script_release='devel'  # options devel, beta, release, stable
+script_version='2.4.2'
+script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -42,9 +42,7 @@ show_help_message() {
 	 dnf - update only installed RPM-based packages
 	 firmware - update only the hardware firmware
 	 flatpak - update only installed Flatpak packages
-	 macos - update only installed macOS and App Store packages
 	 opkg - update only installed OpenWrt packages
-	 port - update only installed MacPorts packages
 	 python - update only installed Python3 packages
 	 snap - update only installed Snap packages
 	 wsl - update only the Windows Subsystem for Linux packages
@@ -128,19 +126,6 @@ flatpak_packages() {
 	fi
 }
 
-macos_packages() {
-	require_root_privileges
-
-	if [[ -x $(which softwareupdate 2> /dev/null) ]]; then
-		softwareupdate autoclean
-		softwareupdate update
-		softwareupdate --yes upgrade
-		softwareupdate --yes full-upgrade
-		# Don't remove any packages without prompting user.
-		softwareupdate autoremove
-	fi
-}
-
 opkg_packages() {
 	require_root_privileges
 
@@ -152,19 +137,6 @@ opkg_packages() {
 		else
 			echo "All OpenWrt packages up to date."
 		fi
-	fi
-}
-
-port_packages() {
-	require_root_privileges
-
-	if [[ -x $(which port 2> /dev/null) ]]; then
-		port autoclean
-		port update
-		port --yes upgrade
-		port --yes full-upgrade
-		# Don't remove any packages without prompting user.
-		port autoremove
 	fi
 }
 
@@ -238,62 +210,52 @@ os_upgrade() {
 
 # Options
 case "$1" in
-all | --all)
+--all)
 	apt_packages
 	dnf_packages
-	# macOS and MacPorts package updating is disabled,
-	# currently these options need more code and testing.
-	# macos_packages
-	# port_packages
 	opkg_packages
 	flatpak_packages
 	snap_packages
 	wsl2_packages
 	firmware_packages
 	;;
-apt | --apt)
+--apt)
 	apt_packages
 	;;
-dnf | --dnf | yum | --yum)
+--dnf | --yum)
 	dnf_packages
 	;;
-firmware | --firmware)
+--firmware | --fw)
 	firmware_packages
 	;;
-flatpak | --flatpak)
+--flatpak)
 	flatpak_packages
 	;;
-openwrt | --openwrt | opkg | --opkg)
+--openwrt | --opkg)
 	opkg_packages
 	;;
-macos | --macos)
-	macos_packages
-	;;
-macports | --macports | port | --port)
-	port_packages
-	;;
-python | --python | pip | --pip)
+--python | --pip)
 	python3_packages
 	;;
-snap | --snap)
+--snap)
 	snap_packages
 	;;
-wsl | --wsl)
+--wsl)
 	wsl2_packages
 	;;
-normal | --normal)
+--normal)
 	os_upgrade "$1"
 	;;
-lts | --lts)
+--lts)
 	os_upgrade "$1"
 	;;
-never | --never)
+--never)
 	os_upgrade "$1"
 	;;
-version | --version)
+--version)
 	show_version_information
 	;;
-help | --help)
+--help)
 	show_help_message
 	;;
 *)

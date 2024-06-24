@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# Copyright (c) 2024 Robert LaRocca https://www.laroccx.com
+# Copyright (c) 2023 Robert LaRocca https://www.laroccx.com
 
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='2.8.0'
-script_release='stable'  # options devel, beta, release, stable
+script_version='2.9.0'
+script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -22,16 +22,16 @@ show_help_message() {
 	Remove all the known history files in the user home directory.
 
 	Options:
-	 all - remove all history files
-	 most - remove most history files
+	 --all		remove all history files
+	 --most		remove most history files
+	 --windows	remove Windows Powershell and recent history files
+	 --halt		clean most and halt
+	 --reboot	clean most and reboot
+	 --poweroff	clean most and poweroff
+	 --shutdown	clean most and shutdown (same as poweroff)
 
-	 halt - clean and halt
-	 reboot - clean and reboot
-	 poweroff - clean and poweroff
-	 shutdown - clean and shutdown (same as poweroff)
-
-	 version - show version information
-	 help - show this help message
+	 --version - show version information
+	 --help - show this help message
 
 	The second argument must be a [TIME] string. The default value
 	is 'now' which is interpeted as '+0'. This may be followed with
@@ -39,10 +39,11 @@ show_help_message() {
 	to users before shutdown.
 
 	Examples:
-	 clean all
-	 clean most
-	 clean reboot now
-	 clean poweroff +5 "Poweroff initiated by clean.sh"
+	 clean --all
+	 clean --most
+	 clean --windows
+	 clean --reboot now
+	 clean --poweroff +5 "Poweroff initiated by clean.sh"
 
 	History files:
 	 ansible
@@ -152,44 +153,44 @@ remove_windows_history() {
 
 # Options
 case "$1" in
-all | --all | -A)
+--all)
 	remove_all_history
 	remove_windows_history
 	;;
-most | --most | -a)
+--most)
 	remove_most_history
 	;;
-windows | --windows | -w)
+--windows | --wsl)
 	remove_windows_history
 	;;
-halt | --halt)
+--halt)
 	remove_most_history
 	if [[ -z "$2" ]]; then
-		/usr/bin/sudo shutdown --halt +0
+		sudo shutdown --halt +0
 	else
-		/usr/bin/sudo shutdown --halt "$2" "$3"
+		sudo shutdown --halt "$2" "$3"
 	fi
 	;;
-reboot | --reboot)
+--reboot)
 	remove_most_history
 	if [[ -z "$2" ]]; then
-		/usr/bin/sudo shutdown --reboot +0
+		sudo shutdown --reboot +0
 	else
-		/usr/bin/sudo shutdown --reboot "$2" "$3"
+		sudo shutdown --reboot "$2" "$3"
 	fi
 	;;
-poweroff | --poweroff | shutdown | --shutdown)
+--poweroff | --shutdown)
 	remove_most_history
 	if [[ -z "$2" ]]; then
-		/usr/bin/sudo shutdown --poweroff +0
+		sudo shutdown --poweroff +0
 	else
-		/usr/bin/sudo shutdown --poweroff "$2" "$3"
+		sudo shutdown --poweroff "$2" "$3"
 	fi
 	;;
-version | --version)
+--version)
 	show_version_information
 	;;
-help | --help)
+--help)
 	show_help_message
 	;;
 *)

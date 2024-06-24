@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
+# Copyright (c) 2023 Robert LaRocca http://www.laroccx.com
 
 # Display the current ipv4 and ipv6 addresses
 
@@ -165,7 +165,7 @@ port_details() {
 
 # Options
 case "$1" in
-all | --all)
+--all)
 	ipv4_address
 	ipv6_address
 	country_name
@@ -173,28 +173,28 @@ all | --all)
 	city_name
 	asn_info
 	;;
--4 )
+-4 | --ipv4)
 	ipv4_address
 	;;
--6)
+-6 | --ipv6)
 	ipv6_address
 	;;
-country | --country)
+--country)
 	country_name
 	;;
-country-code | --country-code)
+--country-code)
 	country_code
 	;;
-city | --city)
+--city)
 	city_name
 	;;
-asn | --asn)
+--asn)
 	asn_info
 	;;
-json | --json)
+--json)
 	json_details
 	;;
-port | --port)
+--port)
 	if [[ -n "$2" ]]; then
 		port_details "$2"
 	else
@@ -202,13 +202,13 @@ port | --port)
 		exit 1
 	fi
 	;;
-flag | --flag)
+--flag)
 	flag_emoji
 	;;
-version | --version)
+--version)
 	show_version_information
 	;;
-help | --help)
+--help)
 	show_help_message
 	;;
 *)
