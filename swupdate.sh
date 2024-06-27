@@ -6,12 +6,15 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='3.0.0'
+script_version='3.0.1'
 script_release='beta'  # options devel, beta, release, stable
 
+# Uncomment to enable bash xtrace mode.
+# set -xv
+
 # Check os-release variables.
-if [[ -x "/etc/os-release" ]]; then
-	# logger -i "Operating system variables (/etc/os-release) are available!"
+if [[ -f /etc/os-release ]]; then
+	# logger -i "Operating system release variables are available!"
 	source /etc/os-release
 fi
 
@@ -36,7 +39,6 @@ show_help_message() {
 	Usage: swupdate [OPTION]...
 	Easily update Debian and Red Hat based operating systems. All the
 	installed packages and hardware firmware can be updated using this
-	swupdate script and command wrapper utiltiy.
 
 	This script by default (without an additional option provided) will
 	update all of the installed packages and autoremove unused packages.
@@ -74,7 +76,7 @@ show_help_message() {
 	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 
 	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8)
-	for additonal information and to provide insight how this wrapper works.
+	for additional information and to provide insight how this wrapper works.
 	EOF_XYZ
 }
 
@@ -175,7 +177,7 @@ python3_packages() {
 	if [[ -x $(which pip3 2> /dev/null) ]]; then
 		local upgrade_list="$(pip3 list --outdated | cut -d' ' -f1 | tail -n+3 2> /dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
-			pip3 install --upgrade "$upgrade_list"
+			pip3 install --upgrade $upgrade_list
 		else
 			echo "All Python packages up to date."
 		fi
