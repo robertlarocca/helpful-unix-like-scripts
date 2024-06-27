@@ -5,8 +5,8 @@
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='2.9.0'
-script_release='release'  # options devel, beta, release, stable
+script_version='3.0.0'
+script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -22,16 +22,16 @@ show_help_message() {
 	Remove all the known history files in the user home directory.
 
 	Options:
-	 --all		remove all history files
-	 --most		remove most history files
-	 --windows	remove Windows Powershell and recent history files
-	 --halt		clean most and halt
-	 --reboot	clean most and reboot
-	 --poweroff	clean most and poweroff
-	 --shutdown	clean most and shutdown (same as poweroff)
+	 --all		remove all shell history files
+	 --most		remove most shell history files
+	 --halt		clean most shell history files and halt
+	 --reboot	clean most shell history files and reboot
+	 --shutdown	clean most shell history files and shutdown (or --poweroff)
+	 --sleep	clean most shell history files and sleep
+	 --windows	remove most Windows history files
 
-	 --version - show version information
-	 --help - show this help message
+	 --version	show version information
+	 --help		show this help message
 
 	The second argument must be a [TIME] string. The default value
 	is 'now' which is interpeted as '+0'. This may be followed with
@@ -166,17 +166,25 @@ case "$1" in
 --halt)
 	remove_most_history
 	if [[ -z "$2" ]]; then
-		sudo shutdown --halt +0
+		sudo shutdown -h +0
 	else
-		sudo shutdown --halt "$2" "$3"
+		sudo shutdown -h "$2" "$3"
 	fi
 	;;
 --reboot)
 	remove_most_history
 	if [[ -z "$2" ]]; then
-		sudo shutdown --reboot +0
+		sudo shutdown -r +0
 	else
-		sudo shutdown --reboot "$2" "$3"
+		sudo shutdown -r "$2" "$3"
+	fi
+	;;
+--sleep)
+	remove_most_history
+	if [[ -z "$2" ]]; then
+		sudo shutdown -s +0
+	else
+		sudo shutdown -s "$2" "$3"
 	fi
 	;;
 --poweroff | --shutdown)

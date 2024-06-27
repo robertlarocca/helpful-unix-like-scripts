@@ -6,8 +6,14 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='2.4.2'
-script_release='release'  # options devel, beta, release, stable
+script_version='3.0.0'
+script_release='beta'  # options devel, beta, release, stable
+
+# Check os-release variables.
+if [[ -x "/etc/os-release" ]]; then
+	# logger -i "Operating system variables (/etc/os-release) are available!"
+	source /etc/os-release
+fi
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then
@@ -37,22 +43,23 @@ show_help_message() {
 	The additional options provide more package sources and functionality.
 
 	Options:
-	 all - update packages, snaps, flatpaks and hardware firmware
-	 apt - update only installed APT packages
-	 dnf - update only installed RPM-based packages
-	 firmware - update only the hardware firmware
-	 flatpak - update only installed Flatpak packages
-	 opkg - update only installed OpenWrt packages
-	 python - update only installed Python3 packages
-	 snap - update only installed Snap packages
-	 wsl - update only the Windows Subsystem for Linux packages
+	 --all		update all packages, including Flatpak, Snap and hardware firmware
+	 --apt		update only installed apt (aka Debian) packages
+	 --dnf		update only installed dnf and yum (aka Red Hat) packages
+	 --firmware	update only the hardware firmware
+	 --flatpak	update only installed Flatpak packages
+	 --macos	update only installed App Store and port (aka MacPorts) packages
+	 --opkg		update only installed opkg (aka OpenWrt) packages
+	 --python	update only installed Python3 packages
+	 --snap		update only installed Snap packages
+	 --wsl		update only the Windows Subsystem for Linux packages
 
-	 normal - upgrade to the next current Ubuntu release
-	 lts - upgrade to the next long term supported Ubuntu release
-	 never - never upgrade to the next Ubuntu release
+	 --normal	upgrade to the next current Ubuntu release
+	 --lts		upgrade to the next long term supported Ubuntu release
+	 --never	never upgrade to the next Ubuntu release
 
-	 version - show version information
-	 help - show this help message
+	 --version	show version information
+	 --help		show this help message
 
 	When using the normal or lts options; swupdate tries to upgrade Ubuntu with
 	third party mirrors and repositories enabled instead of commenting out.
@@ -66,8 +73,8 @@ show_help_message() {
 	License: The MIT License (MIT)
 	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
 
-	See apt(8) dnf(8) fwupdmgr(1) snap(8) and do-release-upgrade(8) for
-	additonal information and to provide insight how this wrapper works.
+	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8)
+	for additonal information and to provide insight how this wrapper works.
 	EOF_XYZ
 }
 
@@ -90,7 +97,7 @@ error_unrecognized_option() {
 apt_packages() {
 	require_root_privileges
 
-	if [[ -x $(which apt 2> /dev/null) ]]; then
+	if [[ "$ID_LIKE" == "debian" ]] && [[ -x $(which apt 2> /dev/null) ]]; then
 		apt autoclean
 		apt update
 		apt --yes upgrade
@@ -103,13 +110,13 @@ apt_packages() {
 dnf_packages() {
 	require_root_privileges
 
-	if [[ -x $(which dnf 2> /dev/null) ]]; then
+	if [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(which dnf 2> /dev/null) ]]; then
 		dnf clean all
 		dnf check-update
 		dnf --assumeyes upgrade
 		# Don't remove any packages without prompting user.
 		dnf autoremove
-	elif [[ -x $(which yum 2> /dev/null) ]]; then
+	elif [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(which yum 2> /dev/null) ]]; then
 		yum clean all
 		yum check-update
 		yum --assumeyes upgrade
@@ -129,14 +136,36 @@ flatpak_packages() {
 opkg_packages() {
 	require_root_privileges
 
-	if [[ -x $(which opkg 2> /dev/null) ]]; then
+	if [[ "$ID_LIKE" == "lede openwrt" ]] && [[ -x $(which opkg 2> /dev/null) ]]; then
 		opkg update
 		local upgrade_list="$(opkg list-upgradable | awk '{ printf "%s ",$1 }' 2>/dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
-			opkg install "$upgrade_list"
+			opkg install $upgrade_list
 		else
 			echo "All OpenWrt packages up to date."
 		fi
+	fi
+}
+
+macos_packages() {
+	require_root_privileges
+
+	# Test for the macOS Darwin UNIX kernel.
+	local kernel_os="$(uname -o 2> /dev/null)"
+
+	if [[ "$kernel_os" =~ "Darwin" ]] && [[ -x $(which port 2> /dev/null) ]] && [[ -x $(which softwareupdate 2> /dev/null) ]]; then
+		port -q selfupdate
+		port -q upgrade outdated
+		softwareupdate --install --all
+	fi
+}
+
+port_packages() {
+	require_root_privileges
+
+	if [[ -x $(which port 2> /dev/null) ]]; then
+		port -q selfupdate
+		port -q upgrade outdated
 	fi
 }
 
@@ -172,8 +201,8 @@ wsl2_packages() {
 
 error_kernel_release() {
 	# Test for the Microsoft Standard Windows Subsystem for Linux (WSL) kernel.
-	local kernel_release="$(uname --kernel-release)"
-	if [[ "$kernel_release" =~ .*"WSL".* ]]; then
+	local kernel_release="$(uname -r 2> /dev/null)"
+	if [[ "$kernel_release" =~ .*"WSL2" ]] ; then
 		cat <<-EOF_XYZ >&2
 		The following kernel is not supported by fwupdmgr:
 		  $kernel_release
@@ -213,6 +242,7 @@ case "$1" in
 --all)
 	apt_packages
 	dnf_packages
+	macos_packages
 	opkg_packages
 	flatpak_packages
 	snap_packages
@@ -233,6 +263,9 @@ case "$1" in
 	;;
 --openwrt | --opkg)
 	opkg_packages
+	;;
+--macos)
+	macos_packages
 	;;
 --python | --pip)
 	python3_packages
@@ -262,6 +295,7 @@ case "$1" in
 	if [[ -z "$1" ]]; then
 		apt_packages
 		dnf_packages
+		macos_packages
 		opkg_packages
 		flatpak_packages
 		snap_packages
