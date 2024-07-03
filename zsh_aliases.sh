@@ -1,11 +1,11 @@
 # Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
 
-# Helpful bash_aliases for sysadmins, developers and the forgetful.
+# Helpful zsh_aliases for sysadmins, developers and the forgetful.
 
 # Script version and release
 script_version='4.0.0'
 script_release='devel'  # options devel, beta, release, stable
-export BASH_ALIASES_VERSION="$script_version-$script_release"
+export ZSH_ALIASES_VERSION="$script_version-$script_release"
 
 # Set custom emoji prompt for user accounts.
 PS1_ORIG="$PS1"
@@ -29,17 +29,17 @@ set_emoji_ps1_prompt() {
 }
 set_emoji_ps1_prompt
 
-# User options for bash_aliases to show aliases, commands, help and version.
-bash_aliases() {
+# User options for zsh_aliases to show aliases, commands, help and version.
+zsh_aliases() {
 	show_help_message() {
 		cat <<-EOF_XYZ
-		Usage: bash_aliases | <alias> | <command> [OPTION] [PARAMETER]...
-		Helpful bash_aliases for sysadmins, developers and the forgetful.
+		Usage: zsh_aliases | <alias> | <command> [OPTION] [PARAMETER]...
+		Helpful zsh_aliases for sysadmins, developers and the forgetful.
 
-		This bash_aliases script by default (without an option) will only return
+		This zsh_aliases script by default (without an option) will only return
 		the text 'OK'. The commands section displays aliases and functions that
-		may be executed without the bash_aliases prefix, just like any other
-		installed Unix-like program or builtin utilities. This bash_aliases file
+		may be executed without the zsh_aliases prefix, just like any other
+		installed Unix-like program or builtin utilities. This zsh_aliases file
 		has only ever been tested with Ubuntu and Ubuntu under WSL2.
 
 		Aliases:
@@ -48,23 +48,14 @@ bash_aliases() {
 		 sftp-passwd - alias to prevent secure file transfer (sftp) pubkey authentication
 		 ssh-passwd - alias to prevent secure remote login (ssh) pubkey authentication
 		 speedtest - alias for Ookla (speedtest-cli) command with minimal output
-		 wsl - alias for Windows PowerShell (wsl.exe) command
-		 wslg - alias for Windows PowerShell (wslg.exe) command
 
 		Commands:
 		 adpasswd - change your Active Directory domain user password
-		 caffeinate - prevent the system suspend and hibernation timer (keep awake)
-		 decaffeinate - restore the default suspend and hibernation timer (allow sleep)
-		 open - open or edit file using the default GNOME application
-		 lvmdisplay - show the logical volume management storage details
-		 lvms - show the logical volume management storage
-		 lvmsnapshot - show example commands how to create lvm snapshots
 		 mkpsk - generate a secure random 64 character pre-shared key
 		 mkpw - generate a secure ambiguous random 14 character password
 		 mksecret - generate a secure random 512 character LUKS secret
 		 test-port - check network port and try to connect with telnet
 		 test-website - check website availability and display headers
-		 wifi-power - toggle wireless network power management
 
 		Options:
 		 --version - show version information
@@ -86,7 +77,7 @@ bash_aliases() {
 
 	show_version_information() {
 		cat <<-EOF_XYZ
-		bash_aliases $script_version-$script_release
+		zsh_aliases $script_version-$script_release
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
 		Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
@@ -95,8 +86,8 @@ bash_aliases() {
 
 	error_unrecognized_option() {
 		cat <<-EOF_XYZ
-		bash_aliases: unrecognized option '$1'
-		Try 'bash_aliases --help' for more information.
+		zsh_aliases: unrecognized option '$1'
+		Try 'zsh_aliases --help' for more information.
 		EOF_XYZ
 	}
 
@@ -119,17 +110,6 @@ bash_aliases() {
 		;;
 	esac
 }
-
-# Windows Subsystem for Linux (WSL2) specific variables and aliases.
-# Use the $NTUSER variable just like $USER from witin Linux.
-# Use the $NTHOME variable just like $HOME from witin Linux.
-
-# Set NTUSER to the Windows username if different from Linux username.
-NTUSER="$USER"
-NTHOME="/mnt/c/Users/$NTUSER"
-
-alias wsl="/mnt/c/WINDOWS/system32/wsl.exe"
-alias wslg="/mnt/c/WINDOWS/system32/wslg.exe"
 
 # Change your Active Directory domain user password.
 adpasswd() {
@@ -183,42 +163,13 @@ clean() {
 	fi
 }
 
-# Single command to disable or off the caffeinate script.
-alias decaffeinate="caffeinate off"
-
 # Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"
-
-# Similar to the macOS 'open' command.
-alias open="$(which xdg-open)"
 
 # Prevent pubkey authentication with OpenSSH related commands.
 alias scp-passwd="scp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 alias sftp-passwd="sftp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
-
-# Show the current logical volume management (lvm) storage.
-lvms() {
-	sudo pvs && echo && sudo vgs && echo && sudo lvs
-}
-
-# Display the current logical volume management (lvm) storage.
-lvmdisplay() {
-	sudo pvdisplay && echo && sudo vgdisplay && echo && sudo lvdisplay
-}
-
-# Display command reminder to create a lvm snapshot.
-lvmsnapshot() {
-	cat <<-EOF_XYZ
-	Logical volume snapshots are created using the 'lvcreate' command.
-
-	Examples:
-	 lvcreate -L 25%ORIGIN --snapshot --name snapshot_1 /dev/ubuntu/root
-	 lvcreate -L 16G -s -n snapshot_2 /dev/ubuntu/home
-
-	See lvcreate(8) for additional information.
-	EOF_XYZ
-}
 
 # Generate a secure random password.
 mkpw() {
@@ -297,18 +248,6 @@ test-port() {
 	fi
 }
 
-# Toggle wireless network power management.
-wifi-power() {
-	# The wireless network interface name.
-	local wifi_iface="wlp2s0"
-
-	if [[ -z "$1" ]]; then
-		iwconfig "$wifi_iface"
-	else
-		sudo iwconfig "$wifi_iface" power "$1"
-	fi
-}
-
 # Ookla speedtest-cli alias to display minimal output by default.
 alias speedtest="speedtest-cli --simple"
 
@@ -335,9 +274,9 @@ install-helpful-macos-shell-scripts-cli-packages() {
 	sudo port -q -c install byobu htop nmap pwgen speedtest-cli tree
 }
 
-# Include bash_private if available.
-if [[ -f "$HOME/.bash_private" ]]; then
-	source $HOME/.bash_private
+# Include zsh_private if available.
+if [[ -f "$HOME/.zsh_private" ]]; then
+	source "$HOME/.zsh_private"
 fi
 
 # vi: syntax=sh ts=2 noexpandtab

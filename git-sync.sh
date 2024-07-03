@@ -5,8 +5,8 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='1.2.0'
-script_release='release'  # options devel, beta, release, stable
+script_version='4.0.0'
+script_release='beta'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv

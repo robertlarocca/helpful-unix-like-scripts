@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright (c) 2024 Robert LaRocca <robert@laroccx.com>
 
 # Customize the GNOME desktop enviroment theme and application settings.
 
 # Script version and release
-script_version='1.0.3'
-script_release='release'  # options devel, beta, release, stable
+script_version='4.0.0'
+script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(whoami)" != "root" ]]; then

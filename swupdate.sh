@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='3.0.1'
+script_version='4.0.0'
 script_release='beta'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -156,8 +156,8 @@ macos_packages() {
 	local kernel_os="$(uname -o 2> /dev/null)"
 
 	if [[ "$kernel_os" =~ "Darwin" ]] && [[ -x $(which port 2> /dev/null) ]] && [[ -x $(which softwareupdate 2> /dev/null) ]]; then
-		port -q selfupdate
-		port -q upgrade outdated
+		port -q -R selfupdate
+		port -q -R upgrade outdated
 		softwareupdate --install --all
 	fi
 }

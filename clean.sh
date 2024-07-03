@@ -5,7 +5,7 @@
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='3.0.0'
+script_version='4.0.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {

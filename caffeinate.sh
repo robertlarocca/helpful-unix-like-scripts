@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
 
@@ -6,8 +6,8 @@
 # until reboot. Similar to the macOS 'caffeinate' command.
 
 # Script version and release
-script_version='2.0.1'
-script_release='stable'  # options devel, beta, release, stable
+script_version='4.0.0'
+script_release='beta'  # options devel, beta, release, stable
 
 # Setting blank_screen_delay to 0 (zero) disables the feature.
 blank_screen_delay_on="3600" # default is 3600 seconds
