@@ -51,6 +51,7 @@ zsh_aliases() {
 
 		Commands:
 		 adpasswd - change your Active Directory domain user password
+		 lvmsnapshot - show example commands to create lvm snapshots
 		 mkpsk - generate a secure random 64 character pre-shared key
 		 mkpw - generate a secure ambiguous random 14 character password
 		 mksecret - generate a secure random 512 character LUKS secret
@@ -133,9 +134,8 @@ adpasswd() {
 	fi
 
 	# The samba-common-bin (aka smbpasswd) packaged must be installed.
-	if [[ -x "$(which smbpasswd)" ]]; then
-		smbpasswd -U "$domain_realm"/"$domain_user" -r "$domain_controller"
-
+	if [[ -x "$(which smbpasswd 2> /dev/null)" ]]; then
+		smbpasswd -U "$domain_realm/$domain_user" -r "$domain_controller"
 		# Display reminder after changed password.
 		smbpasswd_status="$?"
 		if [[ "$smbpasswd_status" == 0 ]]; then
@@ -144,17 +144,20 @@ adpasswd() {
 	else
 		if [[ -x "/usr/lib/command-not-found" ]]; then
 			/usr/lib/command-not-found "smbpasswd"
-		elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which kpasswd)" ]]; then
-			echo "Command 'smbpasswd' not available, but 'kpasswd' on macOS should also work." 2>&1
+		elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which kpasswd 2> /dev/null)" ]]; then
+			cat <<-EOF_XYZ 2>&1
+			Command 'smbpasswd' not available, but 'kpasswd' could work on macOS:
+			kpasswd "$domain_user@$domain_realm"
+			EOF_XYZ
 		fi
 	fi
 }
 
-# Purge the current shell session history after
-# removing files using the clean command.
+# Purge the current shell session history after removing
+# files using the clean command.
 clean() {
-	# Must use absolute path to the clean script.
-	# Unfortunately the which command wont work.
+	# Unfortunately using the which command wont work here.
+	# Must use the absolute path to clean script.
 	/usr/local/bin/clean "$@"
 	if [[ "$SHELL" == "/bin/bash" ]]; then
 		history -c
@@ -166,28 +169,43 @@ clean() {
 # Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"
 
-# Prevent pubkey authentication with OpenSSH related commands.
+# Prevent pubkey authentication with OpenSSH commands.
 alias scp-passwd="scp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 alias sftp-passwd="sftp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 alias ssh-passwd="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
-# Generate a secure random password.
-mkpw() {
-	if [[ -x "$(which pwgen)" ]]; then
-		pwgen --capitalize --numerals --symbols --ambiguous 14 1
-	else
-		if [[ -x "/usr/lib/command-not-found" ]]; then
-			/usr/lib/command-not-found "pwgen"
-		elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which port)" ]]; then
-			echo "Command 'pwgen' not found, but can be installed with:" 2>&1
-			echo "sudo port install pwgen" 2>&1
-		fi
-	fi
+# Show example commands how-to create logical volume (lvm) snapshots.
+lvmsnapshot() {
+	cat <<-EOF_XYZ
+	Examples to create logical volume snapshots using the 'lvcreate' command:
+	 lvcreate --size 25%ORIGIN --snapshot --name snap1 /dev/ubuntu/root
+	 lvcreate --size 50%ORIGIN --snapshot --name snap2 /dev/ubuntu/mysql
+	 lvcreate -L 32G -s -n snap3 /dev/ubuntu/www
+	 lvcreate -L 8G -s -n snap4 /dev/ubuntu/home
+
+	See lvcreate(8) and lvremove(8) manual pages for additional information.
+	EOF_XYZ
 }
 
 # Generate a secure random pre-shared key.
 mkpsk() {
 	head -c 64 /dev/urandom | base64
+}
+
+# Generate a secure random password.
+mkpw() {
+	if [[ -x "$(which pwgen 2> /dev/null)" ]]; then
+		pwgen --capitalize --numerals --symbols --ambiguous 14 1
+	else
+		if [[ -x "/usr/lib/command-not-found" ]]; then
+			/usr/lib/command-not-found "pwgen"
+		elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which port 2> /dev/null)" ]]; then
+			cat <<-EOF_XYZ 2>&1
+			Command 'pwgen' not found, but can be installed with:
+			sudo port install pwgen
+			EOF_XYZ
+		fi
+	fi
 }
 
 # Generate a secure random LUKS device secret.
@@ -222,7 +240,7 @@ test-port() {
 	# The server address and service port are tested by default.
 	local server_address='telnet.example.com'
 	local service_port='8738'
-	if [[ -x "$(which telnet)" ]]; then
+	if [[ -x "$(which telnet 2> /dev/null)" ]]; then
 		case "$1" in
 		--port | -p)
 			telnet $server_address "$2"
@@ -232,7 +250,7 @@ test-port() {
 				telnet $server_address $service_port
 			else
 				cat <<-EOF_XYZ
-				test_port: unrecognized option '$*'
+				test-port: unrecognized option '$*'
 				Try 'test-port --port <port_number>' to check a specific port.
 				EOF_XYZ
 			fi
@@ -241,9 +259,11 @@ test-port() {
 	else
 		if [[ -x "/usr/lib/command-not-found" ]]; then
 			/usr/lib/command-not-found "telnet"
-		elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which port)" ]]; then
-			echo "Command 'telnet' not found, but can be installed with many extras:" 2>&1
-			echo "sudo port install inetutils" 2>&1
+		elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which port 2> /dev/null)" ]]; then
+			cat <<-EOF_XYZ 2>&1
+			Command 'telnet' not found, but can be installed with:
+			sudo port install inetutils
+			EOF_XYZ
 		fi
 	fi
 }
@@ -251,27 +271,24 @@ test-port() {
 # Ookla speedtest-cli alias to display minimal output by default.
 alias speedtest="speedtest-cli --simple"
 
-# Install required and helpful apt packages used by this repository.
-install-helpful-linux-shell-scripts-apt-packages() {
-	sudo apt autoclean
-	sudo apt update
-	sudo apt --yes install byobu dnsutils git htop nmap pwgen samba-common-bin speedtest-cli tasksel telnet tree whois
-}
-
-# Install required and helpful dnf packages used by this repository.
-# For legacy OS versions modify dnf to yum, otherwise just update.
-install-helpful-linux-shell-scripts-dnf-packages() {
-	sudo dnf clean all
-	sudo dnf check-update
-	sudo dnf --assumeyes install dnsutils git nmap pwgen samba-common-bin speedtest-cli telnet tree whois
-}
-
-# Install required helpful macOS and port packages used by this repository.
-install-helpful-macos-shell-scripts-cli-packages() {
-	xcode-select --install
-	sudo port -q -R selfupdate
-	sudo port -q -R upgrade outdated
-	sudo port -q -c install byobu htop nmap pwgen speedtest-cli tree
+# Install required and helpful software packages used by this repository.
+install-helpful-linux-macos-shell-scripts-packages() {
+	if [[ -x "$(which apt 2> /dev/null)" ]]; then
+		sudo apt autoclean
+		sudo apt update
+		sudo apt --yes install byobu dnsutils git htop nmap pwgen samba-common-bin speedtest-cli tasksel telnet tree whois
+	elif [[ -x "$(which dnf 2> /dev/null)" ]]; then
+		sudo dnf clean all
+		sudo dnf --assumeyes install dnsutils git nmap pwgen samba-common-bin speedtest-cli telnet tree whois
+	elif [[ -x "$(which yum 2> /dev/null)" ]]; then
+		sudo yum clean all
+		sudo yum --assumeyes install dnsutils git nmap pwgen samba-common-bin speedtest-cli telnet tree whois
+	elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which port 2> /dev/null)" ]]; then
+		xcode-select --install
+		sudo port -q -R selfupdate
+		sudo port -q -R upgrade outdated
+		sudo port -q -c install byobu htop nmap pwgen speedtest-cli tree
+	fi
 }
 
 # Include zsh_private if available.
