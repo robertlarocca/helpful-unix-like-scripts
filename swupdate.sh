@@ -19,7 +19,7 @@ if [[ -f /etc/os-release ]]; then
 fi
 
 require_root_privileges() {
-	if [[ "$(whoami)" != "root" ]]; then
+	if [[ "$(id -un)" != "root" ]]; then
 		# logger -i "Error: swupdate must be run as root!"
 		echo "Error: swupdate must be run as root!" >&2
 		exit 2
@@ -27,7 +27,7 @@ require_root_privileges() {
 }
 
 require_user_privileges() {
-	if [[ "$(whoami)" == "root" ]]; then
+	if [[ "$(id -un)" == "root" ]]; then
 		# logger -i "Error: swupdate must be run as normal user!"
 		echo "Error: swupdate must be run as normal user!" >&2
 		exit 2

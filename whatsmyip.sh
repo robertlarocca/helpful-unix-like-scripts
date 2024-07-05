@@ -9,7 +9,7 @@ script_version='4.0.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
-	if [[ "$(whoami)" != "root" ]]; then
+	if [[ "$(id -un)" != "root" ]]; then
 		# logger -i "Error: whatsmyip must be run as root!"
 		echo "Error: whatsmyip must be run as root!" >&2
 		exit 2

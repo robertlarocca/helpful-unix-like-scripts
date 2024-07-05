@@ -14,7 +14,7 @@ blank_screen_delay_on="3600" # default is 3600 seconds
 blank_screen_delay_off="300" # default is 300 seconds
 
 require_root_privileges() {
-	if [[ "$(whoami)" != "root" ]]; then
+	if [[ "$(id -un)" != "root" ]]; then
 		# logger -i "Error: caffeinate must be run as root!"
 		echo "Error: caffeinate must be run as root!" >&2
 		exit 2

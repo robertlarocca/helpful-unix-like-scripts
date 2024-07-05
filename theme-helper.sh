@@ -9,7 +9,7 @@ script_version='4.0.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
-	if [[ "$(whoami)" != "root" ]]; then
+	if [[ "$(id -un)" != "root" ]]; then
 		# logger -i "Error: theme-helper must be run as root!"
 		echo "Error: theme-helper must be run as root!" >&2
 		exit 2
@@ -17,7 +17,7 @@ require_root_privileges() {
 }
 
 require_user_privileges() {
-	if [[ "$(whoami)" == "root" ]]; then
+	if [[ "$(id -un)" == "root" ]]; then
 		# logger -i "Error: theme-helper must be run as normal user!"
 		echo "Error: theme-helper must be run as normal user!" >&2
 		exit 2

@@ -12,7 +12,7 @@ script_release='beta'  # options devel, beta, release, stable
 # set -xv
 
 require_root_privileges() {
-	if [[ "$(whoami)" != "root" ]]; then
+	if [[ "$(id -un)" != "root" ]]; then
 		# logger -i "Error: git-sync must be run as root!"
 		echo "Error: git-sync must be run as root!" >&2
 		exit 2
@@ -20,7 +20,7 @@ require_root_privileges() {
 }
 
 require_user_privileges() {
-	if [[ "$(whoami)" == "root" ]]; then
+	if [[ "$(id -un)" == "root" ]]; then
 		# logger -i "Error: git-sync must be run as normal user!"
 		echo "Error: git-sync must be run as normal user!" >&2
 		exit 2
