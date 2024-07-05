@@ -1,42 +1,42 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Install into the current user home directory.
 cp -b -S '-bak' -v $PWD/bash_aliases.sh $HOME/.bash_aliases
-chmod 0644 $HOME/.bash_aliases
+chmod 0600 $HOME/.bash_aliases
 touch $HOME/.bash_private
-chmod 0644 $HOME/.bash_private
+chmod 0600 $HOME/.bash_private
 
 # Install into the current user home directory.
 cp -b -S '-bak' -v $PWD/zsh_aliases.sh $HOME/.zsh_aliases
-chmod 0644 $HOME/.zsh_aliases
+chmod 0600 $HOME/.zsh_aliases
 touch $HOME/.zsh_private
-chmod 0644 $HOME/.zsh_private
+chmod 0600 $HOME/.zsh_private
 
 # Uncomment to install into the /root directory.
 # sudo cp -b -S '-bak' -v $PWD/bash_aliases.sh /root/.bash_aliases
-# sudo chmod 0644 /root/.bash_aliases
+# sudo chmod 0600 /root/.bash_aliases
 # sudo touch /root/.bash_private
-# sudo chmod 0644 /root/.bash_private
+# sudo chmod 0600 /root/.bash_private
 
 # Uncomment to install into the /root directory.
 # sudo cp -b -S '-bak' -v $PWD/zsh_aliases.sh /root/.zsh_aliases
-# sudo chmod 0644 /root/.zsh_aliases
+# sudo chmod 0600 /root/.zsh_aliases
 # sudo touch /root/.zsh_private
-# sudo chmod 0644 /root/.zsh_private
+# sudo chmod 0600 /root/.zsh_private
 
 # Uncomment to install into the /etc/skel directory.
 # sudo cp -b -S '-bak' -v $PWD/bash_aliases.sh /etc/skel/.bash_aliases
-# sudo chmod 0644 /etc/skel/.bash_aliases
+# sudo chmod 0600 /etc/skel/.bash_aliases
 # sudo touch /etc/skel/.bash_private
-# sudo chmod 0644 /etc/skel/.bash_private
+# sudo chmod 0600 /etc/skel/.bash_private
 
 # Uncomment to install into the /etc/skel directory.
 # sudo cp -b -S '-bak' -v $PWD/zsh_aliases.sh /etc/skel/.zsh_aliases
-# sudo chmod 0644 /etc/skel/.zsh_aliases
+# sudo chmod 0600 /etc/skel/.zsh_aliases
 # sudo touch /etc/skel/.zsh_private
-# sudo chmod 0644 /etc/skel/.zsh_private
+# sudo chmod 0600 /etc/skel/.zsh_private
 
 # Uncomment to install into the /usr/local/bin directory.
 # sudo cp -b -S '-bak' -v $PWD/caffeinate.sh /usr/local/bin/caffeinate
