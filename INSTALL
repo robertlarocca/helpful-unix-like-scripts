@@ -2,60 +2,37 @@
 
 # Copyright (c) Robert LaRocca, http://www.laroccx.com
 
-# Install into the current user home directory.
-cp -b -S '-bak' -v $PWD/bash_aliases.sh $HOME/.bash_aliases
-chmod 0600 $HOME/.bash_aliases
-touch $HOME/.bash_private
-chmod 0600 $HOME/.bash_private
+## Uncomment to install into the ~/ directory.
+mv -v $HOME/.bash_aliases $HOME/.bash_aliases-bak
+cp -v $PWD/bash_aliases.sh $HOME/.bash_aliases && chmod 0600 $HOME/.bash_aliases*
+touch $HOME/.bash_private && chmod 0600 $HOME/.bash_private*
 
-# Install into the current user home directory.
-cp -b -S '-bak' -v $PWD/zsh_aliases.sh $HOME/.zsh_aliases
-chmod 0600 $HOME/.zsh_aliases
-touch $HOME/.zsh_private
-chmod 0600 $HOME/.zsh_private
+mv -v $HOME/.zsh_aliases $HOME/.zsh_aliases-bak
+cp -v $PWD/zsh_aliases.sh $HOME/.zsh_aliases && chmod 0600 $HOME/.zsh_aliases*
+touch $HOME/.zsh_private && chmod 0600 $HOME/.zsh_private*
 
-# Uncomment to install into the /root directory.
-# sudo cp -b -S '-bak' -v $PWD/bash_aliases.sh /root/.bash_aliases
-# sudo chmod 0600 /root/.bash_aliases
-# sudo touch /root/.bash_private
-# sudo chmod 0600 /root/.bash_private
+## Uncomment to install into the /root directory.
+# sudo mv -v /root/.bash_aliases /root/.bash_aliases-bak
+# sudo cp -v $PWD/bash_aliases.sh /root/.bash_aliases && sudo chmod 0600 /root/.bash_aliases*
+# sudo touch /root/.bash_private && sudo chmod 0600 /root/.bash_private*
 
-# Uncomment to install into the /root directory.
-# sudo cp -b -S '-bak' -v $PWD/zsh_aliases.sh /root/.zsh_aliases
-# sudo chmod 0600 /root/.zsh_aliases
-# sudo touch /root/.zsh_private
-# sudo chmod 0600 /root/.zsh_private
+# sudo mv -v /root/.zsh_aliases /root/.zsh_aliases-bak
+# sudo cp -v $PWD/zsh_aliases.sh /root/.zsh_aliases && sudo chmod 0600 /root/.zsh_aliases*
+# sudo touch /root/.zsh_private && sudo chmod 0600 /root/.zsh_private*
 
-# Uncomment to install into the /etc/skel directory.
-# sudo cp -b -S '-bak' -v $PWD/bash_aliases.sh /etc/skel/.bash_aliases
-# sudo chmod 0600 /etc/skel/.bash_aliases
-# sudo touch /etc/skel/.bash_private
-# sudo chmod 0600 /etc/skel/.bash_private
+## Uncomment to install into the /etc/skel directory.
+# sudo cp -v $PWD/bash_aliases.sh /etc/skel/.bash_aliases && sudo chmod 0600 /etc/skel/.bash_aliases*
+# sudo touch /etc/skel/.bash_private && sudo chmod 0600 /etc/skel/.bash_private*
 
-# Uncomment to install into the /etc/skel directory.
-# sudo cp -b -S '-bak' -v $PWD/zsh_aliases.sh /etc/skel/.zsh_aliases
-# sudo chmod 0600 /etc/skel/.zsh_aliases
-# sudo touch /etc/skel/.zsh_private
-# sudo chmod 0600 /etc/skel/.zsh_private
+# sudo cp -v $PWD/zsh_aliases.sh /etc/skel/.zsh_aliases && sudo chmod 0600 /etc/skel/.zsh_aliases*
+# sudo touch /etc/skel/.zsh_private && sudo chmod 0600 /etc/skel/.zsh_private*
 
-# Uncomment to install into the /usr/local/bin directory.
-# sudo cp -b -S '-bak' -v $PWD/caffeinate.sh /usr/local/bin/caffeinate
-# sudo chmod 0755 /usr/local/bin/caffeinate
-
-sudo cp -b -S '-bak' -v $PWD/clean.sh /usr/local/bin/clean
-sudo chmod 0755 /usr/local/bin/clean
-
-sudo cp -b -S '-bak' -v $PWD/git-sync.sh /usr/local/bin/git-sync
-sudo chmod 0755 /usr/local/bin/git-sync
-
-sudo cp -b -S '-bak' -v $PWD/swupdate.sh /usr/local/bin/swupdate
-sudo chmod 0755 /usr/local/bin/swupdate
-
-# Uncomment to install into the /usr/local/bin directory.
-# sudo cp -b -S '-bak' -v $PWD/theme-helper.sh /usr/local/bin/theme-helper
-# sudo chmod 0755 /usr/local/bin/theme-helper
-
-sudo cp -b -S '-bak' -v $PWD/whatsmyip.sh /usr/local/bin/whatsmyip
-sudo chmod 0755 /usr/local/bin/whatsmyip
+## Uncomment to install into the /usr/local/bin directory.
+# sudo cp -v $PWD/caffeinate.sh /usr/local/bin/caffeinate && sudo chmod 0755 /usr/local/bin/caffeinate
+# sudo cp -v $PWD/theme-helper.sh /usr/local/bin/theme-helper && sudo chmod 0755 /usr/local/bin/theme-helper
+sudo cp -v $PWD/clean.sh /usr/local/bin/clean && sudo chmod 0755 /usr/local/bin/clean
+sudo cp -v $PWD/git-sync.sh /usr/local/bin/git-sync && sudo chmod 0755 /usr/local/bin/git-sync
+sudo cp -v $PWD/swupdate.sh /usr/local/bin/swupdate && sudo chmod 0755 /usr/local/bin/swupdate
+sudo cp -v $PWD/whatsmyip.sh /usr/local/bin/whatsmyip && sudo chmod 0755 /usr/local/bin/whatsmyip
 
 # vi: syntax=sh ts=2 noexpandtab
