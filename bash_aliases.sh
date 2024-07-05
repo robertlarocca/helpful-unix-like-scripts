@@ -309,18 +309,18 @@ install-helpful-linux-macos-shell-scripts-packages() {
 	if [[ -x "$(which apt 2> /dev/null)" ]]; then
 		sudo apt autoclean
 		sudo apt update
-		sudo apt --yes install byobu dnsutils git htop nmap pwgen samba-common-bin speedtest-cli tasksel telnet tree whois
+		sudo apt --yes install byobu dnsutils git htop iperf3 nmap pwgen samba-common-bin speedtest-cli telnet tree whois
 	elif [[ -x "$(which dnf 2> /dev/null)" ]]; then
 		sudo dnf clean all
-		sudo dnf --assumeyes install dnsutils git nmap pwgen samba-common-bin speedtest-cli telnet tree whois
+		sudo dnf --assumeyes install dnsutils git htop iperf3 nmap pwgen samba-common-bin speedtest-cli telnet tree whois
 	elif [[ -x "$(which yum 2> /dev/null)" ]]; then
 		sudo yum clean all
-		sudo yum --assumeyes install dnsutils git nmap pwgen samba-common-bin speedtest-cli telnet tree whois
+		sudo yum --assumeyes install dnsutils git htop iperf3 nmap pwgen samba-common-bin speedtest-cli telnet tree whois
 	elif [[ "$(uname -s)" == "Darwin" ]] && [[ -x "$(which port 2> /dev/null)" ]]; then
 		xcode-select --install
 		sudo port -q -R selfupdate
 		sudo port -q -R upgrade outdated
-		sudo port -q -c install byobu htop nmap pwgen speedtest-cli tree
+		sudo port -q -c install byobu htop iperf3 nmap pwgen speedtest-cli tree
 	fi
 }
 
