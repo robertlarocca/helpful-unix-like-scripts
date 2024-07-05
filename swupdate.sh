@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2023 Robert LaRocca https://www.laroccx.com
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Update apt packages, snaps, flatpaks, firmware or upgrade
 # to the next operating system release.
@@ -73,7 +73,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 
 	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8)
 	for additional information and to provide insight how this wrapper works.
@@ -85,7 +85,7 @@ show_version_information() {
 	swupdate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 	EOF_XYZ
 }
 

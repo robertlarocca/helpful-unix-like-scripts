@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2024 Robert LaRocca <robert@laroccx.com>
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Customize the GNOME desktop enviroment theme and application settings.
 
@@ -51,7 +51,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 
 	See apt(8) apt-config(8) dpkg(1) dpkg-reconfigure(8) for additonal
 	information and to provide insight how this wrapper works.
@@ -63,7 +63,7 @@ show_version_information() {
 	theme-helper $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 	EOF_XYZ
 }
 

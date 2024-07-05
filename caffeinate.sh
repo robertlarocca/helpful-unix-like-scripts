@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Prevent idle system sleep (blank screen), suspend, and hibernation
 # until reboot. Similar to the macOS 'caffeinate' command.
@@ -44,7 +44,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts-aliases
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 
 	See systemctl(1) for additonal information and to provide insight
 	how this script works.
@@ -56,7 +56,7 @@ show_version_information() {
 	caffeinate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts-aliases
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 	EOF_XYZ
 }
 

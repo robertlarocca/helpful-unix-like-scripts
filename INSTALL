@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Install into the current user home directory.
 cp -b -S '-bak' -v $PWD/bash_aliases.sh $HOME/.bash_aliases

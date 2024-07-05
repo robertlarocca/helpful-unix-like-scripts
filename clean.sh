@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2023 Robert LaRocca https://www.laroccx.com
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Remove history files created using the GNU History Library.
 
@@ -66,7 +66,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 	EOF_XYZ
 }
 
@@ -75,7 +75,7 @@ show_version_information() {
 	clean $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 	EOF_XYZ
 }
 

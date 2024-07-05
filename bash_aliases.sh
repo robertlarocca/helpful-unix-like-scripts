@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Robert LaRocca http://www.laroccx.com
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Helpful bash_aliases for sysadmins, developers and the forgetful.
 

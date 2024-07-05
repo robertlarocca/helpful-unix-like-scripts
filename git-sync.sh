@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2023 Robert LaRocca <robert@laroccx.com>
+# Copyright (c) Robert LaRocca, http://www.laroccx.com
 
 # Synchronize all Git repositories in the current directory or the list of directories.
 
@@ -56,7 +56,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 
 	See git(1) git-pull(1) git-fetch(1) git-push(1) and gittutorial(7) for
 	additonal information and to provide insight how this wrapper works.
@@ -69,7 +69,7 @@ show_version_information() {
 	git-sync $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-bash-scripts
+	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 	EOF_XYZ
 	exit 0
 }
