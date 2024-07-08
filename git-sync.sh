@@ -94,8 +94,8 @@ check_binary_exists() {
 			dnf install "$binary_command"   # or
 			opkg install "$binary_command"  # or
 			snap install "$binary_command"  # or
-			yum install "$binary_command"
-			See your Linux documentation for which 'package manager' to use.
+			xcode-select --install
+			See your Linux or macOS documentation for which 'package manager' to use.
 			EOF_XYZ
 		fi
 		exit 1
@@ -125,19 +125,27 @@ sync_directory() {
 		if [[ -s "$orig_path/.git/config" ]]; then
 			git_pull_fetch_push_clone
 			return
+		else
+			# echo "git-sync: Not a git repository" >&2
+			exit 1
 		fi
 	else
-		export orig_path="$PWD"
-		export sync_path="$(realpath $1)"
-		if [[ -s "$sync_path/.git/config" ]]; then
-			cd "$sync_path"
-			git_pull_fetch_push_clone
-			cd "$orig_path"
-			return
+		if [[ -d "$1" ]]; then
+			export orig_path="$PWD"
+			export sync_path="$(realpath $1 2> /dev/null)"
+			if [[ -s "$sync_path/.git/config" ]]; then
+				cd "$sync_path"
+				git_pull_fetch_push_clone
+				cd "$orig_path"
+				return
+			fi
+		else
+			echo "git-sync: $1: No such file or directory" >&2
+			exit 1
 		fi
 	fi
 
-	for i in $(ls -1 "$sync_path"); do
+	for i in $(ls -1 "$sync_path" 2> /dev/null); do
 		if [[ ! "$PWD" -ef "$orig_path" ]]; then
 			cd "$orig_path"
 		fi
@@ -145,7 +153,6 @@ sync_directory() {
 		if [[ -s "$sync_path/$i/.git/config" ]]; then
 			cd "$sync_path/$i"
 			git_pull_fetch_push_clone
-			# echo
 		fi
 	done
 
@@ -167,8 +174,7 @@ sync_list() {
 		exit 2
 	fi
 
-	grep -v -E '^#|^;|^ ' "$conf_path" \
-	| while read -r line; do
+	grep -v -E '^#|^;|^ ' "$conf_path" | while read -r line; do
 		sync_directory "$line"
 	done
 
@@ -178,10 +184,10 @@ sync_list() {
 sync_upstream() {
 	if [[ -z "$1" ]]; then
 		echo "git-sync: No upstream repository URL" >&2
-		exit 2
+		exit 1
+	else
+		git_add_fetch_merge_upstream "$1"
 	fi
-
-	git_add_fetch_merge_upstream "$1"
 }
 
 check_binary_exists git
@@ -189,6 +195,9 @@ check_binary_exists git
 case "$1" in
 --all)
 	sync_list
+	;;
+--repo | --repos)
+	sync_directory "$2"
 	;;
 --upstream)
 	sync_upstream "$2"
