@@ -1,6 +1,6 @@
 # Copyright (c) Robert LaRocca, http://www.laroccx.com
 
-# Helpful bash_aliases for sysadmins, developers and the forgetful.
+# Helpful aliases for bash sysadmins, developers and the forgetful.
 
 # Script version and release
 script_version='4.0.0'
@@ -165,7 +165,10 @@ clean() {
 	# Unfortunately using the which command wont work here.
 	# Must use the absolute path to clean script.
 	/usr/local/bin/clean "$@"
-	if [[ "$SHELL" == "/bin/bash" ]]; then
+	if [[ "$SHELL" == "/bin/ash" ]]; then
+		echo "WARN: Cannot purge ash (busybox) history buffer." 2>&1
+		# history -{c,p}
+	elif [[ "$SHELL" == "/bin/bash" ]]; then
 		history -c
 	elif [[ "$SHELL" == "/bin/zsh" ]]; then
 		history -p
