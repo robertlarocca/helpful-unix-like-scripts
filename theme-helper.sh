@@ -27,7 +27,7 @@ require_user_privileges() {
 show_help_message() {
 	cat <<-EOF_XYZ
 	Usage: theme-helper [OPTION]...
-	Easily customize the GNOME desktop enviroment theme and application
+	Easily customize the GNOME desktop environment theme and application
 	settings. This script also configures apt (dpkg) post-invoke to run
 	after installing and upgrading packages.
 
@@ -53,7 +53,7 @@ show_help_message() {
 	License: The MIT License (MIT)
 	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
 
-	See apt(8) apt-config(8) dpkg(1) dpkg-reconfigure(8) for additonal
+	See apt(8) apt-config(8) dpkg(1) dpkg-reconfigure(8) for additional
 	information and to provide insight how this wrapper works.
 	EOF_XYZ
 }
@@ -77,7 +77,7 @@ error_unrecognized_option() {
 configure_dpkg_invoke() {
 	if [[ ! -f "/etc/apt/apt.conf.d/80theme-helper" ]]; then
 		cat <<-EOF_XYZ > /etc/apt/apt.conf.d/80theme-helper
-		# Customize the GNOME desktop enviroment theme and application settings.
+		# Customize the GNOME desktop environment theme and application settings.
 		DPkg::Post-Invoke {"$(which $0) 2> /dev/null";};
 		EOF_XYZ
 	fi
