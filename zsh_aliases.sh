@@ -4,7 +4,7 @@
 
 # Script version and release
 script_version='4.0.0'
-script_release='devel'  # options devel, beta, release, stable
+script_release='release'  # options devel, beta, release, stable
 export ZSH_ALIASES_VERSION="$script_version-$script_release"
 
 # Set custom emoji prompt for user accounts.
@@ -160,8 +160,8 @@ clean() {
 	# Must use the absolute path to clean script.
 	/usr/local/bin/clean "$@"
 	if [[ "$SHELL" == "/bin/ash" ]]; then
+		clear
 		echo "WARN: Cannot purge ash (busybox) history buffer." 2>&1
-		# history -{c,p}
 	elif [[ "$SHELL" == "/bin/bash" ]]; then
 		history -c
 	elif [[ "$SHELL" == "/bin/zsh" ]]; then

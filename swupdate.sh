@@ -7,7 +7,7 @@
 
 # Script version and release
 script_version='4.0.0'
-script_release='beta'  # options devel, beta, release, stable
+script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv

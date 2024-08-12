@@ -6,7 +6,7 @@
 
 # Script version and release
 script_version='4.0.0'
-script_release='beta'  # options devel, beta, release, stable
+script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(id -un)" != "root" ]]; then
@@ -52,6 +52,7 @@ show_help_message() {
 	 lesshst
 	 mysql_history
 	 nano search_history
+	 psql_history
 	 python_history
 	 rediscli_history
 	 viminfo
@@ -97,6 +98,7 @@ remove_all_history() {
 	rm -f $HOME/.local/share/nano/search_history
 	rm -f $HOME/.motd_shown
 	rm -f $HOME/.mysql_history
+	rm -f $HOME/.psql_history
 	rm -f $HOME/.python_history
 	rm -f $HOME/.rediscli_history
 	rm -f $HOME/.selected_editor
@@ -121,6 +123,7 @@ remove_most_history() {
 	rm -f $HOME/.bash_history
 	rm -f $HOME/.lesshst
 	rm -f $HOME/.mysql_history
+	rm -f $HOME/.psql_history
 	rm -f $HOME/.python_history
 	rm -f $HOME/.rediscli_history
 	rm -f $HOME/.wget-hsts
