@@ -5,7 +5,7 @@
 # Customize the GNOME desktop enviroment theme and application settings.
 
 # Script version and release
-script_version='4.0.0'
+script_version='4.0.1'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -24,7 +24,7 @@ require_user_privileges() {
 	fi
 }
 
-show_help_message() {
+show_help() {
 	cat <<-EOF_XYZ
 	Usage: theme-helper [OPTION]...
 	Easily customize the GNOME desktop environment theme and application
@@ -51,7 +51,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 
 	See apt(8) apt-config(8) dpkg(1) dpkg-reconfigure(8) for additional
 	information and to provide insight how this wrapper works.
@@ -63,7 +63,7 @@ show_version_information() {
 	theme-helper $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 	EOF_XYZ
 }
 
@@ -176,7 +176,7 @@ version)
 	show_version_information
 	;;
 help | --help)
-	show_help_message
+	show_help
 	;;
 *)
 	if [[ -z "$1" ]]; then

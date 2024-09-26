@@ -3,7 +3,7 @@
 # Helpful aliases for bash sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.0.0'
+script_version='4.0.1'
 script_release='release'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -31,7 +31,7 @@ set_emoji_ps1_prompt
 
 # User options for bash_aliases to show aliases, commands, help and version.
 bash_aliases() {
-	show_help_message() {
+	show_help() {
 		cat <<-EOF_XYZ
 		Usage: bash_aliases | <alias> | <command> [OPTION] [PARAMETER]...
 		Helpful bash_aliases for sysadmins, developers and the forgetful.
@@ -75,7 +75,7 @@ bash_aliases() {
 
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
-		Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+		Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 
 		See bash(1) csh(1) dash(1) zsh(1) man(1) nologin(8) and os-release(5)
 		for additional information and for insights into how this script works.
@@ -87,7 +87,7 @@ bash_aliases() {
 		bash_aliases $script_version-$script_release
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
-		Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+		Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 		EOF_XYZ
 	}
 
@@ -103,7 +103,7 @@ bash_aliases() {
 		show_version_information
 		;;
 	--help)
-		show_help_message
+		show_help
 		;;
 	*)
 		# Default
@@ -308,7 +308,7 @@ alias wsl="/mnt/c/WINDOWS/system32/wsl.exe"
 alias wslg="/mnt/c/WINDOWS/system32/wslg.exe"
 
 # Install required and helpful software packages used by this repository.
-install-helpful-linux-macos-shell-scripts-packages() {
+install-helpful-unix-like-shell-scripts-packages() {
 	if [[ -x "$(which apt 2> /dev/null)" ]]; then
 		sudo apt autoclean
 		sudo apt update

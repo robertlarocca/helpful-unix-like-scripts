@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='4.0.0'
+script_version='4.0.1'
 script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -34,7 +34,7 @@ require_user_privileges() {
 	fi
 }
 
-show_help_message() {
+show_help() {
 	cat <<-EOF_XYZ
 	Usage: swupdate [OPTION]...
 	Easily update Debian and Red Hat based operating systems. All the
@@ -73,7 +73,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 
 	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8)
 	for additional information and to provide insight how this wrapper works.
@@ -85,7 +85,7 @@ show_version_information() {
 	swupdate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 	EOF_XYZ
 }
 
@@ -291,7 +291,7 @@ case "$1" in
 	show_version_information
 	;;
 --help)
-	show_help_message
+	show_help
 	;;
 *)
 	if [[ -z "$1" ]]; then

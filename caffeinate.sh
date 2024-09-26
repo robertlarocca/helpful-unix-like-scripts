@@ -6,7 +6,7 @@
 # until reboot. Similar to the macOS 'caffeinate' command.
 
 # Script version and release
-script_version='4.0.0'
+script_version='4.0.1'
 script_release='release'  # options devel, beta, release, stable
 
 # Setting blank_screen_delay to 0 (zero) disables the feature.
@@ -21,7 +21,7 @@ require_root_privileges() {
 	fi
 }
 
-show_help_message() {
+show_help() {
 	cat <<-EOF_XYZ
 	Usage: caffeinate [OPTION]...
 	Prevent this system from entering sleep, suspend and hibernate targets.
@@ -44,7 +44,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 
 	See systemctl(1) for additonal information and to provide insight
 	how this script works.
@@ -56,7 +56,7 @@ show_version_information() {
 	caffeinate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 	EOF_XYZ
 }
 
@@ -114,7 +114,7 @@ version)
 	show_version_information
 	;;
 help | --help)
-	show_help_message
+	show_help
 	;;
 *)
 	if [[ -z "$1" ]]; then

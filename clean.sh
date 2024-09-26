@@ -5,7 +5,7 @@
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='4.0.0'
+script_version='4.0.1'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -16,7 +16,7 @@ require_root_privileges() {
 	fi
 }
 
-show_help_message() {
+show_help() {
 	cat <<-EOF_XYZ
 	Usage: clean [OPTION] [TIME] [WALL]...
 	Remove all the known history files in the user home directory.
@@ -67,7 +67,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 	EOF_XYZ
 }
 
@@ -76,7 +76,7 @@ show_version_information() {
 	clean $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 	EOF_XYZ
 }
 
@@ -202,7 +202,7 @@ case "$1" in
 	show_version_information
 	;;
 --help)
-	show_help_message
+	show_help
 	;;
 *)
 	if [[ -z "$1" ]]; then

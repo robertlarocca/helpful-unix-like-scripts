@@ -5,7 +5,7 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='4.0.0'
+script_version='4.0.1'
 script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -27,7 +27,7 @@ require_user_privileges() {
 	fi
 }
 
-show_help_message() {
+show_help() {
 	cat <<-EOF_XYZ
 	Usage: git-sync [OPTION] <URI>...
 	Easily synchronize cloned Git repositories on the local filesystem
@@ -35,16 +35,19 @@ show_help_message() {
 	current directory is synchronized unless another option is provided.
 
 	Options:
-	 --all		synchronize all repositories in configuration list
-	 --upstream	synchronize and merge upstream repository
+	 --all       Synchronize all repositories in configuration file
+	 --repo      Synchronize all repositories in provided path
+	 --upstream  Synchronize and merge upstream repository
 
-	 --version	show version information
-	 --help		show this help message
+	 --version   Display version information
+	 --help      Display this help message
 
 	Examples:
 	 git-sync
 	 git-sync /path/to/repo/
 	 git-sync /path/to/repos/
+	 git-sync --repo /path/to/repo/
+	 git-sync --repo /path/to/repos/
 	 git-sync --all
 	 git-sync --upstream git@example.com/project-repo.git
 	 git-sync --upstream https://example.com/project-repo.git
@@ -56,7 +59,7 @@ show_help_message() {
 
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 
 	See git(1) git-pull(1) git-fetch(1) git-push(1) and gittutorial(7) for
 	additonal information and to provide insight how this wrapper works.
@@ -64,12 +67,12 @@ show_help_message() {
 	exit 0
 }
 
-show_version_information() {
+show_version() {
 	cat <<-EOF_XYZ
 	git-sync $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-linux-macos-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
 	EOF_XYZ
 	exit 0
 }
@@ -95,7 +98,8 @@ check_binary_exists() {
 			opkg install "$binary_command"  # or
 			snap install "$binary_command"  # or
 			xcode-select --install
-			See your Linux or macOS documentation for which 'package manager' to use.
+
+			See your Unix-like operating system documentation for which 'package manager' to use.
 			EOF_XYZ
 		fi
 		exit 1
@@ -165,8 +169,8 @@ sync_directory() {
 }
 
 sync_list() {
-	if [[ -s "/etc/gitsync.conf" ]]; then
-		export conf_path="/etc/gitsync.conf"
+	if [[ -s "/etc/gitsync" ]]; then
+		export conf_path="/etc/gitsync"
 	elif [[ -s "$HOME/.gitsync" ]]; then
 		export conf_path="$HOME/.gitsync"
 	else
@@ -203,10 +207,10 @@ case "$1" in
 	sync_upstream "$2"
 	;;
 --version)
-	show_version_information
+	show_version
 	;;
 --help)
-	show_help_message
+	show_help
 	;;
 *)
 	sync_directory "$1"
@@ -215,4 +219,4 @@ esac
 
 exit 0
 
-# vi: syntax=sh ts=2 noexpandtab
+# vi: syntax=sh ts=4 noexpandtab
