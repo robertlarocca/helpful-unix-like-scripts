@@ -5,8 +5,8 @@
 # Synchronize all Git repositories in the current directory or the list of directories.
 
 # Script version and release
-script_version='4.0.1'
-script_release='release'  # options devel, beta, release, stable
+script_version='4.1.0'
+script_release='devel'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv
@@ -33,6 +33,10 @@ show_help() {
 	Easily synchronize cloned Git repositories on the local filesystem
 	or forked repositories with upstream on the internet. By default the
 	current directory is synchronized unless another option is provided.
+
+	When a empty .gitsync-ignore file exists in the repository directory,
+	it will prevent git-sync from syncing even if the repository path is
+	saved in the ~/.gitsync or /etc/gitsync configuration files.
 
 	Options:
 	 --all       Synchronize all repositories in configuration file
@@ -106,6 +110,10 @@ check_binary_exists() {
 	fi
 }
 
+sync_ignore() {
+	echo "Ignoring $(basename $PWD)..."
+}
+
 git_pull_fetch_push_clone() {
 	echo "Synchronizing $(basename $PWD)..."
 	git pull
@@ -127,10 +135,14 @@ sync_directory() {
 		export orig_path="$PWD"
 		export sync_path="$PWD"
 		if [[ -s "$orig_path/.git/config" ]]; then
-			git_pull_fetch_push_clone
-			return
+			if [[ -f "$orig_path/.gitsync-ignore" ]]; then
+				sync_ignore
+				return
+			else
+				git_pull_fetch_push_clone
+				return
+			fi
 		else
-			# echo "git-sync: Not a git repository" >&2
 			exit 1
 		fi
 	else
@@ -138,10 +150,17 @@ sync_directory() {
 			export orig_path="$PWD"
 			export sync_path="$(realpath $1 2> /dev/null)"
 			if [[ -s "$sync_path/.git/config" ]]; then
-				cd "$sync_path"
-				git_pull_fetch_push_clone
-				cd "$orig_path"
-				return
+				if [[ -f "$sync_path/.gitsync-ignore" ]]; then
+					cd "$sync_path"
+					sync_ignore
+					cd "$orig_path"
+					return
+				else
+					cd "$sync_path"
+					git_pull_fetch_push_clone
+					cd "$orig_path"
+					return
+				fi
 			fi
 		else
 			echo "git-sync: $1: No such file or directory" >&2
@@ -155,8 +174,13 @@ sync_directory() {
 		fi
 
 		if [[ -s "$sync_path/$i/.git/config" ]]; then
-			cd "$sync_path/$i"
-			git_pull_fetch_push_clone
+			if [[ -f "$sync_path/$i/.gitsync-ignore" ]]; then
+				cd "$sync_path/$i"
+				sync_ignore
+			else
+				cd "$sync_path/$i"
+				git_pull_fetch_push_clone
+			fi
 		fi
 	done
 
