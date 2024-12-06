@@ -170,19 +170,19 @@ clean() {
 	if [[ "$SHELL" == "/bin/ash" ]]; then
 		clear
 		echo "Warning: Cannot purge ash (busybox) history buffer." 2>&1
-		if [[ $exit_shell == "__EXIT__" ]]; then
+		if [[ $exit_shell == "5" ]]; then
 			sleep 1
 			exit
 		fi
 	elif [[ "$SHELL" == "/bin/bash" ]]; then
 		history -c
-		if [[ $exit_shell == "__EXIT__" ]]; then
+		if [[ $exit_shell == "5" ]]; then
 			sleep 1
 			exit
 		fi
 	elif [[ "$SHELL" == "/bin/zsh" ]]; then
 		history -p
-		if [[ $exit_shell == "__EXIT__" ]]; then
+		if [[ $exit_shell == "5" ]]; then
 			sleep 1
 			exit
 		fi

@@ -6,7 +6,7 @@
 # This source code is governed by a MIT-style license that can be found
 # in the included LICENSE file. If not, see <https://mit-license.org/>.
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __release__ = "beta" # options devel, beta, release, stable
 
 import argparse
@@ -57,7 +57,7 @@ def show_test():
     exit(0)
 
 def show_help():
-    print(f"usage: {script_filename} [-maAPR] [-c] [-xrsz] [-T] [-h] [-v]")
+    print(f"usage: {script_filename} [-aAmPR] [-c] [-xrsz] [-T] [-h] [-v]")
     exit(0)
 
 def show_version():
@@ -177,7 +177,7 @@ def sleep_host():
 
 def exit_shell():
     os.system("exit")
-    exit("__EXIT__")
+    exit(5)
 
 
 def main():
