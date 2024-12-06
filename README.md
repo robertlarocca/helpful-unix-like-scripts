@@ -26,6 +26,9 @@ Install the `bash_aliases`, `zsh_aliases`, and others scripts using the included
 When using the default `zsh` shell on newer macOS releases. You will likely, need to add the following code snippet to the hidden `~/.zshrc` file.
 
 ```shell
+# Disable the sessions save and restore mechanism.
+SHELL_SESSIONS_DISABLE=1
+
 # Include zsh_aliases if available.
 if [[ -f "$HOME/.zsh_aliases" ]]; then
 	source "$HOME/.zsh_aliases"
@@ -42,6 +45,9 @@ Here's my **custom** `~/.zshrc` file, which includes some other helpful aliases 
 zstyle ":completion:*" completer _complete _ignored
 zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit; compinit
+
+# Disable the sessions save and restore mechanism.
+SHELL_SESSIONS_DISABLE=1
 
 # Enable default text editor
 export EDITOR="nano"
