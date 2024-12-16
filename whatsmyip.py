@@ -17,11 +17,10 @@ import sys
 SCRIPT_FILE = os.path.basename(__file__)
 SCRIPT_NAME = str("whatsmyip")
 
-SCRIPT_VERSION = str("1.0.1")
+SCRIPT_VERSION = str("1.0.2")
 SCRIPT_RELEASE = str("beta")  # Options: devel, beta, release, stable
 
-# Set the default IP protocol version and webservice URL.
-IP_PROTOCOL = str("")
+# Set the IP lookup webservice URL.
 IP_SERVICE = str("https://ifconfig.co")
 
 # ----- Required global variables ----- #
@@ -32,10 +31,18 @@ parser = argparse.ArgumentParser(
     add_help=True
 )
 parser.add_argument("-v", "--version", help="show version and exit", action="store_true")
-parser.add_argument("-a", "--all", help="use IPv4 and IPv6 protocols", action="store_true")
-parser.add_argument("-4", "--ipv4", help="use IPv4 protocol", action="store_true")
-parser.add_argument("-6", "--ipv6", help="use IPv6 protocol", action="store_true")
-parser.add_argument("--json", help="show geolocation metadata as json", action="store_true")
+parser.add_argument("-a", "--all", help="IPv4 and IPv6 addresses", action="store_true")
+parser.add_argument("-4", "--ipv4", help="IPv4 address", action="store_true")
+parser.add_argument("-6", "--ipv6", help="IPv6 address", action="store_true")
+parser.add_argument("--country", help="country name", action="store_true")
+parser.add_argument("--iso", help="country ISO code", action="store_true")
+parser.add_argument("--region", help="region (aka state) name", action="store_true")
+parser.add_argument("--city", help="city name", action="store_true")
+parser.add_argument("--zip", help="ZIP (aka postal) code", action="store_true")
+parser.add_argument("--timezone", help="timezone name", action="store_true")
+parser.add_argument("--asn", help="ASN code", action="store_true")
+parser.add_argument("--isp", help="ISP name", action="store_true")
+parser.add_argument("--json", help="all metadata as json", action="store_true")
 args = parser.parse_args()
 
 
@@ -55,10 +62,12 @@ def show_ips():
         f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s6 {IP_SERVICE}/ip"
     ).read().rstrip()
 
-    if args.ipv4 or args.all and inet4:
-        print("IPv4: " + inet4)
-    if args.ipv6 or args.all and inet6:
-        print("IPv6: " + inet6)
+    if inet4:
+        if args.ipv4 or args.all:
+            print("IPv4: " + inet4)
+    if inet6:
+        if args.ipv6 or args.all:
+            print("IPv6: " + inet6)
 
 
 def show_metadata():
@@ -69,6 +78,22 @@ def show_metadata():
     metadata = json.loads(inet)
 
     if inet and metadata:
+        if args.country:
+            print("Country: " + metadata["country"])
+        if args.iso:
+            print("ISO: " + metadata["country_iso"])
+        if args.region:
+            print("Region: " + metadata["region_name"])
+        if args.city:
+            print("City: " + metadata["city"])
+        if args.zip:
+            print("ZIP: " + metadata["zip_code"])
+        if args.timezone:
+            print("TZ: " + metadata["time_zone"])
+        if args.asn:
+            print("ASN: " + metadata["asn"])
+        if args.isp:
+            print("ISP: " + metadata["asn_org"])
         if args.json:
             print(inet)
 
