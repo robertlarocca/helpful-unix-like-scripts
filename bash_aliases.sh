@@ -171,8 +171,13 @@ clean() {
 		echo "Warning: Cannot purge ash (BusyBox) history buffer." 2>&1
 	fi
 
+	if [[ "$clean_status" -ge "4" ]]; then
+		history -c 2> /dev/null
+		history -p 2> /dev/null
+	fi
+
 	if [[ "$clean_status" -ge "5" ]]; then
-		exit
+		exit 2> /dev/null
 	fi
 }
 

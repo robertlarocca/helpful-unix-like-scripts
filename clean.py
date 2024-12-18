@@ -15,9 +15,9 @@ import sys
 # ----- Required global variables ----- #
 
 SCRIPT_FILE = os.path.basename(__file__)
-SCRIPT_NAME = str("Clean")
+SCRIPT_NAME = str("clean")
 
-SCRIPT_VERSION = str("1.0.2")
+SCRIPT_VERSION = str("1.0.3")
 SCRIPT_RELEASE = str("beta")  # Options: devel, beta, release, stable
 
 USER_HOME = os.path.expanduser("~")
@@ -179,6 +179,7 @@ def clear_history():
     if os.name == "posix":
         os.system("history -c 2> /dev/null")
         os.system("history -p 2> /dev/null")
+        return 4
 
 
 def clear_screen():
@@ -187,6 +188,7 @@ def clear_screen():
         os.system("clear 2> /dev/null")
     elif os.name == "nt":
         os.system("cls")
+    return 0
 
 
 def reboot_host():
@@ -201,6 +203,7 @@ def reboot_host():
             os.system("shutdown.exe /r /t 0")
         except Exception:
             sys.exit(1)
+    return 0
 
 
 def shutdown_host():
@@ -215,6 +218,7 @@ def shutdown_host():
             os.system("shutdown.exe /s /t 0")
         except Exception:
             sys.exit(1)
+    return 0
 
 
 def sleep_host():
@@ -229,11 +233,11 @@ def sleep_host():
             os.system("shutdown.exe /h /t 0")
         except Exception:
             sys.exit(1)
+    return 0
 
 
 def exit_shell():
     """exit_shell"""
-    os.system("exit")
     sys.exit(5)
 
 

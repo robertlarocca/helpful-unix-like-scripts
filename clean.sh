@@ -5,8 +5,8 @@
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='4.0.1'
-script_release='release'  # options devel, beta, release, stable
+script_version='4.1.0'
+script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
 	if [[ "$(id -un)" != "root" ]]; then
@@ -18,34 +18,41 @@ require_root_privileges() {
 
 show_help() {
 	cat <<-EOF_XYZ
-	Usage: clean [OPTION] [TIME] [WALL]...
+	Usage: clean [OPTION] [ACTION] <time> <message>
 	Remove all the known history files in the user home directory.
 
 	Options:
-	 --all		remove all shell history files
-	 --most		remove most shell history files
-	 --halt		clean most shell history files and halt
-	 --reboot	clean most shell history files and reboot
-	 --shutdown	clean most shell history files and shutdown (or --poweroff)
-	 --sleep	clean most shell history files and sleep
-	 --windows	remove most Windows history files
+	 -a, --all		  remove all history files
+	 -m, --most		  remove shell history files (default)
+	 -w, --wsl      remove Windows history files
+	     --windows  same as --wsl
+	 -v, --version  show version information
+	 -h, --help     show this help message
 
-	 --version	show version information
-	 --help		show this help message
+	Actions:
+	 -c, --clear    clear screen
+	 -e, --exit     exit shell session
+	 --halt		      halt system
+	 --reboot	      reboot system
+	 --restart      same as --reboot
+	 --shutdown     shutdown system
+	 --poweroff     same as --shutdown
+	 --sleep	      sleep system
+	 --hibernate    same as --sleep
 
-	The second argument must be a [TIME] string. The default value
+	The second argument must be a <time> string. The default value
 	is 'now' which is interpeted as '+0'. This may be followed with
-	a [WALL] message. If included the message will be broadcasted
-	to users before shutdown.
+	a <wall> message. The message will be broadcasted to all users
+	before the action (eg. reboot, shutdown, etc) is performed.
 
-	Examples:
+	Example Commands:
 	 clean --all
 	 clean --most
-	 clean --windows
+	 clean --wsl
 	 clean --reboot now
 	 clean --poweroff +5 "Poweroff initiated by clean.sh"
 
-	History files:
+	History Files:
 	 ansible
 	 bash_history
 	 bash_sessions
@@ -60,23 +67,19 @@ show_help() {
 	 zsh_history
 	 zsh_sessions
 
-	Exit status:
-	 0 - ok
-	 1 - minor issue
-	 2 - serious error
-
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
-	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Status Codes:
+	 0 - OK
+	 1 - Issue
+	 2 - Error
 	EOF_XYZ
 }
 
-show_version_information() {
+show_version() {
 	cat <<-EOF_XYZ
 	clean $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
 }
 
@@ -88,7 +91,7 @@ error_unrecognized_option() {
 	exit 1
 }
 
-remove_all_history() {
+remove_all() {
 	logger -i "Notice: Removed all $(basename $SHELL) and command history from $HOME directory."
 	rm -f -r $HOME/.ansible
 	rm -f -r $HOME/.bash_sessions
@@ -107,13 +110,8 @@ remove_all_history() {
 	rm -f $HOME/.wget-hsts
 	rm -f $HOME/.zsh_history
 
-	if [[ "$SHELL" == "/bin/bash" ]]; then
-		history -c
-		clear
-	elif [[ "$SHELL" == "/bin/zsh" ]]; then
-		history -p
-		clear
-	fi
+	history -c 2> /dev/null
+	history -p 2> /dev/null
 }
 
 remove_most_history() {
@@ -129,13 +127,8 @@ remove_most_history() {
 	rm -f $HOME/.wget-hsts
 	rm -f $HOME/.zsh_history
 
-	if [[ "$SHELL" == "/bin/bash" ]]; then
-		history -c
-		clear
-	elif [[ "$SHELL" == "/bin/zsh" ]]; then
-		history -p
-		clear
-	fi
+	history -c 2> /dev/null
+	history -p 2> /dev/null
 }
 
 remove_windows_history() {
@@ -145,29 +138,32 @@ remove_windows_history() {
 	rm -f /mnt/c/Users/$USER/AppData/Roaming/Microsoft/Windows/Recent/AutomaticDestinations/*
 	rm -f /mnt/c/Users/$USER/AppData/Roaming/Microsoft/Windows/Recent/CustomDestinations/*
 
-	if [[ "$SHELL" == "/bin/bash" ]]; then
-		history -c
-		clear
-	elif [[ "$SHELL" == "/bin/zsh" ]]; then
-		history -p
-		clear
-	fi
+	history -c 2> /dev/null
+	history -p 2> /dev/null
+}
+
+clear_screen() {
+	clear 2> /dev/null
+}
+
+exit_shell() {
+	exit 5
 }
 
 # Options
 case "$1" in
---all)
-	remove_all_history
+-a | --all)
+	remove_all
 	remove_windows_history
 	;;
---most)
-	remove_most_history
+-m | --most)
+	remove_most
 	;;
---windows | --wsl)
+-w | --windows | --wsl)
 	remove_windows_history
 	;;
 --halt)
-	remove_most_history
+	remove_most
 	if [[ -z "$2" ]]; then
 		sudo shutdown -h +0
 	else
@@ -175,15 +171,15 @@ case "$1" in
 	fi
 	;;
 --reboot)
-	remove_most_history
+	remove_most
 	if [[ -z "$2" ]]; then
 		sudo shutdown -r +0
 	else
 		sudo shutdown -r "$2" "$3"
 	fi
 	;;
---sleep)
-	remove_most_history
+--sleep | --hibernate)
+	remove_most
 	if [[ -z "$2" ]]; then
 		sudo shutdown -s +0
 	else
@@ -191,22 +187,22 @@ case "$1" in
 	fi
 	;;
 --poweroff | --shutdown)
-	remove_most_history
+	remove_most
 	if [[ -z "$2" ]]; then
 		sudo shutdown --poweroff +0
 	else
 		sudo shutdown --poweroff "$2" "$3"
 	fi
 	;;
---version)
-	show_version_information
+-v | --version)
+	show_version
 	;;
---help)
+-h | --help)
 	show_help
 	;;
 *)
 	if [[ -z "$1" ]]; then
-		remove_most_history
+		remove_most
 	else
 		error_unrecognized_option "$*"
 	fi
