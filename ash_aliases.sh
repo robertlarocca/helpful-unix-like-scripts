@@ -3,17 +3,16 @@
 # Helpful aliases for busybox sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.0.6'
+script_version='4.1.0'
 script_release='release'  # options devel, beta, release, stable
 export ASH_ALIASES_VERSION="$script_version-$script_release"
 
 PATH="$PATH:/usr/local/sbin:/usr/local/bin"
 
-# Purge the current shell session history and exit
-# after removing files using the clean command.
+# Exit or purge the current shell session history with clean command.
 clean() {
-	# Unfortunately using the which command wont work here.
-	# Must use the absolute path to clean script.
+	# The which command unfortunately does not work here.
+	# We must use the absolute filesystem path to clean binary.
 	/usr/local/bin/clean "$@"
 	local clean_status="$?"
 
@@ -21,8 +20,11 @@ clean() {
 		echo "Warning: Cannot purge ash (BusyBox) history buffer." 2>&1
 	fi
 
+	history -c 2> /dev/null
+	history -p 2> /dev/null
+
 	if [[ "$clean_status" -ge "5" ]]; then
-		exit
+		exit 2> /dev/null
 	fi
 }
 

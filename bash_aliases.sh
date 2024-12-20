@@ -3,7 +3,7 @@
 # Helpful aliases for bash sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.0.6'
+script_version='4.1.0'
 script_release='release'  # options devel, beta, release, stable
 export BASH_ALIASES_VERSION="$script_version-$script_release"
 
@@ -61,7 +61,7 @@ bash_aliases() {
 		 mksecret - generate a secure random 512 character LUKS secret
 		 open - open or edit file using the default GNOME application
 		 test-port - check network port and try to connect with telnet
-		 test-website - check website availability and display headers
+		 security-headers - check website availability and display headers
 		 wifi-power - toggle wireless network power management
 
 		Options:
@@ -75,7 +75,7 @@ bash_aliases() {
 
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
-		Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+		Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 
 		See bash(1) csh(1) dash(1) zsh(1) man(1) nologin(8) and os-release(5)
 		for additional information and for insights into how this script works.
@@ -87,7 +87,7 @@ bash_aliases() {
 		bash_aliases $script_version-$script_release
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
-		Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+		Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 		EOF_XYZ
 	}
 
@@ -159,11 +159,10 @@ adpasswd() {
 	fi
 }
 
-# Purge the current shell session history and exit
-# after removing files using the clean command.
+# Exit or purge the current shell session history with clean command.
 clean() {
-	# Unfortunately using the which command wont work here.
-	# Must use the absolute path to clean script.
+	# The which command unfortunately does not work here.
+	# We must use the absolute filesystem path to clean binary.
 	/usr/local/bin/clean "$@"
 	local clean_status="$?"
 
@@ -171,10 +170,8 @@ clean() {
 		echo "Warning: Cannot purge ash (BusyBox) history buffer." 2>&1
 	fi
 
-	if [[ "$clean_status" -ge "4" ]]; then
-		history -c 2> /dev/null
-		history -p 2> /dev/null
-	fi
+	history -c 2> /dev/null
+	history -p 2> /dev/null
 
 	if [[ "$clean_status" -ge "5" ]]; then
 		exit 2> /dev/null
@@ -228,12 +225,12 @@ mksecret() {
 	head -c 512 /dev/urandom | base64
 }
 
-# Check website availability and display headers.
-test-website() {
+# Check website availability and display security headers.
+security-headers() {
 	local website_url="$1"
 	if [[ -n "$website_url" ]]; then
 		echo "$website_url"
-		curl -A "website-tester/$script_version-$script_release" -ISs --connect-timeout 5 --retry 1 "$website_url"
+		curl -A "security-headers/$script_version-$script_release" -ISs --connect-timeout 5 --retry 1 "$website_url"
 	else
 		for website_url in \
 			https://duckduckgo.com \
@@ -243,7 +240,7 @@ test-website() {
 			https://www.laroccx.com \
 			https://www.microsoft.com ; do
 			echo "$website_url"
-			curl curl -A "website-tester/$script_version-$script_release" -ISs --connect-timeout 5 --retry 1 "$website_url"
+			curl curl -A "security-headers/$script_version-$script_release" -ISs --connect-timeout 5 --retry 1 "$website_url"
 			echo
 		done
 	fi
@@ -314,7 +311,7 @@ alias wsl="/mnt/c/WINDOWS/system32/wsl.exe"
 alias wslg="/mnt/c/WINDOWS/system32/wslg.exe"
 
 # Install required and helpful software packages used by this repository.
-install-helpful-unix-like-shell-scripts-packages() {
+install-helpful-unix-like-scripts-packages() {
 	if [[ -x "$(which apt 2> /dev/null)" ]]; then
 		sudo apt autoclean
 		sudo apt update
