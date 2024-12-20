@@ -5,7 +5,7 @@
 # Remove history files created using the GNU History Library.
 
 # Script version and release
-script_version='4.1.0'
+script_version='4.2.0'
 script_release='beta'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -18,26 +18,27 @@ require_root_privileges() {
 
 show_help() {
 	cat <<-EOF_XYZ
-	Usage: clean [OPTION] [ACTION] <time> <message>
+	Usage: clean [OPTION] [ACTION] <time> <message...>
+
 	Remove all the known history files in the user home directory.
 
 	Options:
-	 -a, --all		  remove all history files
-	 -m, --most		  remove shell history files (default)
-	 -w, --wsl      remove Windows history files
-	     --windows  same as --wsl
+	 -a, --all		remove all history files
+	 -A, --most		remove most history files (default)
+	 -w, --windows  remove Windows history files
+	     --wsl      same as --windows
 	 -v, --version  show version information
-	 -h, --help     show this help message
+	 -h, --help     show this help message and exit
 
 	Actions:
 	 -c, --clear    clear screen
 	 -e, --exit     exit shell session
-	 --halt		      halt system
-	 --reboot	      reboot system
+	 --halt		    halt system
+	 --reboot	    reboot system
 	 --restart      same as --reboot
 	 --shutdown     shutdown system
 	 --poweroff     same as --shutdown
-	 --sleep	      sleep system
+	 --sleep	    sleep system
 	 --hibernate    same as --sleep
 
 	The second argument must be a <time> string. The default value
@@ -47,7 +48,9 @@ show_help() {
 
 	Example Commands:
 	 clean --all
+	 clean -a
 	 clean --most
+	 clean -A
 	 clean --wsl
 	 clean --reboot now
 	 clean --poweroff +5 "Poweroff initiated by clean.sh"
@@ -152,14 +155,14 @@ exit_shell() {
 
 # Options
 case "$1" in
--a | --all)
+--all | -a)
 	remove_all
 	remove_windows_history
 	;;
--m | --most)
+--most | -A)
 	remove_most
 	;;
--w | --windows | --wsl)
+--windows | --wsl | -w)
 	remove_windows_history
 	;;
 --halt)
@@ -194,10 +197,10 @@ case "$1" in
 		sudo shutdown --poweroff "$2" "$3"
 	fi
 	;;
--v | --version)
+--version | -v)
 	show_version
 	;;
--h | --help)
+--help | -h)
 	show_help
 	;;
 *)
