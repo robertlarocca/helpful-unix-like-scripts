@@ -3,8 +3,8 @@
 # Helpful aliases for busybox sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.0'
-script_release='release'  # options devel, beta, release, stable
+script_version='4.1.1'
+script_release='devel'  # options devel, beta, release, stable
 export ASH_ALIASES_VERSION="$script_version-$script_release"
 
 PATH="$PATH:/usr/local/sbin:/usr/local/bin"
@@ -20,8 +20,10 @@ clean() {
 		echo "Warning: Cannot purge ash (BusyBox) history buffer." 2>&1
 	fi
 
-	history -c 2> /dev/null
-	history -p 2> /dev/null
+	if [[ "$clean_status" -ge "4" ]]; then
+		history -c 2> /dev/null
+		history -p 2> /dev/null
+	fi
 
 	if [[ "$clean_status" -ge "5" ]]; then
 		exit 2> /dev/null
@@ -29,3 +31,10 @@ clean() {
 }
 
 alias swupdate="$(which swupdate) --opkg"
+
+# Include bash_private if available.
+if [[ -f "$HOME/.ash_private" ]]; then
+	source $HOME/.ash_private
+fi
+
+# vi: syntax=sh ts=2 noexpandtab

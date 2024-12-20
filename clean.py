@@ -17,8 +17,8 @@ import sys
 SCRIPT_FILE = os.path.basename(__file__)
 SCRIPT_NAME = str("clean")
 
-SCRIPT_VERSION = str("1.0.5")
-SCRIPT_RELEASE = str("beta")  # Options: devel, beta, release, stable
+SCRIPT_VERSION = str("1.0.6")
+SCRIPT_RELEASE = str("devel")  # Options: devel, beta, release, stable
 
 USER_HOME = os.path.expanduser("~")
 
@@ -182,7 +182,6 @@ def clear_history():
     if os.name == "posix":
         os.system("history -c 2> /dev/null")
         os.system("history -p 2> /dev/null")
-        return 4
 
 
 def clear_screen():
@@ -191,7 +190,6 @@ def clear_screen():
         os.system("clear 2> /dev/null")
     elif os.name == "nt":
         os.system("cls")
-    return 0
 
 
 def reboot_host():
@@ -206,7 +204,6 @@ def reboot_host():
             os.system("shutdown.exe /r /t 0")
         except Exception:
             sys.exit(1)
-    return 0
 
 
 def shutdown_host():
@@ -221,7 +218,6 @@ def shutdown_host():
             os.system("shutdown.exe /s /t 0")
         except Exception:
             sys.exit(1)
-    return 0
 
 
 def sleep_host():
@@ -236,7 +232,6 @@ def sleep_host():
             os.system("shutdown.exe /h /t 0")
         except Exception:
             sys.exit(1)
-    return 0
 
 
 def exit_shell():
@@ -260,5 +255,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+    sys.exit(4)
 
 # vi: syntax=python ts=4 noexpandtab
