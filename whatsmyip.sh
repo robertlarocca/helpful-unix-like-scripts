@@ -5,16 +5,8 @@
 # Display the current ipv4 and ipv6 addresses
 
 # Script version and release
-script_version='4.0.1'
+script_version='4.1.0'
 script_release='release'  # options devel, beta, release, stable
-
-require_root_privileges() {
-	if [[ "$(id -un)" != "root" ]]; then
-		# logger -i "Error: whatsmyip must be run as root!"
-		echo "Error: whatsmyip must be run as root!" >&2
-		exit 2
-	fi
-}
 
 show_help() {
 	cat <<-EOF_XYZ
@@ -44,23 +36,19 @@ show_help() {
 	 version - show version information
 	 help - show this help message
 
-	Exit status:
-	 0 - ok
-	 1 - minor issue
-	 2 - serious error
-
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
-	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Status Codes:
+	 0 - OK
+	 1 - Issue
+	 2 - Error
 	EOF_XYZ
 }
 
-show_version_information() {
+show_version() {
 	cat <<-EOF_XYZ
 	whatsmyip $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
 }
 
@@ -77,7 +65,7 @@ flag_emoji() {
 	# Checkout all the emoji country flag options:
 	#   https://apps.timwhitlock.info/emoji/tables/iso3166
 
-	local country_iso="$(curl -s https://ifconfig.co/country-iso)"
+	local country_iso="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/country-iso)"
 
 	case "$country_iso" in
 	CA)
@@ -100,7 +88,7 @@ flag_emoji() {
 }
 
 ipv4_address() {
-	local ipv4="$(curl -s4 https://ifconfig.co/ip)"
+	local ipv4="$(curl -A $script_version/$script_release} -s4 --connect-timeout 3 --retry 2 https://ifconfig.co/ip)"
 
 	if [[ -n "$ipv4" ]]; then
 		echo "IPv4: $ipv4"
@@ -108,7 +96,7 @@ ipv4_address() {
 }
 
 ipv6_address() {
-	local ipv6="$(curl -s6 https://ifconfig.co/ip)"
+	local ipv6="$(curl -A $script_version/$script_release} -s6 --connect-timeout 3 --retry 2 https://ifconfig.co/ip)"
 
 	if [[ -n "$ipv6" ]]; then
 		echo "IPv6: $ipv6"
@@ -116,7 +104,7 @@ ipv6_address() {
 }
 
 country_name() {
-	local country="$(curl -s https://ifconfig.co/country)"
+	local country="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/country)"
 
 	if [[ -n "$country" ]]; then
 		echo "Country: $country"
@@ -124,7 +112,7 @@ country_name() {
 }
 
 country_code() {
-	local country_iso="$(curl -s https://ifconfig.co/country-iso)"
+	local country_iso="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/country-iso)"
 
 	if [[ -n "$country_iso" ]]; then
 		echo "Country Code: $country_iso"
@@ -132,7 +120,7 @@ country_code() {
 }
 
 city_name() {
-	local city="$(curl -s https://ifconfig.co/city)"
+	local city="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/city)"
 
 	if [[ -n "$city" ]]; then
 		echo "City: $city"
@@ -140,7 +128,7 @@ city_name() {
 }
 
 asn_info() {
-	local asn="$(curl -s https://ifconfig.co/asn)"
+	local asn="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/asn)"
 
 	if [[ -n "$asn" ]]; then
 		echo "ASN: $asn"
@@ -148,7 +136,7 @@ asn_info() {
 }
 
 json_details() {
-	local json="$(curl -s https://ifconfig.co/json)"
+	local json="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/json)"
 
 	if [[ -n "$json" ]]; then
 		echo "$json"
@@ -156,7 +144,7 @@ json_details() {
 }
 
 port_details() {
-	local port="$(curl -s https://ifconfig.co/port/$1)"
+	local port="$(curl -A $script_version/$script_release} -s --connect-timeout 3 --retry 2 https://ifconfig.co/port/$1)"
 
 	if [[ -n "$port" ]]; then
 		echo "$port"
@@ -206,7 +194,7 @@ case "$1" in
 	flag_emoji
 	;;
 --version)
-	show_version_information
+	show_version
 	;;
 --help)
 	show_help

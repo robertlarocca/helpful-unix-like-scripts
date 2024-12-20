@@ -6,7 +6,7 @@
 
 # Script version and release
 script_version='4.1.0'
-script_release='devel'  # options devel, beta, release, stable
+script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
 # set -xv
@@ -29,7 +29,8 @@ require_user_privileges() {
 
 show_help() {
 	cat <<-EOF_XYZ
-	Usage: git-sync [OPTION] <URI>...
+	Usage: git-sync [OPTION] <url>...
+
 	Easily synchronize cloned Git repositories on the local filesystem
 	or forked repositories with upstream on the internet. By default the
 	current directory is synchronized unless another option is provided.
@@ -39,31 +40,26 @@ show_help() {
 	saved in the ~/.gitsync or /etc/gitsync configuration files.
 
 	Options:
-	 --all       Synchronize all repositories in configuration file
-	 --repo      Synchronize all repositories in provided path
-	 --upstream  Synchronize and merge upstream repository
+	 -a, --all       Synchronize all repositories in configuration file
+	 -r, --repo      Synchronize all repositories in provided path
+	 -u, --upstream  Synchronize and merge upstream repository
 
-	 --version   Display version information
-	 --help      Display this help message
+	 -v, --version   Display version information
+	 -h, --help      Display this help message
 
 	Examples:
 	 git-sync
-	 git-sync /path/to/repo/
 	 git-sync /path/to/repos/
 	 git-sync --repo /path/to/repo/
-	 git-sync --repo /path/to/repos/
-	 git-sync --all
+	 git-sync -r /path/to/repos/
+	 git-sync -a
 	 git-sync --upstream git@example.com/project-repo.git
-	 git-sync --upstream https://example.com/project-repo.git
+	 git-sync -u https://example.com/project-repo.git
 
-	Exit status:
-	 0 - ok
-	 1 - minor issue
-	 2 - serious error
-
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
-	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Status Codes:
+	 0 - OK
+	 1 - Issue
+	 2 - Error
 
 	See git(1) git-pull(1) git-fetch(1) git-push(1) and gittutorial(7) for
 	additonal information and to provide insight how this wrapper works.
@@ -76,7 +72,7 @@ show_version() {
 	git-sync $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
 	exit 0
 }
@@ -221,19 +217,19 @@ sync_upstream() {
 check_binary_exists git
 
 case "$1" in
---all)
+--all | -a)
 	sync_list
 	;;
---repo | --repos)
+--repo | --repos | -r)
 	sync_directory "$2"
 	;;
---upstream)
+--upstream | -u)
 	sync_upstream "$2"
 	;;
---version)
+--version | -v)
 	show_version
 	;;
---help)
+--help | -h)
 	show_help
 	;;
 *)

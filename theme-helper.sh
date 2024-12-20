@@ -5,7 +5,7 @@
 # Customize the GNOME desktop enviroment theme and application settings.
 
 # Script version and release
-script_version='4.0.1'
+script_version='4.1.0'
 script_release='release'  # options devel, beta, release, stable
 
 require_root_privileges() {
@@ -27,43 +27,40 @@ require_user_privileges() {
 show_help() {
 	cat <<-EOF_XYZ
 	Usage: theme-helper [OPTION]...
+
 	Easily customize the GNOME desktop environment theme and application
 	settings. This script also configures apt (dpkg) post-invoke to run
 	after installing and upgrading packages.
 
 	Options:
-	 all - configure and customize applications, auto invoke theme-helper
-	 auto - invoke theme-helper after apt packages are installed
-	 config - configure GNOME desktop and GTK settings
-	 custom - customize select applications exec, icon, name etc
-	 hide - hide select applications
+	 -a, --all   configure and customize applications, auto invoke theme-helper
+	 -A, --auto  invoke theme-helper after apt packages are installed
+	 --config    configure GNOME desktop and GTK settings
+	 --custom    customize select applications exec, icon, name etc
+	 --hide      hide select applications
 
-	 version - show version information
-	 help - show this help message
+	 -v, --version  show version and exit
+	 -h, --help - show this help message and exit
 
 	When using theme-helper 'Yaru-Dark' is the default appearance style
 	and 'fingers' is the default click-method for touchpad peripherals.
 
-	Exit status:
-	 0 - ok
-	 1 - minor issue
-	 2 - serious error
-
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
-	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Status Codes:
+	 0 - OK
+	 1 - Issue
+	 2 - Error
 
 	See apt(8) apt-config(8) dpkg(1) dpkg-reconfigure(8) for additional
 	information and to provide insight how this wrapper works.
 	EOF_XYZ
 }
 
-show_version_information() {
+show_version() {
 	cat <<-EOF_XYZ
 	theme-helper $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
 }
 
@@ -154,28 +151,28 @@ hide_applications() {
 
 # Options
 case "$1" in
-all)
+--all | -a)
 	configure_dpkg_invoke
 	configure_gsettings
 	customize_applications
 	hide_applications
 	;;
-auto)
+--auto | -A)
 	configure_dpkg_invoke
 	;;
-config)
+--config)
 	configure_gsettings
 	;;
-custom)
+--custom)
 	customize_applications
 	;;
-hide)
+--hide)
 	hide_applications
 	;;
-version)
-	show_version_information
+--version | -v)
+	show_version
 	;;
-help | --help)
+--help | -h)
 	show_help
 	;;
 *)

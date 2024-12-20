@@ -6,7 +6,7 @@
 # to the next operating system release.
 
 # Script version and release
-script_version='4.0.1'
+script_version='4.1.0'
 script_release='release'  # options devel, beta, release, stable
 
 # Uncomment to enable bash xtrace mode.
@@ -37,6 +37,7 @@ require_user_privileges() {
 show_help() {
 	cat <<-EOF_XYZ
 	Usage: swupdate [OPTION]...
+
 	Easily update Debian and Red Hat based operating systems. All the
 	installed packages and hardware firmware can be updated using this
 
@@ -45,47 +46,39 @@ show_help() {
 	The additional options provide more package sources and functionality.
 
 	Options:
-	 --all		update all packages, including Flatpak, Snap and hardware firmware
-	 --apt		update only installed apt (aka Debian) packages
-	 --dnf		update only installed dnf and yum (aka Red Hat) packages
-	 --firmware	update only the hardware firmware
-	 --flatpak	update only installed Flatpak packages
-	 --macos	update only installed App Store and port (aka MacPorts) packages
-	 --opkg		update only installed opkg (aka OpenWrt) packages
-	 --python	update only installed Python3 packages
-	 --snap		update only installed Snap packages
-	 --wsl		update only the Windows Subsystem for Linux packages
+	 -a, --all   update all packages, Flatpaks, Snaps and firmware
+	 --apt       update apt (aka Debian) packages
+	 --dnf       update dnf and yum (aka Red Hat) packages
+	 --firmware  update hardware firmware
+	 --flatpak   update Flatpak packages
+	 --macos     update App Store and MacPorts (aka port) packages
+	 --opkg      update OpenWrt (aka opkg) packages
+	 --python    update Python3 (aka pip3) packages
+	 --snap      update Snap packages
+	 --wsl       update Windows Subsystem for Linux packages
 
-	 --normal	upgrade to the next current Ubuntu release
-	 --lts		upgrade to the next long term supported Ubuntu release
-	 --never	never upgrade to the next Ubuntu release
-
-	 --version	show version information
-	 --help		show this help message
+	 -v, --version  show version and exit
+	 -h, --help     show this help message and exit
 
 	When using the normal or lts options; swupdate tries to upgrade Ubuntu with
 	third party mirrors and repositories enabled instead of commenting out.
 
-	Exit status:
-	 0 - ok
-	 1 - minor issue
-	 2 - serious error
-
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
-	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Status Codes:
+	 0 - OK
+	 1 - Issue
+	 2 - Error
 
 	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8)
 	for additional information and to provide insight how this wrapper works.
 	EOF_XYZ
 }
 
-show_version_information() {
+show_version() {
 	cat <<-EOF_XYZ
 	swupdate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
 }
 
@@ -155,10 +148,15 @@ macos_packages() {
 	# Test for the macOS Darwin UNIX kernel.
 	local kernel_os="$(uname -o 2> /dev/null)"
 
-	if [[ "$kernel_os" =~ "Darwin" ]] && [[ -x $(which port 2> /dev/null) ]] && [[ -x $(which softwareupdate 2> /dev/null) ]]; then
-		port -q -R selfupdate
-		port -q -R upgrade outdated
-		softwareupdate --install --all
+	if [[ "$kernel_os" =~ "Darwin" ]]; then
+		if [[ -x $(which port 2> /dev/null) ]]; then
+			port -q -R selfupdate
+			port -q -R upgrade outdated
+		fi
+
+		if [[ -x $(which softwareupdate 2> /dev/null) ]]; then
+			softwareupdate --install --all
+		fi
 	fi
 }
 
@@ -224,6 +222,8 @@ firmware_packages() {
 }
 
 os_upgrade() {
+	# Use this function at your own risk!
+	# You are better to directly use the do-release-upgrade command.
 	local os_release="$1"
 	require_root_privileges
 
@@ -241,7 +241,7 @@ os_upgrade() {
 
 # Options
 case "$1" in
---all)
+--all | -a)
 	apt_packages
 	dnf_packages
 	macos_packages
@@ -275,22 +275,13 @@ case "$1" in
 --snap)
 	snap_packages
 	;;
---wsl)
+--wsl | --wsl2)
 	wsl2_packages
 	;;
---normal)
-	os_upgrade "$1"
+--version | -v)
+	show_version
 	;;
---lts)
-	os_upgrade "$1"
-	;;
---never)
-	os_upgrade "$1"
-	;;
---version)
-	show_version_information
-	;;
---help)
+--help | -h)
 	show_help
 	;;
 *)

@@ -6,7 +6,7 @@
 # until reboot. Similar to the macOS 'caffeinate' command.
 
 # Script version and release
-script_version='4.0.1'
+script_version='4.1.0'
 script_release='release'  # options devel, beta, release, stable
 
 # Setting blank_screen_delay to 0 (zero) disables the feature.
@@ -24,39 +24,36 @@ require_root_privileges() {
 show_help() {
 	cat <<-EOF_XYZ
 	Usage: caffeinate [OPTION]...
+
 	Prevent this system from entering sleep, suspend and hibernate targets.
 
 	This script by default (without an additional option provided) will
 	prevent idle power management until the next reboot or disabled.
 
 	Options:
-	 on - prevent idle sleep, suspend and hibernate
-	 off - restore idle sleep, suspend and hibernate
-	 status - show the current state of caffeinate
+	 -1, --enable   prevent idle sleep, suspend and hibernate
+	 -0, --disable  restore idle sleep, suspend and hibernate
+	 -s, --status   show the current state of caffeinate
 
-	 version - show version information
-	 help - show this help message
+	 -v, --version  show version and exit
+	 -h, --help     show this help message and exit
 
-	Exit status:
-	 0 - ok
-	 1 - minor issue
-	 2 - serious error
-
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
-	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Status Codes:
+	 0 - OK
+	 1 - Issue
+	 2 - Error
 
 	See systemctl(1) for additonal information and to provide insight
 	how this script works.
 	EOF_XYZ
 }
 
-show_version_information() {
+show_version() {
 	cat <<-EOF_XYZ
 	caffeinate $script_version-$script_release
 	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 	License: The MIT License (MIT)
-	Source: https://github.com/robertlarocca/helpful-unix-like-shell-scripts
+	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
 }
 
@@ -69,7 +66,7 @@ error_unrecognized_option() {
 
 # Options
 case "$1" in
-on)
+--enable | -1)
 	gsettings set org.gnome.desktop.session idle-delay $blank_screen_delay_on
 
 	sudo systemctl --runtime mask \
@@ -82,7 +79,7 @@ on)
 	touch $HOME/.caffeinate
 	PS1="☕ $PS1_ORIG"
 	;;
-off)
+--disable | -0)
 	gsettings set org.gnome.desktop.session idle-delay $blank_screen_delay_off
 
 	sudo systemctl --runtime unmask \
@@ -98,7 +95,7 @@ off)
 
 	set_emoji_ps1_prompt
 	;;
-status)
+--status | -s)
 	echo "Period of inactivity after which the screen will go blank."
 	echo "    Blank Screen Delay: $(gsettings get org.gnome.desktop.session idle-delay) " && echo
 
@@ -110,10 +107,10 @@ status)
 		hibernate.target \
 		| tee
 	;;
-version)
-	show_version_information
+--version | -v)
+	show_version
 	;;
-help | --help)
+--help | -h)
 	show_help
 	;;
 *)
