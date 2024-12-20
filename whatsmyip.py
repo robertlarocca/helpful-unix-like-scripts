@@ -11,13 +11,12 @@ import json
 import os
 import sys
 
-
 # ----- Required global variables ----- #
 
 SCRIPT_FILE = os.path.basename(__file__)
 SCRIPT_NAME = str("whatsmyip")
 
-SCRIPT_VERSION = str("1.0.2")
+SCRIPT_VERSION = str("1.0.4")
 SCRIPT_RELEASE = str("beta")  # Options: devel, beta, release, stable
 
 # Set the IP lookup webservice URL.
@@ -49,6 +48,9 @@ args = parser.parse_args()
 def show_version():
     """show_version"""
     print(f"{SCRIPT_NAME} ({SCRIPT_FILE}) v{SCRIPT_VERSION}-{SCRIPT_RELEASE}")
+    print("Copyright (c) 2024 Robert LaRocca, https://www.laroccx.com")
+	print("License: The MIT License (MIT)")
+	print("Source: https://github.com/robertlarocca/helpful-unix-like-scripts")
     sys.exit(0)
 
 
@@ -56,11 +58,11 @@ def show_ip(proto):
     """show_ip"""
     if os.name == "posix":
         i = os.popen(
-            f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} {IP_SERVICE}/ip"
+            f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/ip"
         ).read().rstrip()
     else:
         i = os.popen(
-            f"curl.exe -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} {IP_SERVICE}/ip"
+            f"curl.exe -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/ip"
         ).read().rstrip()
 
     if i is not None:
@@ -75,12 +77,12 @@ def show_metadata(proto):
     """show_metadata"""
     if os.name == "posix":
         j = os.popen(
-            f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} {IP_SERVICE}/json"
+            f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/json"
         ).read()
         m = json.loads(j)
     else:
         j = os.popen(
-            f"curl.exe -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} {IP_SERVICE}/json"
+            f"curl.exe -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/json"
         ).read()
         m = json.loads(j)
 

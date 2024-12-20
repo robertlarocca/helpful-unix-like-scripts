@@ -17,7 +17,7 @@ import sys
 SCRIPT_FILE = os.path.basename(__file__)
 SCRIPT_NAME = str("clean")
 
-SCRIPT_VERSION = str("1.0.3")
+SCRIPT_VERSION = str("1.0.4")
 SCRIPT_RELEASE = str("beta")  # Options: devel, beta, release, stable
 
 USER_HOME = os.path.expanduser("~")
@@ -60,6 +60,9 @@ def require_user_privileges():
 def show_version():
     """show_version"""
     print(f"{SCRIPT_NAME} ({SCRIPT_FILE}) v{SCRIPT_VERSION}-{SCRIPT_RELEASE}")
+    print("Copyright (c) 2024 Robert LaRocca, https://www.laroccx.com")
+	print("License: The MIT License (MIT)")
+	print("Source: https://github.com/robertlarocca/helpful-unix-like-scripts")
     sys.exit(0)
 
 
