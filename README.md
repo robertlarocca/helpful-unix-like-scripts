@@ -1,4 +1,4 @@
-# helpful-unix-like-shell-scripts
+# helpful-unix-like-scripts
 
 Helpful Linux and macOS shell scripts for sysadmins, developers and the forgetful.
 
