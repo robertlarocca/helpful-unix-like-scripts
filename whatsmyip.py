@@ -30,18 +30,13 @@ parser = argparse.ArgumentParser(
     add_help=True
 )
 parser.add_argument("-v", "--version", help="show version and exit", action="store_true")
+parser.add_argument("-a", "--all", help="all IPv4 and IPv6 addresses", action="store_true")
 parser.add_argument("-4", "--ipv4", help="IPv4 address", action="store_true")
 parser.add_argument("-6", "--ipv6", help="IPv6 address", action="store_true")
-parser.add_argument("--all", help="all metadata", action="store_true")
-parser.add_argument("--country", help="country name", action="store_true")
-parser.add_argument("--iso", help="country ISO code", action="store_true")
-parser.add_argument("--region", help="region (aka state) name", action="store_true")
-parser.add_argument("--city", help="city name", action="store_true")
-parser.add_argument("--zip", help="ZIP (aka postal) code", action="store_true")
-parser.add_argument("--timezone", help="timezone name", action="store_true")
-parser.add_argument("--asn", help="ASN code", action="store_true")
-parser.add_argument("--isp", help="ISP name", action="store_true")
-parser.add_argument("--json", help="all metadata as json", action="store_true")
+parser.add_argument("--hostname", help="reverse DNS lookup", action="store_true")
+parser.add_argument("--network", help="service provider", action="store_true")
+parser.add_argument("--location", help="physical location", action="store_true")
+parser.add_argument("--timezone", help="timezone location", action="store_true")
 args = parser.parse_args()
 
 
@@ -56,81 +51,152 @@ def show_version():
 
 def show_ip(proto):
     """show_ip"""
+
+    # Set the Internet Protocol (IP) version to use.
+    # Options: 4, 6, or ("") an empty string for system default.
+    # proto = str("")
+
     if os.name == "posix":
         i = os.popen(
-            f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/ip"
+            f"curl \
+                -A {SCRIPT_NAME}/{SCRIPT_VERSION} \
+                -f \
+                -s{proto} \
+                --connect-timeout 5 \
+                {IP_SERVICE}/ip"
         ).read().rstrip()
     else:
         i = os.popen(
-            f"curl.exe -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/ip"
+            f"curl.exe \
+                -A {SCRIPT_NAME}/{SCRIPT_VERSION} \
+                -f \
+                -s{proto} \
+                --connect-timeout 5 \
+                {IP_SERVICE}/ip"
         ).read().rstrip()
 
-    if i is not None:
+    if i:
         if proto in ("4", "6"):
-            print(f"IP: {i}")
+            print(f"IPv{proto}: {i}")
         else:
             print(f"IP: {i}")
-        show_metadata(proto)
 
 
 def show_metadata(proto):
     """show_metadata"""
+
+    # Set the Internet Protocol (IP) version to use.
+    # Options: 4, 6, or ("") an empty string for system default.
+    # proto = str("")
+
     if os.name == "posix":
         j = os.popen(
-            f"curl -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/json"
+            f"curl \
+                -A {SCRIPT_NAME}/{SCRIPT_VERSION} \
+                -f \
+                -s{proto} \
+                --connect-timeout 5 \
+                {IP_SERVICE}/json"
         ).read()
         m = json.loads(j)
     else:
         j = os.popen(
-            f"curl.exe -A {SCRIPT_NAME}/{SCRIPT_VERSION} -s{proto} --connect-timeout 3 --retry 2 {IP_SERVICE}/json"
+            f"curl.exe \
+                -A {SCRIPT_NAME}/{SCRIPT_VERSION} \
+                -f \
+                -s{proto} \
+                --connect-timeout 5 \
+                {IP_SERVICE}/json"
         ).read()
         m = json.loads(j)
 
-    if j and m is not None:
-        if args.all:
-            print("Country: " + m["country"])
-            print("ISO: " + m["country_iso"])
-            print("Region: " + m["region_name"])
-            print("City: " + m["city"])
-            print("ZIP: " + m["zip_code"])
-            print("TZ: " + m["time_zone"])
-            print("ASN: " + m["asn"])
-            print("ISP: " + m["asn_org"])
-        if args.country:
-            print("Country: " + m["country"])
-        if args.iso:
-            print("ISO: " + m["country_iso"])
-        if args.region:
-            print("Region: " + m["region_name"])
-        if args.city:
-            print("City: " + m["city"])
-        if args.zip:
-            print("ZIP: " + m["zip_code"])
+    # { "ip": "108.227.213.141",
+    #   "ip_decimal": 1826870669,
+    #   "country": "United States",
+    #   "country_iso": "US",
+    #   "country_eu": false,
+    #   "region_name": "Florida",
+    #   "region_code": "FL",
+    #   "metro_code": 528,
+    #   "zip_code": "33056",
+    #   "city": "Miami Gardens",
+    #   "latitude": 25.9409,
+    #   "longitude": -80.2453,
+    #   "time_zone": "America/New_York",
+    #   "asn": "AS7018",
+    #   "asn_org": "ATT-INTERNET4",
+    #   "hostname": "108-227-213-141.lightspeed.miamfl.sbcglobal.net",
+    #   "user_agent": {
+    #     "product": "whatsmyip",
+    #     "version": "0.0.1",
+    #     "raw_value": "whatsmyip/0.0.1"
+    #   }}
+
+    if j and m:
+        ip = str(m["ip"])
+        ip_decimal = str(m["ip_decimal"])
+        country = str(m["country"])
+        country_iso = str(m["country_iso"]).upper()
+        country_eu = str(m["country_eu"]).capitalize()
+        region_name = str(m["region_name"])
+        region_code = str(m["region_code"]).upper()
+        zip_code = str(m["zip_code"]).upper()
+        city = str(m["city"])
+        latitude = str(m["latitude"])
+        longitude = str(m["longitude"])
+        time_zone = str(m["time_zone"])
+        asn = str(m["asn"])
+        asn_org = str(m["asn_org"])
+
+        if proto in ("4", "6"):
+            print(f"IPv{proto}: {ip}")
+        else:
+            print(f"IP: {ip}")
+
+        if args.hostname:
+            if str(m["hostname"]).isprintable():
+                hostname = str(m["hostname"])
+                print(f"Hostname: {hostname}")
+
+        if args.network:
+            print(f"Network: {asn_org} ({asn})")
+
+        if args.location:
+            print(f"City: {city}")
+            print(f"Region: {region_name} ({region_code})")
+            print(f"Zip: {zip_code}")
+            print(f"Country: {country} ({country_iso})")
+            print(f"Coordinates: {latitude}, {longitude}")
+            print(f"EU: {country_eu}")
+
         if args.timezone:
-            print("TZ: " + m["time_zone"])
-        if args.asn:
-            print("ASN: " + m["asn"])
-        if args.isp:
-            print("ISP: " + m["asn_org"])
-        if args.json:
-            print(j)
+            print(f"Time Zone: {time_zone}")
 
-
-def main():
+def whatsmyip():
     """main"""
     if args.version:
         show_version()
-    if args.ipv4:
-        show_ip("4")
-    elif args.ipv6:
-        show_ip("6")
+
+    if args.all:
+        # show_ip("4")
+        # show_ip("6")
+        show_metadata("4")
+        print("\r")
+        show_metadata("6")
     else:
-        show_ip("4")
-        show_ip("6")
+        if args.ipv4:
+            # show_ip("4")
+            show_metadata("4")
+        if args.ipv6:
+            # show_ip("6")
+            show_metadata("6")
+
+    # Use the system default IP version.
+    if not args.all and not args.ipv4 and not args.ipv6:
+        show_metadata("")
 
 
 if __name__ == "__main__":
-    main()
-    sys.exit(0)
+    whatsmyip()
 
 # vi: syntax=python ts=4 noexpandtab
