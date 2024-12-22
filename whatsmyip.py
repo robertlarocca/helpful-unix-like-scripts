@@ -98,7 +98,10 @@ def show_metadata(proto):
                 --connect-timeout 5 \
                 {IP_SERVICE}/json"
         ).read()
-        m = json.loads(j)
+        try:
+            m = json.loads(j)
+        except:
+            sys.exit(1)
     else:
         j = os.popen(
             f"curl.exe \
@@ -108,7 +111,10 @@ def show_metadata(proto):
                 --connect-timeout 5 \
                 {IP_SERVICE}/json"
         ).read()
-        m = json.loads(j)
+        try:
+            m = json.loads(j)
+        except:
+            sys.exit(1)
 
     # { "ip": "108.227.213.141",
     #   "ip_decimal": 1826870669,
@@ -154,19 +160,20 @@ def show_metadata(proto):
             print(f"IP: {ip}")
 
         if args.hostname:
-            if str(m["hostname"]).isprintable():
+            try:
                 hostname = str(m["hostname"])
                 print(f"Hostname: {hostname}")
+            except:
+                print(f"Hostname: null")
 
         if args.network:
             print(f"Network: {asn_org} ({asn})")
 
         if args.location:
             print(f"City: {city}")
-            print(f"Region: {region_name} ({region_code})")
+            print(f"Region: {region_name}")
             print(f"Zip: {zip_code}")
-            print(f"Country: {country} ({country_iso})")
-            print(f"Coordinates: {latitude}, {longitude}")
+            print(f"Country: {country}")
             print(f"EU: {country_eu}")
 
         if args.timezone:
@@ -181,7 +188,6 @@ def whatsmyip():
         # show_ip("4")
         # show_ip("6")
         show_metadata("4")
-        print("\r")
         show_metadata("6")
     else:
         if args.ipv4:
