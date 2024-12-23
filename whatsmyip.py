@@ -16,7 +16,7 @@ import sys
 SCRIPT_FILE = os.path.basename(__file__)
 SCRIPT_NAME = str("whatsmyip")
 
-SCRIPT_VERSION = str("1.0.5")
+SCRIPT_VERSION = str("1.0.6")
 SCRIPT_RELEASE = str("beta")  # Options: devel, beta, release, stable
 
 # Set the IP lookup webservice URL.
@@ -203,6 +203,9 @@ def whatsmyip():
 
 
 if __name__ == "__main__":
-    whatsmyip()
+    try:
+        whatsmyip()
+    except KeyboardInterrupt:
+        pass
 
 # vi: syntax=python ts=4 noexpandtab
