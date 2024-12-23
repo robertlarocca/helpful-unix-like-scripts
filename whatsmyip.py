@@ -101,7 +101,7 @@ def show_metadata(proto):
         try:
             m = json.loads(j)
         except:
-            break
+            return
     else:
         j = os.popen(
             f"curl.exe \
@@ -114,7 +114,7 @@ def show_metadata(proto):
         try:
             m = json.loads(j)
         except:
-            break
+            return
 
     # { "ip": "108.227.213.141",
     #   "ip_decimal": 1826870669,
