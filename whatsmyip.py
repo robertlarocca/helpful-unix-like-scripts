@@ -101,7 +101,7 @@ def show_metadata(proto):
         try:
             m = json.loads(j)
         except:
-            sys.exit(1)
+            break
     else:
         j = os.popen(
             f"curl.exe \
@@ -114,7 +114,7 @@ def show_metadata(proto):
         try:
             m = json.loads(j)
         except:
-            sys.exit(1)
+            break
 
     # { "ip": "108.227.213.141",
     #   "ip_decimal": 1826870669,
@@ -164,7 +164,7 @@ def show_metadata(proto):
                 hostname = str(m["hostname"])
                 print(f"Hostname: {hostname}")
             except:
-                print(f"Hostname: null")
+                print(f"Hostname: None")
 
         if args.network:
             print(f"Network: {asn_org} ({asn})")
