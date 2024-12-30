@@ -3,9 +3,9 @@
 # Helpful aliases for busybox sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.1'
-script_release='devel'  # options devel, beta, release, stable
-export ASH_ALIASES_VERSION="$script_version-$script_release"
+script_version='4.1.2'
+script_release='release'  # options devel, beta, release, stable
+export ALIASES_VERSION="$script_version-$script_release"
 
 PATH="$PATH:/usr/local/sbin:/usr/local/bin"
 

@@ -3,9 +3,9 @@
 # Helpful aliases for bash sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.1'
-script_release='devel'  # options devel, beta, release, stable
-export BASH_ALIASES_VERSION="$script_version-$script_release"
+script_version='4.1.2'
+script_release='release'  # options devel, beta, release, stable
+export ALIASES_VERSION="$script_version-$script_release"
 
 # Set custom emoji prompt for user accounts.
 PS1_ORIG="$PS1"
@@ -14,16 +14,12 @@ set_emoji_ps1_prompt() {
 		# Emoji when caffeinate is enabled
 		PS1="☕ $PS1_ORIG"
 	elif [[ $USER = 'root' ]]; then
-		# Emoji for root
 		PS1="🧀 $PS1_ORIG"
 	elif [[ $USER = 'user1' ]]; then
-		# Emoji for user1
 		PS1="🦄 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
-		# Emoji for user2
 		PS1="🩻 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
-		# Emoji for user3
 		PS1="🧟 $PS1_ORIG"
 	fi
 }
