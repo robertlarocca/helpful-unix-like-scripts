@@ -3,7 +3,7 @@
 # Helpful aliases for zsh sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.2'
+script_version='4.1.4'
 script_release='release'  # options devel, beta, release, stable
 export ALIASES_VERSION="$script_version-$script_release"
 
@@ -18,9 +18,9 @@ set_emoji_ps1_prompt() {
 	elif [[ $USER = 'user1' ]]; then
 		PS1="🦄 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
-		PS1="🩻 $PS1_ORIG"
+		PS1="🐡 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
-		PS1="🧟 $PS1_ORIG"
+		PS1="🏓 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt

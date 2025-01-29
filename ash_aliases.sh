@@ -3,10 +3,29 @@
 # Helpful aliases for busybox sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.2'
+script_version='4.1.4'
 script_release='release'  # options devel, beta, release, stable
 export ALIASES_VERSION="$script_version-$script_release"
 
+# Set custom emoji prompt for user accounts.
+PS1_ORIG="$PS1"
+set_emoji_ps1_prompt() {
+	if [[ -f "$HOME/.caffeinate" ]]; then
+		# Emoji when caffeinate is enabled
+		PS1="☕ $PS1_ORIG"
+	elif [[ $USER = 'root' ]]; then
+		PS1="🧀 $PS1_ORIG"
+	elif [[ $USER = 'user1' ]]; then
+		PS1="🦄 $PS1_ORIG"
+	elif [[ $USER = 'user2' ]]; then
+		PS1="🐡 $PS1_ORIG"
+	elif [[ $USER = 'user3' ]]; then
+		PS1="🏓 $PS1_ORIG"
+	fi
+}
+set_emoji_ps1_prompt
+
+# Set custom PATH for ash (BusyBox) shell.
 PATH="$PATH:/usr/local/sbin:/usr/local/bin"
 
 # Exit or purge the current shell session history with clean command.

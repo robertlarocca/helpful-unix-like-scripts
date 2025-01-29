@@ -3,7 +3,7 @@
 # Helpful aliases for bash sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.2'
+script_version='4.1.4'
 script_release='release'  # options devel, beta, release, stable
 export ALIASES_VERSION="$script_version-$script_release"
 
@@ -18,9 +18,9 @@ set_emoji_ps1_prompt() {
 	elif [[ $USER = 'user1' ]]; then
 		PS1="🦄 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
-		PS1="🩻 $PS1_ORIG"
+		PS1="🐡 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
-		PS1="🧟 $PS1_ORIG"
+		PS1="🏓 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt
@@ -281,16 +281,30 @@ test-port() {
 # Ookla speedtest-cli alias to display minimal output by default.
 alias speedtest="speedtest-cli --simple"
 
-# Toggle wireless network power management.
+# Toggle wireless (WiFi) network power management.
 wifi-power() {
-	# The wireless network interface name.
-	local wifi_iface="wlp2s0"
+	# Set the network interface name.
+	local wifi_iface="wlan0"
 
-	if [[ -z "$1" ]]; then
-		iwconfig "$wifi_iface"
-	else
-		sudo iwconfig "$wifi_iface" power "$1"
-	fi
+	case "$1" in
+	--enable | --on | on)
+		sudo iwconfig "$wifi_iface" power on
+		;;
+	--disable | --off | off)
+		sudo iwconfig "$wifi_iface" power off
+		;;
+	*)
+		if [[ -z "$1" ]]; then
+			iwconfig "$wifi_iface"
+		else
+			cat <<-EOF_XYZ
+			wifi-power: unrecognized option '$*'
+			Use 'wifi-power on' to enable WiFi network power management.
+			    'wifi-power off' to disable WiFi network power management.
+			EOF_XYZ
+		fi
+		;;
+	esac
 }
 
 # Similar to the macOS 'open' command.
