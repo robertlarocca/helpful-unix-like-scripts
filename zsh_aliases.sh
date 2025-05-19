@@ -300,4 +300,4 @@ if [[ -f "$HOME/.zsh_private" ]]; then
 	source "$HOME/.zsh_private"
 fi
 
-# vi: syntax=sh ts=2 noexpandtab
+# vi: syntax=sh ts=4 sw=4 sts=4 sr noet

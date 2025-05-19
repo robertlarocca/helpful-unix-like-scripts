@@ -257,4 +257,4 @@ if __name__ == "__main__":
     main()
     sys.exit(4)
 
-# vi: syntax=python ts=4 noexpandtab
+# vi: syntax=python ts=4 sw=4 sts=4 sr noet

@@ -347,4 +347,4 @@ if [[ -f "$HOME/.bash_private" ]]; then
 	source $HOME/.bash_private
 fi
 
-# vi: syntax=sh ts=2 noexpandtab
+# vi: syntax=sh ts=4 sw=4 sts=4 sr noet

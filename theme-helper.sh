@@ -189,4 +189,4 @@ esac
 
 exit 0
 
-# vi: syntax=sh ts=2 noexpandtab
+# vi: syntax=sh ts=4 sw=4 sts=4 sr noet
