@@ -3,7 +3,7 @@
 # Helpful aliases for busybox sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.4'
+script_version='4.1.6'
 script_release='release'  # options devel, beta, release, stable
 export ALIASES_VERSION="$script_version-$script_release"
 
@@ -14,13 +14,19 @@ set_emoji_ps1_prompt() {
 		# Emoji when caffeinate is enabled
 		PS1="☕ $PS1_ORIG"
 	elif [[ $USER = 'root' ]]; then
-		PS1="🧀 $PS1_ORIG"
-	elif [[ $USER = 'user1' ]]; then
+		PS1="🐳 $PS1_ORIG"
+	elif [[ $USER = 'ansible' ]]; then
 		PS1="🦄 $PS1_ORIG"
+	elif [[ $USER = 'user1' ]]; then
+		PS1="🫥 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
-		PS1="🐡 $PS1_ORIG"
+		PS1="🌀 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
-		PS1="🏓 $PS1_ORIG"
+		PS1="🥸 $PS1_ORIG"
+	elif [[ $USER = 'user4' ]]; then
+		PS1="🥁 $PS1_ORIG"
+	elif [[ $USER = 'user5' ]]; then
+		PS1="🛸 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt

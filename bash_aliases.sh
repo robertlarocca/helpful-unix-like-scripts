@@ -3,7 +3,7 @@
 # Helpful aliases for bash sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.1.4'
+script_version='4.1.6'
 script_release='release'  # options devel, beta, release, stable
 export ALIASES_VERSION="$script_version-$script_release"
 
@@ -14,13 +14,19 @@ set_emoji_ps1_prompt() {
 		# Emoji when caffeinate is enabled
 		PS1="☕ $PS1_ORIG"
 	elif [[ $USER = 'root' ]]; then
-		PS1="🧀 $PS1_ORIG"
-	elif [[ $USER = 'user1' ]]; then
+		PS1="🐳 $PS1_ORIG"
+	elif [[ $USER = 'ansible' ]]; then
 		PS1="🦄 $PS1_ORIG"
+	elif [[ $USER = 'user1' ]]; then
+		PS1="🫥 $PS1_ORIG"
 	elif [[ $USER = 'user2' ]]; then
-		PS1="🐡 $PS1_ORIG"
+		PS1="🌀 $PS1_ORIG"
 	elif [[ $USER = 'user3' ]]; then
-		PS1="🏓 $PS1_ORIG"
+		PS1="🥸 $PS1_ORIG"
+	elif [[ $USER = 'user4' ]]; then
+		PS1="🥁 $PS1_ORIG"
+	elif [[ $USER = 'user5' ]]; then
+		PS1="🛸 $PS1_ORIG"
 	fi
 }
 set_emoji_ps1_prompt
@@ -178,6 +184,11 @@ clean() {
 
 # Prevent conflicts with existing kubectl installs.
 alias kubectl="microk8s kubectl"
+
+# Enable Bitwarden ssh-agent support for use with OpenSSH commands.
+# export SSH_AUTH_SOCK="/Users/$USER/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock" # App Store
+# export SSH_AUTH_SOCK=/home/$USER/snap/bitwarden/current/.bitwarden-ssh-agent.sock # Snap
+# export SSH_AUTH_SOCK=/home/$USER/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock # Flatpak
 
 # Prevent pubkey authentication with OpenSSH commands.
 alias scp-passwd="scp -o PreferredAuthentications=password -o PubkeyAuthentication=no"
