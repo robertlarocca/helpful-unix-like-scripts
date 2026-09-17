@@ -10,7 +10,7 @@ We as contributors and security professionals follow the [MITRE.org](https://www
 
 Please don't report security vulnerabilities through issue tracking or the public internet.
 
-Instead, report them by email [security@laroccx.io](mailto:security@laroccx.io?subject=Security%20Vulnerability%20Report).
+Instead, report them by email [security@laroccx.io](mailto:security@example.com?subject=Security%20Vulnerability%20Report).
 
 You should receive a reply response promptly. If for some reason you don't, follow-up via email to ensure we received your original message.
 

@@ -2,7 +2,7 @@
 
 Helpful Linux and macOS shell scripts for sysadmins, developers and the forgetful.
 
-The `clean` command script previously located [clean-command-history](https://github.com/robertlarocca/clean-command-history) is now part of this repository. Less for me to maintain and just makes sense. It's **helpful** and a Unix-like shell script. 🙂
+The `clean` command script previously located [helpful-unix-like-scripts](https://github.com/robertlarocca/helpful-unix-like-scripts) is now part of this repository. Less for me to maintain and just makes sense. It's **helpful** and a Unix-like shell script. 🙂
 
 -   bash_aliases.sh
 -   caffeinate.sh

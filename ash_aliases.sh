@@ -1,11 +1,11 @@
-# Copyright (c) Robert LaRocca, http://www.laroccx.com
+# Copyright (c) 2026 Robert LaRocca.
 
 # Helpful aliases for busybox sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.2.0'
-script_release='release'  # options devel, beta, release, stable
-export ALIASES_VERSION="$script_version-$script_release"
+SCRIPT_VERSION='4.3.1'
+SCRIPT_RELEASE='release'  # options devel, beta, release, stable
+export ALIASES_VERSION="$SCRIPT_VERSION-$SCRIPT_RELEASE"
 
 # Set custom emoji prompt for user accounts.
 PS1_ORIG="$PS1"
@@ -57,9 +57,29 @@ clean() {
 
 alias swupdate="$(which swupdate) --opkg"
 
-# Include bash_private if available.
-if [[ -f "$HOME/.ash_private" ]]; then
-	source $HOME/.ash_private
+# Include (source) the bash_private files also fix ownership and permission if available.
+if [[ -f "$HOME/.bash_private" ]]; then
+	chmod 0640 $HOME/.bash_private*
+	chown $USER:$USER $HOME/.bash_private*
+	source $HOME/.bash_private
 fi
 
-# vi: syntax=sh ts=4 sw=4 sts=4 sr noet
+if [[ -f "$HOME/.bash_private_mysql" ]]; then
+	source "$HOME/.bash_private_mysql"
+fi
+
+if [[ -f "$HOME/.bash_private_rabbit" ]]; then
+	source "$HOME/.bash_private_rabbit"
+fi
+
+if [[ -f "$HOME/.bash_private_search" ]]; then
+	source "$HOME/.bash_private_search"
+fi
+
+if [[ -f "$HOME/.bash_private_web" ]]; then
+	source "$HOME/.bash_private_web"
+fi
+
+# code: language=sh
+# vi: syntax=sh ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=sh ts=4 sw=4 sts=4 noexpandtab

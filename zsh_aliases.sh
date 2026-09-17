@@ -1,11 +1,11 @@
-# Copyright (c) Robert LaRocca, http://www.laroccx.com
+# Copyright (c) 2026 Robert LaRocca.
 
 # Helpful aliases for zsh sysadmins, developers and the forgetful.
 
 # Script version and release
-script_version='4.2.0'
-script_release='release'  # options devel, beta, release, stable
-export ALIASES_VERSION="$script_version-$script_release"
+SCRIPT_VERSION='4.3.1'
+SCRIPT_RELEASE='release'  # options devel, beta, release, stable
+export ALIASES_VERSION="$SCRIPT_VERSION-$SCRIPT_RELEASE"
 
 # Set custom emoji prompt for user accounts.
 PS1_ORIG="$PS1"
@@ -80,7 +80,7 @@ zsh_aliases() {
 
 	show_version_information() {
 		cat <<-EOF_XYZ
-		zsh_aliases $script_version-$script_release
+		zsh_aliases $SCRIPT_VERSION-$SCRIPT_RELEASE
 		Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
 		License: The MIT License (MIT)
 		Source: https://github.com/robertlarocca/hhelpful-unix-like-scripts
@@ -273,7 +273,7 @@ security-headers() {
 	local website_url="$1"
 	if [[ -n "$website_url" ]]; then
 		echo "$website_url"
-		curl -A "security-headers/$script_version-$script_release" -ISs --connect-timeout 5 --retry 1 "$website_url"
+		curl -A "security-headers/$SCRIPT_VERSION-$SCRIPT_RELEASE" -ISs --connect-timeout 5 --retry 1 "$website_url"
 	else
 		for website_url in \
 			https://duckduckgo.com \
@@ -283,7 +283,7 @@ security-headers() {
 			https://www.laroccx.com \
 			https://www.microsoft.com ; do
 			echo "$website_url"
-			curl curl -A "security-headers/$script_version-$script_release" -ISs --connect-timeout 5 --retry 1 "$website_url"
+			curl curl -A "security-headers/$SCRIPT_VERSION-$SCRIPT_RELEASE" -ISs --connect-timeout 5 --retry 1 "$website_url"
 			echo
 		done
 	fi
@@ -346,9 +346,29 @@ install-hhelpful-unix-like-scripts-packages() {
 	fi
 }
 
-# Include zsh_private if available.
-if [[ -f "$HOME/.zsh_private" ]]; then
-	source "$HOME/.zsh_private"
+# Include (source) the bash_private files also fix ownership and permission if available.
+if [[ -f "$HOME/.bash_private" ]]; then
+	chmod 0640 $HOME/.bash_private*
+	chown $USER:$USER $HOME/.bash_private*
+	source $HOME/.bash_private
 fi
 
-# vi: syntax=sh ts=4 sw=4 sts=4 sr noet
+if [[ -f "$HOME/.bash_private_mysql" ]]; then
+	source "$HOME/.bash_private_mysql"
+fi
+
+if [[ -f "$HOME/.bash_private_rabbit" ]]; then
+	source "$HOME/.bash_private_rabbit"
+fi
+
+if [[ -f "$HOME/.bash_private_search" ]]; then
+	source "$HOME/.bash_private_search"
+fi
+
+if [[ -f "$HOME/.bash_private_web" ]]; then
+	source "$HOME/.bash_private_web"
+fi
+
+# code: language=sh
+# vi: syntax=sh ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=sh ts=4 sw=4 sts=4 noexpandtab

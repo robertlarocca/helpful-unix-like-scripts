@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) Robert LaRocca, http://www.laroccx.com
+# Copyright (c) 2026 Robert LaRocca.
 
 ## Uncomment to install into the ~/ directory.
 # mv -v $HOME/.ash_aliases $HOME/.ash_aliases-bak
@@ -52,4 +52,6 @@ sudo cp -v $PWD/git-sync.sh /usr/local/bin/git-sync && sudo chmod 0755 /usr/loca
 sudo cp -v $PWD/swupdate.sh /usr/local/bin/swupdate && sudo chmod 0755 /usr/local/bin/swupdate
 sudo cp -v $PWD/whatsmyip.py /usr/local/bin/whatsmyip && sudo chmod 0755 /usr/local/bin/whatsmyip
 
-# vi: syntax=sh ts=2 noexpandtab
+# code: language=sh
+# vi: syntax=sh ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=sh ts=4 sw=4 sts=4 noexpandtab

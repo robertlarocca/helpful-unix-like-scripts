@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) Robert LaRocca, http://www.laroccx.com
+# Copyright (c) 2026 Robert LaRocca.
 
 # Synchronize all Git repositories in the current directory or the list of directories.
 
@@ -239,4 +239,6 @@ esac
 
 exit 0
 
-# vi: syntax=sh ts=4 sw=4 sts=4 sr noet
+# code: language=sh
+# vi: syntax=sh ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=sh ts=4 sw=4 sts=4 noexpandtab

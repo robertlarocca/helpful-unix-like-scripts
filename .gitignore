@@ -1,43 +1,81 @@
 # You should customize this list as applicable to this project.
 #
-# Learn more about .gitignore:
+# Learn more about .gitignore files at the following URLs:
 # - https://git-scm.com/docs/gitignore
 # - https://github.com/github/gitignore
-#
 
 # Ansible
 *.retry
 
 # Backup
-*.bak
-*.gho
-*.orig
-*.tmp
-
-# GPG
-secring.*
+*-bak*
+*-gho*
+*-orig*
+*-tmp*
+*.bak*
+*.gho*
+*.orig*
+*.tmp*
 
 # SVN
-.svn/
+**/.svn/
 
-# Plain-text passwords
+# Keep sensitive files and secrets Encrypted if you must store it online!
 #
-# Consider encrypting files with private information using
-# Ansible Vault for real security not just obscurity:
-#   https://docs.ansible.com/ansible/latest/vault_guide/index.html
+# Ansible Vault and GitHub can both encrypt sensitive data to help keep your
+# information private. Checkout the following links for more information:
 #
+# - https://docs.ansible.com/ansible/latest/vault_guide/index.html
+# - https://docs.github.com/en/actions/security-guides/encrypted-secrets
+
+# GPG
+pubring.*
+secring.*
+
+# Passwords (plain-text and hashed)
+*.htpasswd
 *.passwd
-**/.passwd/
+**/.elasticsearch/*
+**/.htpasswd
+**/.ldap/*
+**/.mariadb/*.cnf
+**/.mysql/*.cnf
+**/.opensearch/*
+**/.passwd
+**/.rabbitmq/*
+**/.redis/*
+**/.sshpass/*
+**/.valkey/*
 
-# Log files
+# SSH (private keys)
+**/id_dsa
+**/id_ecdsa
+**/id_ecdsa_sk
+**/id_ecdsa-sk
+**/id_ed25519
+**/id_ed25519_sk
+**/id_ed25519-sk
+**/id_rsa
+
+# Logs
 *.log
-*.log[0-9]
+*.log-*
+*.log.*
 
 # JetBrains IDEs
 .idea_modules/
 .idea/
 *.iws
 out/
+
+# Composer Authentication
+**/auth.json*
+
+# Github Tokens
+**/.artifact_github_token*
+**/.artifact_github.token*
+**/.github_token*
+**/.github.token*
 
 # Sublime Text
 *.stTheme.cache
@@ -89,3 +127,6 @@ ehthumbs_vista.db
 ehthumbs.db
 Thumbs.db
 Thumbs.db:encryptable
+
+# Windows Subsystem for Linux (WSL)
+*:Zone.Identifier

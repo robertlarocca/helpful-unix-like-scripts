@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding=utf-8 -*-
 
-# Copyright (c) 2024 Robert LaRocca <https://www.laroccx.com>
+# Copyright (c) 2026 Robert LaRocca.
 
 # This source code is governed by a MIT-style license that can be found
 # in the included LICENSE file. If not, see <https://mit-license.org/>.
@@ -18,7 +18,7 @@ SCRIPT_FILE = os.path.basename(__file__)
 SCRIPT_NAME = str("clean")
 
 SCRIPT_VERSION = str("1.0.6")
-SCRIPT_RELEASE = str("devel")  # Options: devel, beta, release, stable
+SCRIPT_RELEASE = str("release")  # Options: devel, beta, release, stable
 
 USER_HOME = os.path.expanduser("~")
 
@@ -233,7 +233,6 @@ def sleep_host():
         except Exception:
             sys.exit(1)
 
-
 def exit_shell():
     """exit_shell"""
     sys.exit(5)
@@ -257,4 +256,6 @@ if __name__ == "__main__":
     main()
     sys.exit(4)
 
-# vi: syntax=python ts=4 sw=4 sts=4 sr noet
+# code: language=python
+# vi: syntax=python ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=python ts=4 sw=4 sts=4 noexpandtab

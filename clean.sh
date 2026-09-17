@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) Robert LaRocca, http://www.laroccx.com
+# Copyright (c) 2026 Robert LaRocca.
 
 # Remove history files created using the GNU History Library.
 
@@ -212,4 +212,6 @@ case "$1" in
 	;;
 esac
 
-# vi: syntax=sh ts=4 sw=4 sts=4 sr noet
+# code: language=sh
+# vi: syntax=sh ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=sh ts=4 sw=4 sts=4 noexpandtab

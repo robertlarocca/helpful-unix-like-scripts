@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding=utf-8 -*-
 
-# Copyright (c) 2024 Robert LaRocca <https://www.laroccx.com>
+# Copyright (c) 2026 Robert LaRocca.
 
 # This source code is governed by a MIT-style license that can be found
 # in the included LICENSE file. If not, see <https://mit-license.org/>.
@@ -208,4 +208,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
 
-# vi: syntax=python ts=4 sw=4 sts=4 sr noet
+# code: language=python
+# vi: syntax=python ts=4 sw=4 sts=4 noexpandtab
+# vim: set filetype=python ts=4 sw=4 sts=4 noexpandtab

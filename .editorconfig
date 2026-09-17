@@ -2,51 +2,79 @@
 
 root = true
 
-# Unix-style newlines with a newline ending every file
+# Defaults
 [*]
 charset = utf-8
 end_of_line = lf
+indent_size = 4
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# HTML/CSS Style Guide:
-# - https://google.github.io/styleguide/htmlcssguide.html
-[*.{htm,html,css}]
-indent_style = space
-indent_size = 2
-
-[INSTALL]
-indent_style = tab
-indent_size = 2
-
-[*.{j2,jinja2}]
-indent_style = tab
+# Go
+[*.go]
 indent_size = 4
+indent_style = tab
 
-[*.{js,json}]
+# HTML and CSS
+# Style guide: https://google.github.io/styleguide/htmlcssguide.html
+[*.{css,htm,html,phtml,scss,shtml}]
+indent_size = 4
 indent_style = space
-indent_size = 2
 
+# JavaScript and JSON
+[*.{js,json}]
+indent_size = 2
+indent_style = space
+
+# Jinja2
+[*.{j2,jinja2}]
+indent_size = 4
+indent_style = tab
+
+# Composer
+[{composer,auth}.json]
+indent_size = 4
+indent_style = space
+
+# Makefile
 [Makefile]
 indent_style = tab
 
+# Markdown
 [*.md]
-indent_style = space
 indent_size = 4
+indent_style = space
 trim_trailing_whitespace = false
 
-# Python Style Guide:
-# - https://google.github.io/styleguide/pyguide.html
-[*.py]
-indent_style = space
+# PHP
+# Style guide: https://www.php-fig.org/psr/psr-12
+[*.php]
 indent_size = 4
-
-# Shell Style Guide:
-# - https://google.github.io/styleguide/shellguide.html
-[*.sh]
-indent_style = tab
-indent_size = 2
-
-[*.{yml,yaml}]
 indent_style = space
+
+# Python
+# Style guide: https://google.github.io/styleguide/pyguide.html
+[*.py]
+indent_size = 4
+indent_style = space
+
+# Windows PowerShell
+[*.{ps1,psm1,psd1,ps1xml,pssc,psrc,cdxml}]
+indent_size = 4
+indent_style = tab
+
+# Unix-like Shell
+# Style guide: https://google.github.io/styleguide/shellguide.html
+[*.{sh,bash,csh,zsh}]
+indent_size = 4
+indent_style = tab
+
+# SQL
+[*.sql]
+indent_size = 4
+indent_style = tab
+
+# TOML and YAML
+[*.{toml,yaml,yml}]
 indent_size = 2
+indent_style = space
