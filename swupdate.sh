@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2026 Robert LaRocca.
+# Copyright (c) 2026 Robert LaRocca <https://www.laroccx.com>
 
-# Update apt packages, snaps, flatpaks, firmware or upgrade
-# to the next operating system release.
+# Helper script (wrapper) to updates software packages across many popular Unix-like and Windows package managers
+# including apt, dnf (and legacy yum), opkg, winget, pip3, snap, flatpak, brew, and port. Support for additional
+# package managers is being added. The tool can also perform an in-place upgrade of Ubuntu-based operating systems
+# to the next long-term support (LTS) or development release.
 
 # Script version and release
-script_version='4.2.2'
-script_release='beta'  # options devel, beta, release, stable
+SCRIPT_VERSION="4.3.0"
+SCRIPT_RELEASE="release"  # options devel, alpha, beta, release, stable
+SCRIPT_VERINFO="$SCRIPT_VERSION-$SCRIPT_RELEASE"
 
 # Uncomment to enable bash xtrace mode.
 # set -xv
 
+OPTIONS_USER="$1"
+
 # Check os-release variables.
-if [[ -f /etc/os-release ]]; then
+if [ -f /etc/os-release ]; then
 	# logger -i "Operating system release variables are available!"
 	source /etc/os-release
 fi
@@ -36,48 +41,59 @@ require_user_privileges() {
 
 show_help() {
 	cat <<-EOF_XYZ
-	Usage: swupdate [OPTION]...
+	Usage: swupdate [OPTIONS] [EXTRAS] ...
 
-	Easily update Debian and Red Hat based operating systems. All the
-	installed packages and hardware firmware can be updated using this
+	Easily update Debian, Red Hat, and other Unix-like operating systems.
+	This script updates installed packages and hardware firmware.
 
-	This script by default (without an additional option provided) will
-	update all of the installed packages and autoremove unused packages.
-	The additional options provide more package sources and functionality.
+	The swupdate command, by default updates all installed packages and removes
+	unused dependencies. Additional options enable access to more package sources
+	and other built-in features.
 
 	Options:
-	 -a, --all   Update all packages, Flatpaks, Snaps and firmware
-	 --apt       Update apt (aka Debian) packages
-	 --dnf       Update dnf and yum (aka Red Hat) packages
-	 --firmware  Update hardware firmware
-	 --flatpak   Update Flatpak packages
-	 --macos     Update App Store and MacPorts (aka port) packages
-	 --opkg      Update OpenWrt (aka opkg) packages
-	 --python    Update Python3 (aka pip3) packages
-	 --snap      Update Snap packages
-	 --winget    Update Microsoft Store and other installed packages
-	 --wsl       Update Windows Subsystem for Linux packages
+	 -a, --all      Update all packages, default, firmware, snap, brew, etc
+	 --apt          Update apt Debian like packages
+	 --dnf          Update dnf Red Hat like packages
+	 --firmware     Update hardware firmware
+	 --flatpak      Update Flatpak packages
+	 --macos        Update App Store packages
+	 --homebrew     Update Homebrew (brew) packages [Untested]
+	 --macports     Update MacPorts (port) packages
+	 --opkg         Update OpenWrt packages
+	 --python       Update Python3 (pip3) packages
+	 --snap         Update Snapcraft (snap) packages
+	 --winget       Update Windows Package Manager packages
+	 --wsl          Update Windows Subsystem for Linux system components
+	 --yum          Update legacy yum CentOS and Red Hat packages
 
-	 -v, --version  Show version and exit
+	Extras:
+	 -f, --force    Always update packages, even if phased by system vendor
 	 -h, --help     Show this help message and exit
+	 -v, --version  Show version information and exit
 
-	When using the normal or lts options; swupdate tries to upgrade Ubuntu with
-	third party mirrors and repositories enabled instead of commenting out.
+	Notes:
+	When using the Normal or Long-Term Support (LTS) options, swupdate will attempt
+	to upgrade Debian and Ubuntu while leaving any third-party repositories enabled.
 
-	Status Codes:
-	 0 - OK
+	Status:
+	Like most Unix-like programs, the swupdate script returns an exit status code
+	whenever it terminates. The status code reflects the reason for why the process
+	ended and is passed to the calling shell.
+
+	 0 - Successful
 	 1 - Issue
 	 2 - Error
+	 3 - Unknown
 
-	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8)
-	for additional information and to provide insight how this wrapper works.
+	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8) for more
+	information and provide detailed insight into how this wrapper script works.
 	EOF_XYZ
 }
 
 show_version() {
 	cat <<-EOF_XYZ
-	swupdate $script_version-$script_release
-	Copyright (c) $(date +%Y) Robert LaRocca, https://www.laroccx.com
+	swupdate $SCRIPT_VERINFO
+	Copyright (c) $(date +%Y) Robert LaRocca <https://www.laroccx.com>
 	License: The MIT License (MIT)
 	Source: https://github.com/robertlarocca/helpful-unix-like-scripts
 	EOF_XYZ
@@ -85,34 +101,52 @@ show_version() {
 
 error_unrecognized_option() {
 	cat <<-EOF_XYZ
-	swupdate: unrecognized option '$1'
+	swupdate: unrecognized option '$OPTIONS_USER'
 	Try 'swupdate --help' for more information.
 	EOF_XYZ
 }
 
 apt_packages() {
-	require_root_privileges
+	require_root_privileges;
+	local extras_option="$2"
 
-	if [[ "$ID_LIKE" == "debian" ]] && [[ -x $(which apt 2> /dev/null) ]]; then
+	if [[ "$ID_LIKE" == "debian" ]] && [[ -x $(command -v apt 2> /dev/null) ]]; then
 		apt autoclean
 		apt update
-		apt --yes upgrade
-		apt --yes full-upgrade
-		# Don't remove any packages without prompting user.
+
+		case "$extras_option" in
+		--force | -f)
+			# Install any phased packages with updates
+			apt --yes --option="APT::Get::Always-Include-Phased-Updates=true" upgrade
+			apt --yes --option="APT::Get::Always-Include-Phased-Updates=true" full-upgrade
+			;;
+		*)
+			if [[ -z "$extras_option" ]]; then
+				# Do not install phased packages with updates
+				apt --yes upgrade
+				apt --yes full-upgrade
+			else
+				error_unrecognized_option "$*"
+				exit 1
+			fi
+			;;
+		esac
+
+		# Do not remove any packages without prompting user.
 		apt autoremove
 	fi
 }
 
 dnf_packages() {
-	require_root_privileges
+	require_root_privileges;
 
-	if [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(which dnf 2> /dev/null) ]]; then
+	if [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(command -v dnf 2> /dev/null) ]]; then
 		dnf clean all
 		dnf check-update
 		dnf --assumeyes upgrade
 		# Don't remove any packages without prompting user.
 		dnf autoremove
-	elif [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(which yum 2> /dev/null) ]]; then
+	elif [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(command -v yum 2> /dev/null) ]]; then
 		yum clean all
 		yum check-update
 		yum --assumeyes upgrade
@@ -122,17 +156,17 @@ dnf_packages() {
 }
 
 flatpak_packages() {
-	require_root_privileges
+	require_root_privileges;
 
-	if [[ -x $(which flatpak 2> /dev/null) ]]; then
+	if [[ -x $(command -v flatpak 2> /dev/null) ]]; then
 		flatpak update
 	fi
 }
 
 opkg_packages() {
-	require_root_privileges
+	require_root_privileges;
 
-	if [[ "$ID_LIKE" == "lede openwrt" ]] && [[ -x $(which opkg 2> /dev/null) ]]; then
+	if [[ "$ID_LIKE" == "lede openwrt" ]] && [[ -x $(command -v opkg 2> /dev/null) ]]; then
 		opkg update
 		local upgrade_list="$(opkg list-upgradable | awk '{ printf "%s ",$1 }' 2>/dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
@@ -144,36 +178,50 @@ opkg_packages() {
 }
 
 macos_packages() {
-	require_root_privileges
+	require_root_privileges;
 
 	# Test for the macOS Darwin UNIX kernel.
 	local kernel_os="$(uname -o 2> /dev/null)"
 
 	if [[ "$kernel_os" =~ "Darwin" ]]; then
-		if [[ -x $(which port 2> /dev/null) ]]; then
-			port -q -R selfupdate
-			port -q -R upgrade outdated
-		fi
-
-		if [[ -x $(which softwareupdate 2> /dev/null) ]]; then
+		if [[ -x $(command -v softwareupdate 2> /dev/null) ]]; then
 			softwareupdate --install --all
 		fi
 	fi
 }
 
-port_packages() {
-	require_root_privileges
+homebrew_packages() {
+	require_root_privileges;
 
-	if [[ -x $(which port 2> /dev/null) ]]; then
-		port -q selfupdate
-		port -q upgrade outdated
+	# Test for the macOS Darwin UNIX kernel.
+	local kernel_os="$(uname -o 2> /dev/null)"
+
+	if [[ "$kernel_os" =~ "Darwin" ]]; then
+		if [[ -x $(command -v brew 2> /dev/null) ]]; then
+			brew update
+			brew --force-cleanup --no-ask upgrade
+		fi
+	fi
+}
+
+macports_packages() {
+	require_root_privileges;
+
+	# Test for the macOS Darwin UNIX kernel.
+	local kernel_os="$(uname -o 2> /dev/null)"
+
+	if [[ "$kernel_os" =~ "Darwin" ]]; then
+		if [[ -x $(command -v port 2> /dev/null) ]]; then
+			port -q -R selfupdate
+			port -q -R upgrade outdated
+		fi
 	fi
 }
 
 python3_packages() {
 	require_user_privileges
 
-	if [[ -x $(which pip3 2> /dev/null) ]]; then
+	if [[ -x $(command -v pip3 2> /dev/null) ]]; then
 		local upgrade_list="$(pip3 list --outdated | cut -d' ' -f1 | tail -n+3 2> /dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
 			pip3 install --upgrade $upgrade_list
@@ -183,29 +231,29 @@ python3_packages() {
 	fi
 }
 
-snap_packages() {
-	require_root_privileges
+snapcraft_packages() {
+	require_root_privileges;
 
-	if [[ -x $(which snap 2> /dev/null) ]]; then
+	if [[ -x $(command -v snap 2> /dev/null) ]]; then
 		snap refresh
 	fi
 }
 
 winget_packages() {
 	# Set absolute path to the winget.exe binary.
-	# Using methods like which command do not work as root user.
+	# Using methods like command or which  do not work as root user
 	local winget_binary="$NTHOME/AppData/Local/Microsoft/WindowsApps/winget.exe"
-	if [[ -x "$(which winget.exe)" ]]; then
+	if [[ -x "$(command -v winget.exe)" ]]; then
 		# winget.exe source update
 		winget.exe update --all
 	fi
 }
 
-wsl2_packages() {
+wsl_packages() {
 	# Set complete path to the wsl.exe binary.
-	# Using methods like which command do not work as root user.
+	# Using methods like command or which  do not work as root user.
 	local wsl_binary="/mnt/c/WINDOWS/system32/wsl.exe"
-	if [[ -x "$(which wsl.exe)" ]]; then
+	if [[ -x "$(command -v wsl.exe)" ]]; then
 		wsl.exe --update
 	fi
 }
@@ -223,10 +271,10 @@ error_kernel_release() {
 }
 
 firmware_packages() {
-	require_root_privileges
+	require_root_privileges;
 	error_kernel_release
 
-	if [[ -x $(which fwupdmgr 2> /dev/null) ]]; then
+	if [[ -x $(command -v fwupdmgr 2> /dev/null) ]]; then
 		fwupdmgr --force refresh
 		fwupdmgr update
 	fi
@@ -236,83 +284,93 @@ os_upgrade() {
 	# Use this function at your own risk!
 	# You are better to directly use the do-release-upgrade command.
 	local os_release="$1"
-	require_root_privileges
+	require_root_privileges;
 
-	if [[ -x $(which apt 2> /dev/null) ]]; then
+	if [[ -x $(command -v apt 2> /dev/null) ]]; then
 		apt --yes install update-manager-core
 	fi
 
 	cp /etc/update-manager/release-upgrades /etc/update-manager/release-upgrades.bak
 	sed -E -i s/'^Prompt=.*'/'Prompt=$os_release'/g /etc/update-manager/release-upgrades
 
-	if [[ -x $(which do-release-upgrade 2> /dev/null) ]]; then
+	if [[ -x $(command -v do-release-upgrade 2> /dev/null) ]]; then
 		do-release-upgrade --allow-third-party
 	fi
 }
 
 # Options
-case "$1" in
+case "$OPTIONS_USER" in
 --all | -a)
-	apt_packages
-	dnf_packages
-	macos_packages
-	opkg_packages
-	flatpak_packages
-	snap_packages
-	winget_packages
-	wsl2_packages
-	firmware_packages
+	apt_packages;
+	dnf_packages;
+	macos_packages;
+	homebrew_packages;
+	macports_packages;
+	opkg_packages;
+	flatpak_packages;
+	snapcraft_packages;
+	winget_packages;
+	wsl_packages;
+	firmware_packages;
 	;;
---apt)
-	apt_packages
+--apt | --apt-get)
+	apt_packages;
 	;;
 --dnf | --yum)
-	dnf_packages
+	dnf_packages;
 	;;
---firmware | --fw)
-	firmware_packages
+--firmware | --fw | --eprom)
+	firmware_packages;
 	;;
 --flatpak)
-	flatpak_packages
+	flatpak_packages;
 	;;
 --openwrt | --opkg)
-	opkg_packages
+	opkg_packages;
 	;;
 --macos)
-	macos_packages
+	macos_packages;
 	;;
---python | --pip)
+--brew | --homebrew)
+	homebrew_packages;
+	;;
+--ports | --macports)
+	macports_packages;
+	;;
+--python | --python3 | --pip | pip3)
 	python3_packages
 	;;
---snap)
-	snap_packages
+--snap | --snapcraft)
+	snapcraft_packages;
 	;;
---winget | --msstore)
-	winget_packages
+--winget)
+	winget_packages;
 	;;
 --wsl | --wsl2)
-	wsl2_packages
+	wsl_packages;
 	;;
 --version | -v)
 	show_version
 	;;
 --help | -h)
-	show_help
+	show_help;
 	;;
 *)
-	if [[ -z "$1" ]]; then
-		apt_packages
-		dnf_packages
-		macos_packages
-		opkg_packages
-		flatpak_packages
-		snap_packages
+	if [[ -z "$OPTIONS_USER" ]]; then
+		apt_packages;
+		dnf_packages;
+		macos_packages;
+		opkg_packages;
+		flatpak_packages;
+		snapcraft_packages;
 	else
-		error_unrecognized_option "$*"
+		error_unrecognized_option "$*";
 		exit 1
 	fi
 	;;
 esac
+
+exit 0
 
 # code: language=sh
 # vi: syntax=sh ts=4 sw=4 sts=4 noexpandtab
