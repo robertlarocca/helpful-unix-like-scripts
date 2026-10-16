@@ -2,26 +2,23 @@
 
 # Copyright (c) 2026 Robert LaRocca <https://www.laroccx.com>
 
-# Helper script (wrapper) to updates software packages across many popular Unix-like and Windows package managers
-# including apt, dnf (and legacy yum), opkg, winget, pip3, snap, flatpak, brew, and port. Support for additional
-# package managers is being added. The tool can also perform an in-place upgrade of Ubuntu-based operating systems
-# to the next long-term support (LTS) or development release.
+# Helper script (wrapper) to updates software packages across many popular
+# Unix-like and Windows package managers including apt, dnf (and legacy yum),
+# opkg, winget, pip3, snap, flatpak, brew, and port. Support for additional
+# package managers is being added. The tool can also perform an in-place upgrade
+# of Ubuntu-based operating systems to the next long-term support (LTS) release.
+
+# ----- Required global variables ----- #
 
 # Script version and release
 SCRIPT_VERSION="4.3.0"
 SCRIPT_RELEASE="release"  # options devel, alpha, beta, release, stable
 SCRIPT_VERINFO="$SCRIPT_VERSION-$SCRIPT_RELEASE"
 
-# Uncomment to enable bash xtrace mode.
-# set -xv
+# Set to toggle debug mode
+DEBUG=false  # options: true or false
 
-OPTIONS_USER="$1"
-
-# Check os-release variables.
-if [ -f /etc/os-release ]; then
-	# logger -i "Operating system release variables are available!"
-	source /etc/os-release
-fi
+# ----- Required global variables ----- #
 
 require_root_privileges() {
 	if [[ "$(id -un)" != "root" ]]; then
@@ -38,6 +35,18 @@ require_user_privileges() {
 		exit 2
 	fi
 }
+
+if [[ "$DEBUG" == "true" ]]; then
+	# Uncomment to print only commands and their arguments as they are executed.
+	# The return value of a pipeline is the status of the last command to exit with
+	# a non-zero status, or zero if no command exits with a non-zero status.
+	set -ox pipefail
+fi
+
+if [[ -f /etc/os-release ]]; then
+	# Source os-release variables from operating system vendor
+	source /etc/os-release
+fi
 
 show_help() {
 	cat <<-EOF_XYZ
@@ -80,10 +89,10 @@ show_help() {
 	whenever it terminates. The status code reflects the reason for why the process
 	ended and is passed to the calling shell.
 
-	 0 - Successful
-	 1 - Issue
-	 2 - Error
-	 3 - Unknown
+	 0. Success
+	 1. Failure
+	 2. Error
+	 3. Unknown
 
 	See apt(8) dnf(8) port(1) fwupdmgr(1) snap(8) and do-release-upgrade(8) for more
 	information and provide detailed insight into how this wrapper script works.
@@ -101,33 +110,32 @@ show_version() {
 
 error_unrecognized_option() {
 	cat <<-EOF_XYZ
-	swupdate: unrecognized option '$OPTIONS_USER'
+	swupdate: unrecognized option '$1'
 	Try 'swupdate --help' for more information.
 	EOF_XYZ
 }
 
 apt_packages() {
 	require_root_privileges;
-	local extras_option="$2"
 
 	if [[ "$ID_LIKE" == "debian" ]] && [[ -x $(command -v apt 2> /dev/null) ]]; then
 		apt autoclean
 		apt update
+		apt --yes upgrade
 
-		case "$extras_option" in
+		case "$1" in
 		--force | -f)
-			# Install any phased packages with updates
-			apt --yes --option="APT::Get::Always-Include-Phased-Updates=true" upgrade
+			# Install any phased packages with full-upgrade
+			echo "Notice: Always include phased package updates is enabled." >&2
 			apt --yes --option="APT::Get::Always-Include-Phased-Updates=true" full-upgrade
 			;;
 		*)
-			if [[ -z "$extras_option" ]]; then
-				# Do not install phased packages with updates
-				apt --yes upgrade
+			if [[ -z "$2" ]]; then
+				# Do not install phased packages with full-upgrade
 				apt --yes full-upgrade
 			else
 				error_unrecognized_option "$*"
-				exit 1
+				exit 2
 			fi
 			;;
 		esac
@@ -144,13 +152,13 @@ dnf_packages() {
 		dnf clean all
 		dnf check-update
 		dnf --assumeyes upgrade
-		# Don't remove any packages without prompting user.
+		# Do not remove any packages without prompting user.
 		dnf autoremove
 	elif [[ "$ID_LIKE" == "fedora" ]] && [[ -x $(command -v yum 2> /dev/null) ]]; then
 		yum clean all
 		yum check-update
 		yum --assumeyes upgrade
-		# Don't remove any packages without prompting user.
+		# Do not remove any packages without prompting user.
 		yum autoremove
 	fi
 }
@@ -168,7 +176,7 @@ opkg_packages() {
 
 	if [[ "$ID_LIKE" == "lede openwrt" ]] && [[ -x $(command -v opkg 2> /dev/null) ]]; then
 		opkg update
-		local upgrade_list="$(opkg list-upgradable | awk '{ printf "%s ",$1 }' 2>/dev/null)"
+		local upgrade_list="$(opkg list-upgradable | awk '{ printf "%s ",$1 }' 2> /dev/null)"
 		if [[ -n "$upgrade_list" ]]; then
 			opkg install $upgrade_list
 		else
@@ -299,9 +307,9 @@ os_upgrade() {
 }
 
 # Options
-case "$OPTIONS_USER" in
+case "$1" in
 --all | -a)
-	apt_packages;
+	apt_packages "$2";
 	dnf_packages;
 	macos_packages;
 	homebrew_packages;
@@ -314,7 +322,7 @@ case "$OPTIONS_USER" in
 	firmware_packages;
 	;;
 --apt | --apt-get)
-	apt_packages;
+	apt_packages "$2";
 	;;
 --dnf | --yum)
 	dnf_packages;
@@ -356,8 +364,8 @@ case "$OPTIONS_USER" in
 	show_help;
 	;;
 *)
-	if [[ -z "$OPTIONS_USER" ]]; then
-		apt_packages;
+	if [[ -z "$1" ]]; then
+		apt_packages "$2";
 		dnf_packages;
 		macos_packages;
 		opkg_packages;
@@ -365,7 +373,7 @@ case "$OPTIONS_USER" in
 		snapcraft_packages;
 	else
 		error_unrecognized_option "$*";
-		exit 1
+		exit 2
 	fi
 	;;
 esac
